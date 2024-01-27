@@ -1,0 +1,1 @@
+export const END_POINT = 'http://188.166.186.82:8080';

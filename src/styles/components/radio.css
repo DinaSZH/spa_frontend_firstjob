@@ -1,0 +1,34 @@
+.radio-group{
+    width: 100%;
+}
+
+.radio{
+    display: flex;
+    gap:10px;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.radio label{
+    margin: 0;
+    font-weight: 400;
+}
+
+.radio input{
+    margin: 0;
+    width: 15px;
+    height: 15px;
+}
+
+.checkbox{
+    display: flex;
+    gap:10px;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.checkbox input{
+    margin: 0;
+    width: 15px;
+    height: 15px;
+}

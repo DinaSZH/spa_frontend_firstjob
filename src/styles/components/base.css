@@ -1,0 +1,161 @@
+body{
+    margin: 0;
+}
+
+main{
+    margin:0;
+}
+
+body, div, input, a, li, ul, ol, textarea, span, p, h1, h2, h3, aside, main{
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container{
+    max-width: 1250px;
+    width: 100%;
+    padding: 0 20px;
+    display: block;
+    margin: 0 auto;
+}
+
+.container-background{
+    border: 30px solid #336be2;
+}
+
+a{
+    text-decoration: none;
+}
+
+.flex{
+    display: flex;
+}
+
+.flex-cl{
+    flex-direction: column;
+}
+
+.flex-jc-c{
+    justify-content: center;
+}
+
+.flex-jc-sb{
+    justify-content: space-between;
+}
+
+.flex-jc-end{
+    justify-content: flex-end;
+}
+.flex-ai-c{
+    align-items: center;
+}
+
+.flex-ai-sb{
+    align-items: space-between;
+}
+
+.p0{
+    padding: 0;
+}
+
+.p1{
+    padding: 5px;
+}
+
+.p2{
+    padding: 10px;
+}
+
+.p3{
+    padding: 15px;
+}
+
+.p4{
+    padding: 20px;
+}
+
+.p7{
+    padding: 40px;
+}
+
+.ptb7{
+    padding: 40px 0;
+}
+
+.m1{
+    margin: 5px;
+}
+
+.m2{
+    margin: 10px;
+}
+
+.m3{
+    margin: 15px;
+}
+
+.m4{
+    margin: 20px;
+}
+
+.m7{
+    margin: 40px;
+}
+
+.mtb2{
+    margin: 10px 0;
+}
+
+.mtb4{
+    margin: 20px 0;
+}
+.mtb7{
+    margin: 40px 0;
+}
+.mt2 {
+    margin-top: 10px;
+}
+
+.mt24{
+    margin-top: 24px;
+}
+
+.mt7 {
+    margin-top: 40px;
+}
+
+.mr4{
+    margin-right: 20px;
+}
+
+.mb10{
+    margin-bottom: 10px;
+}
+
+.mb5{
+    margin-bottom: 5px;
+}
+
+.mb20{
+    margin-bottom: 20px;
+}
+
+.ck-powered-by {
+    display: none;
+}
+
+.backgroundBlock{
+    background-color: #fff;
+}
+
+.no-mr{
+    margin: 0px;
+}
+
+.w-100{
+    width: 100%;
+}
+
+.gap{
+    gap: 20px;
+}

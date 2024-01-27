@@ -1,0 +1,48 @@
+.fieldset{
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    outline: none;
+    padding: 20px 0;
+    position: relative;
+}
+
+.fieldset-sm{
+    width: 100%;
+    max-width: 400px;
+}
+
+.fieldset-md{
+    width: 100%;
+    max-width: 500px;
+}
+
+.fieldset-lg{
+    width: 100%;
+    max-width: 600px;
+}
+
+.fieldset label{
+    width: 300px;
+    display: flex;
+    align-items: center;
+}
+
+.fieldset-vertical{
+    border: none;
+    margin: 0 0 30px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.fieldset-vertical label{
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.fieldset-vertical .dropdown{
+    top: 78px;
+}

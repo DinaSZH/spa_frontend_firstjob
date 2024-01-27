@@ -1,0 +1,90 @@
+.input{
+    height: 40px;
+    border-radius: 4px;
+    padding: 0 20px;
+    width: 100%;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
+.input:focus{
+    border: 1px solid #1785E5;
+}
+
+.autocomplete{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.tags{
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.tag{
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #ECEFF0;
+    display: inline-block;
+    margin-left: auto;
+}
+
+.textarea{
+    height: 200px;
+    border-radius: 4px;
+    padding: 0 20px;
+    width: 100%;
+    border: 1px solid #ddd;
+    outline: none;
+    resize: none;
+    padding-top: 10px;
+}
+
+.lns{
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.lns select:last-child{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-right: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.lns .remove{
+    position: absolute;
+    right: -10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.input-group {
+    display: flex;
+}
+
+.input-group .input{
+    border-left: none;
+    border-radius: 0;
+    display: flex;
+    outline: #1785E5;
+}
+
+.input-group .input:focus {
+    border-color: #ddd;
+}
+
+
+.input-group .input:first-child {
+    border-left: 1px solid #ddd;
+    border-top-left-radius:4px;
+    border-bottom-left-radius:4px;
+}
+
+.input-group .input:last-child {
+    border-top-right-radius:4px;
+    border-bottom-right-radius:4px;
+}
+

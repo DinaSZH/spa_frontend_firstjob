@@ -1,0 +1,37 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.row:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.col {
+    width: 33.3333%;
+}
+
+.row-header {
+    background-color: #fff;
+}
+
+.row-header .col {
+    cursor: pointer;
+    font-weight: 700;
+    user-select: none;
+}
+
+.row-header .col img {
+    width: 15px;
+    height: 15px;
+    
+}
+
+.row-header .col.asc img {
+    transform: rotate(90deg);
+}
+
+.row-header .col.desc img {
+    transform: rotate(270deg);
+}

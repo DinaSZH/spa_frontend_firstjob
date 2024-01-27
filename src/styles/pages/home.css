@@ -1,0 +1,24 @@
+.home-block{
+    display: flex;
+}
+
+.home-block div{
+    width: 50%;
+}
+
+.home-block div:first-child{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.home-block h1{
+    font-size: 48px;
+    margin: 10px 0px;
+}
+
+.home-block p{
+    color: #676767;
+    font-size: 28px;
+    margin: 10px 0px;
+}

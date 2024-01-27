@@ -1,0 +1,132 @@
+button{
+    cursor: pointer;
+}
+
+a{
+    cursor: pointer;
+}
+.button{
+    border-radius: 10px;
+    /* background-color: #5fc964; */
+    background-color: #228Be6;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    height: 40px;
+    cursor: pointer;
+    max-width: 100%;
+    color: #fff;
+    border: none;
+}
+
+.button-primary{
+    border-radius: 10px;
+    /* background-color: #4CAF4F; */
+    background-color: #2277c2;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    height: 40px;
+    cursor: pointer;
+    color: #fff;
+    border: none;
+}
+
+.button-primary:hover{
+    background-color: #43a2f6;
+}
+
+.header-button{
+    border-radius: 25px;
+    background-color: #769577;
+    outline: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.button-delete{
+    position: absolute;
+    right: 25px;
+    top: 30px;
+    cursor: pointer;
+    color: red;
+    background-color: #f4f5fb;
+    padding: 5px 15px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.button-edit{
+    position: absolute;
+    right: 110px;
+    top: 30px;
+    cursor: pointer;
+    color: rgb(72, 65, 65);   
+    background-color: #f4f5fb;
+    padding: 5px 15px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* //////////////////////////////////////////// */
+
+
+.button-primary-bordered{
+    border: 1px solid #1785E5;
+    color: #1785E5;
+    background-color: transparent;
+}
+
+.button-primary-bordered:hover{
+    opacity: 0.8;
+}
+
+.button-secondary-bordered{
+    border: 1px solid #BCBEBF;
+    color: #303233;
+    background-color: #FAFAFA;
+}
+
+.button-secondary-bordered:hover{
+    opacity: 0.8;
+}
+
+.button-secondary{
+    background: #f4f2ea;
+    color: #0d0c22;
+    padding: 11px 20px;
+    border-radius: 9999999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.button-secondary:hover{
+    background: #c8c7c6;
+}
+
+
+.button-black{
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3f3f3f;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.button-black:hover{
+    background: #080713;
+}
