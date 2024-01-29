@@ -21,7 +21,7 @@ import KeycloakService from './services/KeycloakService';
 import CreateResume from './pages/create-resume/CreateResume';
 import Profile from './pages/profile/Profile';
 import '@mantine/core/styles.css';
-
+import '@mantine/dates/styles.css';
 import { MantineProvider } from '@mantine/core';
 import EditProfile from './pages/profile/editProfile/EditProfile';
 import SignupHR from './pages/HR/SignupHR';
@@ -32,6 +32,7 @@ import SearchVacancy from './pages/search/searchVacancy/SearchVacancy';
 import Register from './pages/register/Register';
 import RenderOnAnonymous from './helpers/RenderOnAnonymous';
 import RenderOnAuthenticated from './helpers/RenderOnAuthenticated';
+import { NotFound } from './pages/NotFound/NotFound';
 
 
 const router = createBrowserRouter([
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
 				element: <CreateResume />
 			},
 			{
-				path: '/profile/:username',
+				path: '/profile',
 				element: <RenderOnAuthenticated><Profile /></RenderOnAuthenticated> 
 			},
 			{
@@ -106,7 +107,11 @@ const router = createBrowserRouter([
 			}
 		]
 	},
-	
+	{
+		path: '*',
+		// element: <RequireAuth><Layout /></RequireAuth>,
+		element: <NotFound />
+	},
 ]);
 
 const _axios = axios.create({ baseURL: 'https://erah07zkak.execute-api.eu-central-1.amazonaws.com' });

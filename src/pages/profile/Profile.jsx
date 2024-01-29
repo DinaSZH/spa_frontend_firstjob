@@ -9,11 +9,13 @@ import iconUser from '../../assets/images/iconUser.png';
 import KeycloakService from '../../services/KeycloakService';
 import { Loader } from '@mantine/core';
 import { getProfile } from '../../store/slices/profileSlice';
+import RenderOnAuthenticated from '../../helpers/RenderOnAuthenticated';
+import { DatePickerInput } from '@mantine/dates';
 
 export default function Profile() {
 
     const dispatch = useDispatch();
-    const { profile, error } = useSelector(
+    const { profile, error, loading } = useSelector(
       (state) => state.profile
     )
     // const {id} = useParams();
@@ -29,26 +31,9 @@ export default function Profile() {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [birthdate, setBirthdate] = useState("");
-    const [resume, setResume] = useState("");
     const [loader, setLoader] = useState(true);
-
     const navigate = useNavigate();
 
-  const age = getAgeFromBirthday(resume.birthday)
-  const birthday = new Date(resume.birthday)
-
-    const showPhone = phone => {
-        let res="";
-        
-        if(phone[0] == "8" ){
-            phone = '+7' + phone.slice(1, phone.length);
-        }
-
-        res = `${phone.slice(0, 2)} (${phone.slice(2, 5)}) ${phone.slice(5, 8)}-${phone.slice(8, 10)}-${phone.slice(10, 12)}`
-        return res;
-    }
-
-    let skills = ['React', 'Javascript', 'Node.JS'];
     const getProfileInfo = async () => {
       try {
         if (KeycloakService.isLoggedIn()) {
@@ -58,7 +43,7 @@ export default function Profile() {
           setPhone(KeycloakService.getPhone());
           setBirthdate(KeycloakService.getBirthdate());
           console.log("User authenticated");
-          setLoader(false);
+        
         } else {
           console.log("User is not authenticated");
         }
@@ -68,13 +53,21 @@ export default function Profile() {
     };
     
     useEffect(() => {
-      getProfileInfo();
+      dispatch(getProfile())
     }, []);
 
+    useEffect(() => {
+      if(profile){
+        setLoader(false);
+      }
+    }, [profile]);
+
+    
 
   
 
   return (
+    <RenderOnAuthenticated>
     <main>
       <div className='container'>
         <div className='flex flex-ai-c flex-jc-end ptb7'>
@@ -92,7 +85,7 @@ export default function Profile() {
             <div className='vacancy-container-left'>
                     {loader ? <Loader color="blue" /> : <div>
                         <h2 className='no-mr'>Profile Information</h2>
-                        <h3 className='text'>{`${name} ${surname}`}</h3>
+                        <h3 className='text'>{`${profile?.firstname} ${profile?.lastname}`}</h3>
 
                         <div className='divider'></div>
 
@@ -100,9 +93,9 @@ export default function Profile() {
                           <div className='flex resume-title'> 
                           {/* <img className='logo' src={iconUser} alt='logo'/> */}
                           <h1 className='no-mr'>Personal Details</h1></div>
-                          <p>{email}</p>
-                          <p>{phone}</p>
-                          <p>{birthdate} </p>
+                          <p>{profile?.email}</p>
+                          <p>{profile?.phone}</p>
+                          <p>{profile?.birthdate} </p>
                         
                         </div>
                       </div>}
@@ -113,5 +106,6 @@ export default function Profile() {
       </div>
       </div>
     </main>
+    </RenderOnAuthenticated>
   )
 }

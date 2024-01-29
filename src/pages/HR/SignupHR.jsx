@@ -52,10 +52,10 @@ export default function SignupHR() {
 
                             {error && (<>{Array.isArray(error) ? (error.map((errorItem, index) => (
                                     <ErrorMessage key={index} title={errorItem.field} text={errorItem.description} />))
-                                ) : (<p>{`${error.field}: ${error.description}`}</p> )}</>  )}
-                            {errorState && (<>{Array.isArray(errorState) ? (errorState.map((errorItem, index) => (
-                                    <ErrorMessage key={index} text={errorItem} />))
-                                ) : (<p>{`${errorState}`}</p> )}</>  )}
+                                ) : (<ErrorMessage title={"Error"} text={error} /> )}</>  )
+                                
+                                }
+                            
 
                             <div className='login-footer'>
                                 <button className='button-primary' type='submit' disabled={loading}>

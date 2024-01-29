@@ -40,7 +40,7 @@ function Header() {
             <Link to="/">Home</Link>
             <RenderOnAnonymous><Link to="/employer/signup">For employers</Link></RenderOnAnonymous>
             <RenderOnAnonymous><Link to="/mentor/signup">Mentorship</Link></RenderOnAnonymous>
-            <RenderOnAuthenticated><Link to="/profile/:username">Profile</Link></RenderOnAuthenticated>
+            <RenderOnAuthenticated><Link to="/profile">Profile</Link></RenderOnAuthenticated>
             <RenderOnAuthenticated><Link to="/resumes">Resumes</Link></RenderOnAuthenticated>
             
           </div>
@@ -71,7 +71,7 @@ function Header() {
                     </Menu.Item>
 
                     <Menu.Divider />
-                    <Menu.Item  onClick={() => KeycloakService.doLogout()}
+                    <Menu.Item  onClick={() => KeycloakService.doLogout({redirectUri: 'http://localhost:3000/'})}
                       color="red"
                       leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
                     >

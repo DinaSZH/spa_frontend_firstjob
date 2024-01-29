@@ -6,22 +6,20 @@ export default function SelectDate({size, label, onChange, value}) {
     const [year, setYear] = useState("")
 
     useEffect(() => {
-        const date = new Date();
-        date.setDate(day);
-        date.setMonth(month);
-        date.setFullYear(year);
-        onChange(date)
-        console.log(date)
-    }, [day, month, year])
-
-    useEffect(() => {
-        if(value){
-            const date = new Date(value)
-            setDay(date.getDate())
-            setMonth(date.getMonth())
-            setYear(date.getFullYear())
+        if (day !== "" && month !== "" && year !== "") {
+          const date = new Date(year, month, day);
+          onChange(date);
         }
-    }, [value])
+      }, [day, month, year, onChange]);
+    
+      useEffect(() => {
+        if (value) {
+          const date = new Date(value);
+          setDay(date.getDate().toString());
+          setMonth(date.getMonth().toString());
+          setYear(date.getFullYear().toString());
+        }
+      }, [value]);
 
     
     return(

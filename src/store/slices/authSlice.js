@@ -7,7 +7,6 @@ const initialState = {
   userInfo: null,
   userToken: null,
   error: null,
-  errorState: null,
   success: false,
 }
 
@@ -21,9 +20,6 @@ export const authSlice = createSlice({
     },
     setSignupSuccess: (state, action) => {
       state.success = action.payload;
-    },
-    setErrorState: (state, action) => {
-      state.errorState=action.payload.status;
     }
 
   },
@@ -42,7 +38,6 @@ export const authSlice = createSlice({
         state.loading = false;
         state.error = payload;
       });
-      
   },
 });
 
@@ -67,10 +62,13 @@ export const registerHR = createAsyncThunk(
       if (error.response && error.response.data.message) {
         console.log("Error rejectWithValue111", error.response.data)
         return rejectWithValue(error.response.data.message)
-
-      } else {
+      } else if(error.response.data.fields) {
+        console.log("Fields error", error.response.data.fields)
         return rejectWithValue(error.response.data.fields)
-        
+      } 
+      else if(error.response.data.status) {
+        console.log("Status error", error.response.data.status)
+        return rejectWithValue(error.response.data.status)
       }
     }
   }
@@ -97,25 +95,17 @@ export const registerMentor = createAsyncThunk(
         console.log("Error rejectWithValue111", error.response.data)
         return rejectWithValue(error.response.data.message)
 
-      } else {
-        console.log('Error mentor', error.response.data);
+      } else if(error.response.data.fields) {
+        console.log("Fields error", error.response.data.fields)
         return rejectWithValue(error.response.data.fields)
-        
+      } 
+      else if(error.response.data.status) {
+        console.log("Status error", error.response.data.status)
+        return rejectWithValue(error.response.data.status)
       }
     }
   }
 )
-
-
-
-
-
-
-
-
-
-
-
 
 
 export const signUpHr = (data) => (dispatch) => {

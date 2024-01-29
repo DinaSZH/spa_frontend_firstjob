@@ -5,7 +5,9 @@ import KeycloakService from '../../services/KeycloakService';
 
 let initialState=  {
   profile:null,
-  error: null
+  error: null,
+  loading: false,
+  success: false,
 }
 
 
@@ -20,35 +22,100 @@ export const profileSlice = createSlice({
       state.error = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getProfile.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true; 
+      })
+      .addCase(getProfile.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(editProfile.pending, (state) => {
+        state.loading = true;
+        state.success = false; // Reset success state when starting the request
+        state.error = null;
+      })
+      .addCase(editProfile.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(editProfile.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
 });
 
-export const { setProfile, setError } = profileSlice.actions; // Fix the export
+export const { setProfile, setError } = profileSlice.actions; 
 
 export const getProfile = createAsyncThunk('user/getProfile', async (_, thunkApi) => {
   try {
-    const jwt = thunkApi.getState().auth.token; // Access the token from your auth state
+    const jwt = KeycloakService.getToken(); 
     const { data } = await axios.get(`${END_POINT}/api/client-app/profiles`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    thunkApi.dispatch(setProfile(data)); // Use thunkApi.dispatch to dispatch actions
+    thunkApi.dispatch(setProfile(data)); 
   } catch (error) {
     thunkApi.dispatch(setError(error.message));
   }
 });
 
-
-
-export const editProfile = (sendData, navigate) => async (dispatch) => {
-    try{
-      const res = await axios.put(`${END_POINT}/api/client-app/profiles`, sendData);
-      navigate.push(`/profile`)
-    } catch(e) {
-  
-      alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-    }   
+export const editProfile = createAsyncThunk('user/editProfile', async (updatedProfile, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken();
+    const { data } = await axios.put(`${END_POINT}/api/client-app/profiles`, updatedProfile, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    thunkApi.dispatch(setProfile(data));
+    return data; 
+  } catch (error) {
+    console.log("Error edit: ", error.response.data.fields )
+    return rejectWithValue(error.response.data.fields)
   }
+});
+
+
+
+// export const editProfile = createAsyncThunk('user/getProfile', async (_, thunkApi) => {
+//   try {
+//     const jwt = KeycloakService.getToken(); // Access the token from your auth state
+//     const { data } = await axios.get(`${END_POINT}/api/client-app/profiles`, {
+//       headers: {
+//         Authorization: `Bearer ${jwt}`,
+//       },
+//     });
+//     thunkApi.dispatch(setProfile(data)); // Use thunkApi.dispatch to dispatch actions
+//   } catch (error) {
+//     thunkApi.dispatch(setError(error.message));
+//   }
+// });
+
+
+// export const editProfile = (sendData, navigate) => async (dispatch) => {
+//     try{
+//       const jwt = KeycloakService.getToken(); 
+//       const res = await axios.put(`${END_POINT}/api/client-app/profiles`, sendData);
+//       navigate.push(`/profile`)
+//     } catch(e) {
+  
+//       alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
+//     }   
+//   }
 
 // export const sendVerificationEmail = (email) => (dispatch) => {
 //       axios.post(`${END_POINT}/api/auth/sendmail` , {
