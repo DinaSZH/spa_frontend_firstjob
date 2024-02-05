@@ -13,11 +13,17 @@ import {
 } from '@tabler/icons-react';
 import RenderOnAuthenticated from "../../helpers/RenderOnAuthenticated";
 import RenderOnAnonymous from "../../helpers/RenderOnAnonymous";
+import { useDispatch, useSelector } from 'react-redux';
+import { createProfile } from '../../store/slices/profileSlice';
 
 function Header() {
   
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(KeycloakService.isLoggedIn());
+  const { profile } = useSelector(
+    (state) => state.profile
+  )
 
   useEffect(() => {
     const updateAuthenticationStatus = () => {
@@ -31,6 +37,11 @@ function Header() {
     };
   }, [isLoggedIn]);
 
+  const createUserProfile = () => {
+    dispatch(createProfile());
+    navigate('/profile');
+  }
+
   return (
     <header className="header">
       <div className="container">
@@ -40,7 +51,6 @@ function Header() {
             <Link to="/">Home</Link>
             <RenderOnAnonymous><Link to="/employer/signup">For employers</Link></RenderOnAnonymous>
             <RenderOnAnonymous><Link to="/mentor/signup">Mentorship</Link></RenderOnAnonymous>
-            <RenderOnAuthenticated><Link to="/profile">Profile</Link></RenderOnAuthenticated>
             <RenderOnAuthenticated><Link to="/resumes">Resumes</Link></RenderOnAuthenticated>
             
           </div>
@@ -66,9 +76,12 @@ function Header() {
 
                   <Menu.Dropdown>
                     <Menu.Label>Application</Menu.Label>
-                    <Menu.Item onClick={() => navigate('/profile/:username')} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
+                    {profile && <Menu.Item onClick={() => navigate('/profile/:username')} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
                       Profile
-                    </Menu.Item>
+                    </Menu.Item>}
+                    {!profile && <Menu.Item onClick={createUserProfile} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
+                      Create profile
+                    </Menu.Item>}
 
                     <Menu.Divider />
                     <Menu.Item  onClick={() => KeycloakService.doLogout({redirectUri: 'http://localhost:3000/'})}

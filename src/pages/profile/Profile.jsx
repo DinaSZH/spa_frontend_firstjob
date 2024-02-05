@@ -71,7 +71,7 @@ export default function Profile() {
     <main>
       <div className='container'>
         <div className='flex flex-ai-c flex-jc-end ptb7'>
-          <button className='button button-black' onClick={() => navigate(`/profile/edit`)}>Редактировать</button>
+         {profile && <button className='button button-black' onClick={() => navigate(`/profile/edit`)}>Редактировать</button>}
         </div> 
 
         <div className='vacancy-container flex mb10'>

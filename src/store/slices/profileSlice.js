@@ -21,6 +21,9 @@ export const profileSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    clearSuccess: (state, action) => {
+      state.success = false;
+    } 
   },
   extraReducers: (builder) => {
     builder
@@ -57,7 +60,7 @@ export const profileSlice = createSlice({
   },
 });
 
-export const { setProfile, setError } = profileSlice.actions; 
+export const { setProfile, setError, clearSuccess } = profileSlice.actions; 
 
 export const getProfile = createAsyncThunk('user/getProfile', async (_, thunkApi) => {
   try {
@@ -72,6 +75,22 @@ export const getProfile = createAsyncThunk('user/getProfile', async (_, thunkApi
     thunkApi.dispatch(setError(error.message));
   }
 });
+
+export const createProfile = createAsyncThunk('user/createProfile', async (_, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken();
+    const { data } = await axios.post(`${END_POINT}/api/client-app/profiles`, null, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    thunkApi.dispatch(setProfile(data));
+  } catch (error) {
+    thunkApi.dispatch(setError(error.message));
+  }
+});
+
+
 
 export const editProfile = createAsyncThunk('user/editProfile', async (updatedProfile, thunkApi) => {
   try {

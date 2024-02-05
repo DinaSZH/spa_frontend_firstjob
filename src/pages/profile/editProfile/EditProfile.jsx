@@ -6,11 +6,14 @@ import {getAgeFromBirthday, monthsInRussian, monthsInRussian2} from '../../../ut
 import { Link, useNavigate } from 'react-router-dom';
 import user from '../../../assets/images/user-icon.webp';
 import KeycloakService from '../../../services/KeycloakService';
-import { Loader, em } from '@mantine/core';
+import { Button, Loader, em } from '@mantine/core';
 import Input from '../../../components/FillForm/input/input';
 import SelectDate from '../../../components/FillForm/SelectDate/SelectDate';
-import { editProfile, getProfile, setError } from '../../../store/slices/profileSlice';
+import { clearSuccess, editProfile, getProfile, setError } from '../../../store/slices/profileSlice';
 import { DatePickerInput } from '@mantine/dates';
+import ErrorMessage from '../../../components/Error/ErrorMessage';
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input/input'
 
 export default function EditProfile() {
 
@@ -28,10 +31,11 @@ export default function EditProfile() {
     const [phone, setPhone] = useState("");
     const [birthdate, setBirthdate] = useState(null);
     const [loader, setLoader] = useState(true);
+    const [errors, setErrors] = useState([]);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { profile, error, loading, success } = useSelector(
+    const { profile, loading, success } = useSelector(
       (state) => state.profile
     )
 
@@ -51,9 +55,12 @@ export default function EditProfile() {
       getProfileInfo()
     }, [profile])
 
-
     useEffect(() => {
       dispatch(getProfile());
+    }, [])
+
+    useEffect(() => {
+      
       if(profile){
         setLoader(false)
       }
@@ -62,13 +69,42 @@ export default function EditProfile() {
     useEffect(() => {
       if(success){
         navigate('/profile');
+        dispatch(clearSuccess()); 
       }
+
     }, [success])
 
     const handleEditProfile = async () => {
       try {
         const formattedBirthdate = new Date(birthdate).toISOString().split('T')[0];
+        const newErrors = [];
 
+        if (firstname.trim() === "") {
+          newErrors.push("Firstname cannot be empty");
+        }
+        if (!/^[a-zA-Z]+$/.test(firstname)) {
+          newErrors.push("Firstname can only contain letters");
+        }
+    
+        // Validation for lastname
+        if (lastname.trim() === "") {
+          newErrors.push("Lastname cannot be empty");
+        }
+        if (!/^[a-zA-Z]+$/.test(lastname)) {
+          newErrors.push("Lastname can only contain letters");
+        }
+    
+        // Validation for phone
+        const phoneRegex = /^\+7\d{10}$/;
+        if (!phoneRegex.test(phone)) {
+          newErrors.push("Invalid phone number format");
+        }
+    
+        if (newErrors.length > 0) {
+          setErrors(newErrors);
+          return;
+        }
+        
         await dispatch(editProfile({
           firstname,
           lastname,
@@ -108,7 +144,12 @@ export default function EditProfile() {
                         <div className='backgroundBlock mb20'>
                           <div className='flex resume-title'> 
                           <h1 className='no-mr'>Personal Information</h1></div>
-                          <Input placeholder="" type="text" label="phone" size="fieldset-md" onChange={(e) => setPhone(e.target.value)} value={phone}/>
+                          {/* <Input placeholder="" type="tel" label="phone" size="fieldset-md" onChange={(e) => setPhone(e.target.value)} value={phone}/>
+                          <PhoneInput country="KZ" onChange={(e) => setPhone(e.target.value)} value={phone} /> */}
+                          <fieldset className='fieldset fieldset-md'>
+                            <label>Phone</label>
+                            <PhoneInput className="input" placeholder="Enter phone number"onChange={(value) => setPhone(value)} value={phone} />
+                          </fieldset>
                           <DatePickerInput
                               label="Pick date"
                               placeholder="Pick date"
@@ -118,9 +159,9 @@ export default function EditProfile() {
                             />
                         </div>
 
-                        {error && (<>{Array.isArray(error) ? (error.map((errorItem, index) => (
-                                    <ErrorMessage key={index} title={errorItem.field} text={errorItem.description} />))
-                                ) : (<p>{`${error.field}: ${error.description}`}</p> )}</>  )}
+                        {errors && (<>{Array.isArray(errors) ? (errors.map((errorItem, index) => (
+                                    <ErrorMessage key={index} title={'Error'} text={errorItem} />))
+                                ) : ( <ErrorMessage title={"Error"} text={errors}   /> )}</>  )}
                       <div className='divider'></div>
                        <button className='button button-black' onClick={handleEditProfile}>Edit</button>
                       </div>}
