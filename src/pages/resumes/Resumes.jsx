@@ -2,36 +2,19 @@ import Header from '../../components/header/Header'
 import MyResumes from '../../components/myresumes/MyResumes'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-// import { getMyResumes } from '@/app/store/slices/resumeSlice';
+import { getMyResumes } from '../../store/slices/resumeSlice'
 import { Link } from 'react-router-dom'
 
 export default function ResumesPage() {
 
-//   const dispacth = useDispatch();
-//   const resumes = useSelector((state) => state.resume.resumes)
-//   const didMount = () => {
-//     dispacth(getMyResumes())
-//   }
+  const dispacth = useDispatch();
+  const resumes = useSelector((state) => state.resume.resumes);
 
-//   useEffect(didMount, [])
+  useEffect(() => {
+    dispacth(getMyResumes())
+  }, [])
 
-const resumes = [{
-    position: 'Software engineer',
-    createdAt:  '23.01.2023',
-    skills: ['Node.JS', "SQL", "Vue", 'Javascript']
-  },
-  {
-    position: 'React engineer',
-    createdAt:  '23.01.2023',
-    skills: ['React', "Redux", "Vue", 'Javascript']
-  },
-  {
-    position: 'Backend engineer',
-    createdAt:  '23.01.2023',
-    skills: ['Java', "Spring", "MySQL", 'GIT']
-  }]
-  
-
+  console.log("RSSSS", resumes);
   return (
     <main>
       <div className='container'>

@@ -159,3 +159,7 @@ a{
 .gap{
     gap: 20px;
 }
+
+.w-full{
+    width: 100%;
+}

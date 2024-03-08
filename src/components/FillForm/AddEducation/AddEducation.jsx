@@ -1,69 +1,78 @@
-import { useState, useEffect } from "react"
+import { DatePickerInput } from "@mantine/dates"
+import { useState } from "react"
+export default function ModalAddExp({close, addEducation}) {
+    const [startDate, setStartDate] = useState(Date.now())
+    const [endDate, setEndDate] = useState(Date.now())
 
-export default function AddEducation({onChange, education}) {
-   
+    const [instanceName, setInstanceName] = useState("")
+    const [specialization, setSpecialization] = useState("")
+    const [level, setLevel] = useState("")
 
-    const onChangeData = (e) => {
-        let [index, name] = e.target.name.split("-")
-        index = index * 1;
-        let eds = [...education]
-        eds[index][name] = e.target.value;
-        onChange(eds)
+
+    const onChangesetInstanceName = (e) => {
+        setInstanceName(e.target.value)
     }
 
-    const newEducation = () => {
-        onChange([...education, {
-            level: "Высшее",
-            university_name: "",
-            faculty: "",
-            major: "",
-            end_date: ""
-        }])
+    const onChangeSpecialization = (e) => {
+        setSpecialization(e.target.value)
     }
 
-    const removeEd = (ed) => {
-        const eds = [...education]
-        const index = education.indexOf(ed)
-        eds.splice(index, 1)
-        onChange(eds)
+    const onChangeLevel = (e) => {
+        setLevel(e.target.value)
+    }
+
+    const save = () => {
+        const education = {
+            startDate,
+            endDate,
+            instanceName,
+            specialization,
+            level
+        }
+
+        console.log(education)
+        addEducation(education)
     }
 
 
+    return(
+        <div className="modal">
+            <div className="modal-backdrop" onClick={close}></div>
+            <div className="modal-inner">
 
+                <h2>Образование</h2>
+                <h4>Начало обучения</h4>
 
-    const educations = education.map((ed, index) => (<div key={index} className="education">
-    <span onClick={() => removeEd(ed)}>X</span>
-    <fieldset className={"fieldset fieldset-md"}>
-        <label>Уровень</label>
-        <select className="input" onChange={onChangeData} name={index + "-level"} value={ed.level}>
-            <option value={"Высшее"}>Высшее</option>
-            <option value={"Не полное высшее"}>Не полное высшее</option>
-        </select>
-    </fieldset>
+                {/* {testdate.toLocaleDateString()} */}
+                <DatePickerInput
+                              placeholder="Pick date"
+                              onChange={(date) => setStartDate(date)}
+                              className='mb10'/>
 
-    <fieldset className={"fieldset fieldset-md"}>
-        <label>Название учебного заведения</label>
-        <input className="input" onChange={onChangeData} type="text" name={index + "-university_name"} value={ed.university_name}/>
-    </fieldset>
-    <fieldset className={"fieldset fieldset-md"}>
-        <label>Факультет</label>
-        <input className="input" onChange={onChangeData} type="text"  name={index + "-major"} value={ed.major}/>
-    </fieldset>
-    <fieldset className={"fieldset fieldset-md"}>
-        <label>Специализация</label>
-        <input className="input" onChange={onChangeData} type="text" name={index + "-faculty"} value={ed.faculty}/>
-    </fieldset>
-    <fieldset className={"fieldset fieldset-md"}>
-        <label>Год окончания</label>
-        <input className="input" onChange={onChangeData} type="text" name={index + "-end_date"} value={ed.end_date}/>
-    </fieldset>
-</div>))
+                <h4>Конец обучения</h4>
 
+                <DatePickerInput
+                    placeholder="Pick date"
+                    onChange={(date) => setEndDate(date)}
+                    className='mb10'/>
 
-    return (
-        <div className="eds">
-            {educations}
-            <a onClick={newEducation}> {education.length > 0 ? "Указать еще одно место обучения" : "Указать место обучения"} </a>
-        </div>
+                <h4>Название учебного заведения</h4>
+                <input className="input" placeholder="Название учебного заведения" type="text" onChange={onChangesetInstanceName} value={instanceName}/>
+
+                <h4>Специализация</h4>
+                <input className="input" placeholder="Специализация" type="text" onChange={onChangeSpecialization} value={specialization}/>
+
+                <h4>Уровень образования</h4>
+                <input className="input" placeholder="Уровень образования" type="text" onChange={onChangeLevel} value={level}/>
+
+                <div className="modal-actions">
+                    <button className="button button-primary-bordered" onClick={close}>Отменить</button>
+                    <button className="button button-primary" onClick={save}>Сохранить</button>
+                 </div>
+                
+            </div>
+             
+             
+    </div>
     )
 }

@@ -2,10 +2,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerMentor, setError, setSignupSuccess } from '../../store/slices/authSlice';
-import { Loader} from '@mantine/core';
+import { Loader, Textarea} from '@mantine/core';
 import { useForm } from "react-hook-form";
 import Success from '../../components/Success/Success';
 import ErrorMessage from '../../components/Error/ErrorMessage';
+import PhoneInput from 'react-phone-number-input/input';
+import { DatePickerInput } from '@mantine/dates';
 
 
 export default function SignupHR() {
@@ -49,6 +51,20 @@ export default function SignupHR() {
     
                             <label>Last name</label>
                             <input className="input" placeholder='Enter last name'  {...register('lastname')} required/>
+
+                            <label>Phone</label>
+                            <PhoneInput className="input" placeholder="Enter phone number" {...register('phone')} required />
+
+                            <label>Birth date</label>
+                            <DatePickerInput
+                              placeholder="Birth date"
+                              {...register('birthdate')} required
+                              className='mb10'
+                            />
+
+                            <label>Description</label>
+                            <Textarea
+                            placeholder="Input description about yourself" {...register('Description')} required/>
 
                             {error && (<>{Array.isArray(error) ? (error.map((errorItem, index) => (
                                     <ErrorMessage key={index} title={errorItem.field} text={errorItem.description} />))

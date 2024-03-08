@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { END_POINT } from '../../config/end-point'
+import KeycloakService from '../../services/KeycloakService';
 
 
 export const resumeSlice = createSlice({
@@ -30,32 +31,15 @@ export const resumeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getResumes.pending, (state) => {
+      .addCase(getMyResumes.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getResumes.fulfilled, (state, { payload }) => {
+      .addCase(getMyResumes.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true; 
       })
-      .addCase(getResumes.rejected, (state, { payload }) => {
-        console.error('Error from backend:', payload);
-        state.loading = false;
-        state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(editProfile.pending, (state) => {
-        state.loading = true;
-        state.success = false; // Reset success state when starting the request
-        state.error = null;
-      })
-      .addCase(editProfile.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(editProfile.rejected, (state, { payload }) => {
+      .addCase(getMyResumes.rejected, (state, { payload }) => {
         console.error('Error from backend:', payload);
         state.loading = false;
         state.error = payload;
@@ -63,22 +47,24 @@ export const resumeSlice = createSlice({
   },
 })
 
-// Action creators are generated for each case reducer function
 export const { setMyResumes, uppendResume, setResume, handleDeleteResume} = resumeSlice.actions
 
-export const getProfile = createAsyncThunk('user/getResumes', async (_, thunkApi) => {
+export const getMyResumes = createAsyncThunk('user/getResumes', async (_, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.get(`${END_POINT}/api/client-app/resumes`, {
+    const { data } = await axios.get(`${END_POINT}/api/client-app/resumes/my`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    thunkApi.dispatch(setMyResumes(data)); 
+    console.log('Fetched resumes:', data); // Log fetched data
+    thunkApi.dispatch(setMyResumes({resumes: data})); 
   } catch (error) {
-    thunkApi.dispatch(setError(error.message));
+    console.error('Error fetching resumes:', error);
+    thunkApi.rejectWithValue(error.message);
   }
 });
+
 
 // export const getResumeById = (id) => async (dispatch) => {
 //   try{

@@ -33,7 +33,12 @@ import Register from './pages/register/Register';
 import RenderOnAnonymous from './helpers/RenderOnAnonymous';
 import RenderOnAuthenticated from './helpers/RenderOnAuthenticated';
 import { NotFound } from './pages/NotFound/NotFound';
-
+import {
+	QueryClient,
+	QueryClientProvider,
+	useQuery,
+  } from '@tanstack/react-query'
+  
 
 const router = createBrowserRouter([
 	{
@@ -124,6 +129,7 @@ _axios.interceptors.request.use((config) => {
     return UserService.updateToken(cb);
   }
 });
+const queryClient = new QueryClient()
 
 const renderApp = async () => {
 	try {
@@ -132,11 +138,13 @@ const renderApp = async () => {
 	  const root = ReactDOM.createRoot(document.getElementById('root'));
 	  root.render(
 		<React.StrictMode>
-		  <MantineProvider>
-			<Provider store={store}>
-			  <RouterProvider router={router} />
-			</Provider>
-		  </MantineProvider>
+		  <QueryClientProvider client={queryClient}>
+			<MantineProvider>
+				<Provider store={store}>
+				<RouterProvider router={router} />
+				</Provider>
+			</MantineProvider>
+		  </QueryClientProvider>
 		</React.StrictMode>,
 	  );
 	} catch (error) {

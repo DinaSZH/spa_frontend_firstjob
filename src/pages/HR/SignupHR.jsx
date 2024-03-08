@@ -6,6 +6,8 @@ import { Loader} from '@mantine/core';
 import { useForm } from "react-hook-form";
 import Success from '../../components/Success/Success';
 import ErrorMessage from '../../components/Error/ErrorMessage';
+import PhoneInput from 'react-phone-number-input/input';
+import { DatePickerInput } from '@mantine/dates';
 
 
 export default function SignupHR() {
@@ -50,6 +52,22 @@ export default function SignupHR() {
                             <label>Last name</label>
                             <input className="input" placeholder='Enter last name'  {...register('lastname')} required/>
 
+                            <label>Phone</label>
+                            <PhoneInput className="input" placeholder="Enter phone number" {...register('phone')} required />
+
+                            <label>Date</label>
+                            <DatePickerInput
+                              placeholder="Pick date"
+                              {...register('birthdate')} required
+                              className='mb10'
+                            />
+
+                            <label>Company</label>
+                            <input className="input" placeholder='Enter company name'  {...register('company')} required/>
+
+                            <label>Company url</label>
+                            <input className="input" placeholder='Enter company url'  {...register('url')} required/>
+                            
                             {error && (<>{Array.isArray(error) ? (error.map((errorItem, index) => (
                                     <ErrorMessage key={index} title={errorItem.field} text={errorItem.description} />))
                                 ) : (<ErrorMessage title={"Error"} text={error} /> )}</>  )

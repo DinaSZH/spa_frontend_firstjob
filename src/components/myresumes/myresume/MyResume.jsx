@@ -12,15 +12,15 @@ export default function MyResume ({item}) {
         </div>
 
         <div className="skill flex mt7 ">
-        {item.skills.map((skill, index) => (
-          <span key={index} className="p3">
-            {skill}
-          </span>
-        ))}
-        <div className='date flex'> 
+                {item.skills && item.skills.map((skill, index) => (
+                    <span key={index} className="p3">
+                        {skill}
+                    </span>
+                ))}
+        {/* <div className='date flex'> 
             <img  src={date} alt='date'/>
             <p>{item.createdAt}</p>
-        </div>
+        </div> */}
       </div>
         <span className='button-edit'>Edit</span>
         <span className='button-delete'>Delete</span>

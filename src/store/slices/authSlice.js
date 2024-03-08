@@ -108,27 +108,27 @@ export const registerMentor = createAsyncThunk(
 )
 
 
-export const signUpHr = (data) => (dispatch) => {
-  const fd = new FormData();
-  fd.append("email", data.email)
-  fd.append("firstname", data.firstname)
-  fd.append("lastname", data.lastname)
-  axios.post(`${END_POINT}/api/client-app/application/hr`, fd).catch(e => {
-    console.log(e)
-    dispatch(setError(e.response.data))
-  })
-}
+// export const signUpHr = (data) => (dispatch) => {
+//   const fd = new FormData();
+//   fd.append("email", data.email)
+//   fd.append("firstname", data.firstname)
+//   fd.append("lastname", data.lastname)
+//   axios.post(`${END_POINT}/api/client-app/application/hr`, fd).catch(e => {
+//     console.log(e)
+//     dispatch(setError(e.response.data))
+//   })
+// }
 
-export const signUpMentor = (data) => (dispatch) => {
-  const fd = new FormData();
-  fd.append("email", data.email)
-  fd.append("firstname", data.firstname)
-  fd.append("lastname", data.lastname)
-  axios.post(`${END_POINT}/api/client-app/application/mentor`, fd).catch(e => {
-    console.log(e)
-    dispatch(setError(e.response.data))
-  })
-}
+// export const signUpMentor = (data) => (dispatch) => {
+//   const fd = new FormData();
+//   fd.append("email", data.email)
+//   fd.append("firstname", data.firstname)
+//   fd.append("lastname", data.lastname)
+//   axios.post(`${END_POINT}/api/client-app/application/mentor`, fd).catch(e => {
+//     console.log(e)
+//     dispatch(setError(e.response.data))
+//   })
+// }
 
 // export const registerHR = createAsyncThunk(
 //   'user/register',
