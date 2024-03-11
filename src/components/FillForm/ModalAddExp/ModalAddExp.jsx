@@ -1,11 +1,11 @@
 import { DatePickerInput } from "@mantine/dates"
 import { useState } from "react"
 export default function ModalAddExp({close, addWorkingHistory}) {
-    const [start_date, setStartDate] = useState(Date.now())
-    const [end_date, setEndDate] = useState(Date.now())
+    const [startDate, setStartDate] = useState(Date.now())
+    const [endDate, setEndDate] = useState(Date.now())
 
     const [company, setCompany] = useState("")
-    const [company_description, setCompany_description] = useState("")
+    const [position, setPosition] = useState("")
     const [responsibilitites, setResponsibilitites] = useState("")
 
 
@@ -13,8 +13,8 @@ export default function ModalAddExp({close, addWorkingHistory}) {
         setCompany(e.target.value)
     }
 
-    const onChangeCompanyDescription = (e) => {
-        setCompany_description(e.target.value)
+    const onChangePosition = (e) => {
+        setPosition(e.target.value)
     }
 
     const onChangeResponsibilitites = (e) => {
@@ -22,16 +22,24 @@ export default function ModalAddExp({close, addWorkingHistory}) {
     }
 
     const save = () => {
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+
         const workingHistory = {
-            start_date,
-            end_date,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
             responsibilitites,
             company,
-            company_description
+            position
         }
 
         console.log(workingHistory)
         addWorkingHistory(workingHistory)
+    }
+
+    const formatDate = (date) => {
+        const options = { year: 'numeric', month: 'long' };
+        return new Date(date).toLocaleDateString('en-US', options);
     }
 
 
@@ -60,7 +68,7 @@ export default function ModalAddExp({close, addWorkingHistory}) {
                 <input className="input" placeholder="Название компании" type="text" onChange={onChangeCompanyName} value={company}/>
 
                 <h4>Должность</h4>
-                <input className="input" placeholder="Должность" type="text" onChange={onChangeCompanyDescription} value={company_description}/>
+                <input className="input" placeholder="Должность" type="text" onChange={onChangePosition} value={position}/>
 
                 <h4>Обязанности на рабочем месте</h4>
                 <textarea className="textarea" placeholder="Опишите что вы делали на работе" type="text" onChange={onChangeResponsibilitites}>{responsibilitites}</textarea>

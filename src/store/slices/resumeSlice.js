@@ -45,6 +45,22 @@ export const resumeSlice = createSlice({
         state.error = payload;
       });
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createResume.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createResume.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true; 
+      })
+      .addCase(createResume.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
 })
 
 export const { setMyResumes, uppendResume, setResume, handleDeleteResume} = resumeSlice.actions
@@ -65,6 +81,22 @@ export const getMyResumes = createAsyncThunk('user/getResumes', async (_, thunkA
   }
 });
 
+export const createResume = createAsyncThunk('user/createResume', async (createResume, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken();
+    const { data } = await axios.post(`${END_POINT}/api/client-app/resumes`, createResume, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    thunkApi.dispatch(uppendResume({newresume: data}));
+    return data; 
+  } catch (error) {
+    console.log("Error creating resume: ", error.response.data )
+    return rejectWithValue(error.response.data)
+  }
+});
+
 
 // export const getResumeById = (id) => async (dispatch) => {
 //   try{
@@ -74,23 +106,6 @@ export const getMyResumes = createAsyncThunk('user/getResumes', async (_, thunkA
 //     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
 //   }  
 // }
-
-export const createResume = createAsyncThunk('user/editProfile', async (createResume, thunkApi) => {
-  try {
-    const jwt = KeycloakService.getToken();
-    const { data } = await axios.post(`${END_POINT}/api/client-app/resumes`, createResume, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-    thunkApi.dispatch(uppendResume(data));
-    return data; 
-  } catch (error) {
-    console.log("Error edit: ", error.response.data )
-    return rejectWithValue(error.response.data)
-  }
-});
-
 
 // export const createResume = (sendData, router) => async (dispatch) => {
 //   try{

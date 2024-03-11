@@ -14,7 +14,6 @@ export default function ResumesPage() {
     dispacth(getMyResumes())
   }, [])
 
-  console.log("RSSSS", resumes);
   return (
     <main>
       <div className='container'>

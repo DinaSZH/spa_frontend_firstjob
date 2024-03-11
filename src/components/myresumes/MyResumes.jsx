@@ -1,6 +1,5 @@
 import MyResume from "./myresume/MyResume";
 export default function MyResumes ({resumes}) {
-    console.log("Myresumes", resumes); 
     if (!resumes) {
         return <div>No resumes to display</div>;
     }

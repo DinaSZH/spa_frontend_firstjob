@@ -1,57 +1,47 @@
-'use client';
-import AutoCompleteSelect from '../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect';
-import Header from '../../components/header/Header'
 import Input from '../../components/FillForm/input/input';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import SelectDate from '../../components/FillForm/SelectDate/SelectDate';
 import ModalAddExp from '../../components/FillForm/ModalAddExp/ModalAddExp';
 import WorkingHistory from '../../components/FillForm/WorkingHistory/WorkingHistory';
-import AutoCompleteTags from '../../components/FillForm/AutoCompleteTags/AutoCompleteTags';
 import AddEducation from '../../components/FillForm/AddEducation/AddEducation';
-import AddLang from '../../components/FillForm/AddLang/AddLang';
 import SelectEmploymentTypes from '../../components/FillForm/SelectEmploymentTypes/SelectEmploymentTypes';
-import { Link } from 'react-router-dom';
-import { Radio, Group, Select } from '@mantine/core';
+import { Link, useNavigate } from 'react-router-dom';
+import { Select } from '@mantine/core';
 import { END_POINT } from '../../config/end-point';
-import { DatePickerInput } from '@mantine/dates';
 import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
+  useQuery, useQueryClient,
 } from '@tanstack/react-query'
 import { MultiSelect } from '@mantine/core';
-import { editProfile } from '../../store/slices/profileSlice';
 import EducationItem from '../../components/EducationItem/EducationItem';
+import { createResume } from '../../store/slices/resumeSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function CreateResume() {
-    //const [cities, setCities] = useState([]);
-    const [countries, setCountries] = useState([]);
     const [allSkills, setSkills] = useState([]);
     const [allEmploymentTypes, setEmploymentTypes] = useState([]);
-    const [workingHistories, SetWorkingHistories] = useState([]);
+    const [experience, setExperience] = useState([]);
     const [modalExpIsOpen, setModalExpIsOpen] = useState(false);
     const [modalEduIsOpen, setModalEduIsOpen] = useState(false);
-    const [first_name, setName] = useState("");
-    const [last_name, setLastName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [cityId, setCity] = useState();
-    const [birthday, setBirthday] = useState();
+
+    const [city, setCity] = useState();
     const [gender, setGender] = useState("");
-    const [citizenship, setCitizenship] = useState();
     const [position, setPosition] = useState("");
     const [salary, setSalary] = useState();
     const [currency, setCurrency] = useState("KZT");
     const [skills, setSelectedSkills] = useState("");
-    const [educations, setEducation] = useState([]);
-    const [foreignLanguages, setForeignLanguages] = useState([]);
-    const [employmentTypes, setSelectedEmpTypes] = useState([]);
+    const [education, setEducation] = useState([]);
+   
+    const [employmentType, setSelectedEmpTypes] = useState([]);
     const [about, setAbout] = useState("");
 
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { error, loading, success } = useSelector(
+      (state) => state.resume
+    )
 
     const { isPending, isError, data: cities } = useQuery({
-      queryKey: 'cities',
+      queryKey: ['cities'],
       queryFn: async () => {
         const response = await fetch(`${END_POINT}/api/client-app/resumes/cities`);
         if (!response.ok) {
@@ -68,8 +58,6 @@ export default function CreateResume() {
     });
 
     useEffect(() => {
-      console.log("didMount")
-      
       axios.get(`${END_POINT}/api/client-app/resumes/skills`).then(res => {
         const skillsData = res.data;
         setSkills(skillsData.map(skill => ({
@@ -93,25 +81,25 @@ export default function CreateResume() {
  }
 
    const addWorkingHistory = (item) => {
-    SetWorkingHistories([...workingHistories, item])
+    setExperience([...experience, item])
       closeModalExp()
    }
 
    const addEducation = (item) => {
-    setEducation([...educations, item])
+    setEducation([...education, item])
       closeModalEdu()
    }
 
    const removeWorkingHistory = (workingHistory) => {
-      let wh= [...workingHistories]
-      let index = workingHistories.indexOf(workingHistory)
+      let wh= [...experience]
+      let index = experience.indexOf(workingHistory)
       wh.splice(index,1);
-      SetWorkingHistories(wh)
+      setExperience(wh)
    }
 
    const removeEducation = (education) => {
-    let ed= [...educations]
-    let index = educations.indexOf(education)
+    let ed= [...education]
+    let index = education.indexOf(education)
     ed.splice(index,1);
     setEducation(ed)
  }
@@ -120,15 +108,38 @@ export default function CreateResume() {
       setGender(e.target.value)
      }
      
-     const onSkillsChange = (data) => {
-      if (Array.isArray(data)) { 
-        const arr = data.map(item => item.name);
-        setSelectedSkills(arr.join(","));
+     const onSkillsChange = (selectedSkills) => {
+      if (Array.isArray(selectedSkills)) {
+        // If selectedSkills is an array, it contains the selected skills
+        const selectedSkillIds = selectedSkills.map(skill => skill.value); // Extract skill ids
+        setSelectedSkills(selectedSkillIds); // Update state with selected skill ids
       } else {
-        console.error("Data passed to onSkillsChange is not an array:", data);
+        console.error("Data passed to onSkillsChange is not an array:", selectedSkills);
       }
     }
 
+    
+
+    const handleSave = ()=> {
+      dispatch(createResume({
+        gender,
+        city,
+        position,
+        skills,
+        salary,
+        currency,
+        experience,
+        about,
+        education,
+        employmentType,
+      }))  
+    }
+
+    useEffect(() => {
+      if(success){
+        navigate('/resumes')
+      }
+    }, [success])
 
   return (
     <main>
@@ -165,6 +176,7 @@ export default function CreateResume() {
           placeholder="Search city"
           data={cities}
           searchable
+          onSelect={(data) => setCity(data.id)}
           nothingFoundMessage="Nothing found..."
           className={"fieldset fieldset-sm h3" } 
         />
@@ -182,7 +194,6 @@ export default function CreateResume() {
           data={allSkills}
           hidePickedOptions
           onSelect={onSkillsChange}
-          //selected={(skills && skills.length > 0) ? skills.split(",").map(item => ({ name: item })) : []}
         />
 
         <fieldset className={"fieldset fieldset-lg" } >
@@ -206,7 +217,7 @@ export default function CreateResume() {
             <label>Места работы</label>
 
             <div className='exp'>
-                {workingHistories.map(item => (<WorkingHistory key={item.id}  workingHistory={item} remove={removeWorkingHistory}/>))}
+                {experience.map(item => (<WorkingHistory key={item.id}  workingHistory={item} remove={removeWorkingHistory}/>))}
                 <button className='button button-primary-bordered' onClick={() => setModalExpIsOpen(true)}>Добавить место работы</button>
             </div>           
         </fieldset>
@@ -225,7 +236,7 @@ export default function CreateResume() {
             <label>Образование</label>
 
             <div className='exp'>
-                {educations.map(item => (<EducationItem key={item.id}  education={item} remove={removeEducation}/>))}
+                {education.map(item => (<EducationItem key={item.id}  education={item} remove={removeEducation}/>))}
                 <button className='button button-primary-bordered' onClick={() => setModalEduIsOpen(true)}>Добавить место учебы</button>
             </div>           
         </fieldset>
@@ -233,7 +244,7 @@ export default function CreateResume() {
         <h3>Choose employment type</h3>
         <SelectEmploymentTypes label="Занятость" size="fieldset-md" allEmploymentTypes={allEmploymentTypes} onChange={(tps) => setSelectedEmpTypes(tps)} employmentTypes={[]}/>
 
-        <button className='button button-primary'>Сохранить и опубликовать</button>
+        <button className='button button-primary' onClick={handleSave}>Сохранить и опубликовать</button>
       </div>
       </div>
      
