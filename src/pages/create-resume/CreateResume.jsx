@@ -28,7 +28,7 @@ export default function CreateResume() {
     const [position, setPosition] = useState("");
     const [salary, setSalary] = useState();
     const [currency, setCurrency] = useState("KZT");
-    const [skills, setSelectedSkills] = useState("");
+    const [skills, setSelectedSkills] = useState([]);
     const [education, setEducation] = useState([]);
    
     const [employmentType, setSelectedEmpTypes] = useState([]);
@@ -108,30 +108,23 @@ export default function CreateResume() {
       setGender(e.target.value)
      }
      
-     const onSkillsChange = (selectedSkills) => {
-      if (Array.isArray(selectedSkills)) {
-        // If selectedSkills is an array, it contains the selected skills
-        const selectedSkillIds = selectedSkills.map(skill => skill.value); // Extract skill ids
-        setSelectedSkills(selectedSkillIds); // Update state with selected skill ids
-      } else {
-        console.error("Data passed to onSkillsChange is not an array:", selectedSkills);
-      }
+     const onSkillsChange = (data) => {
+      setSelectedSkills(data.map(skill => skill.label)); // Store only the label (name) of selected skills
     }
 
-    
 
     const handleSave = ()=> {
       dispatch(createResume({
         gender,
         city,
         position,
-        skills,
+        skills: skills.map(skill => skill.value),
         salary,
         currency,
         experience,
         about,
         education,
-        employmentType,
+        employmentType: employmentType.map(type => type.value),
       }))  
     }
 
@@ -194,6 +187,7 @@ export default function CreateResume() {
           data={allSkills}
           hidePickedOptions
           onSelect={onSkillsChange}
+          selected={skills.map(skill => ({ label: skill }))}
         />
 
         <fieldset className={"fieldset fieldset-lg" } >
@@ -242,7 +236,7 @@ export default function CreateResume() {
         </fieldset>
 
         <h3>Choose employment type</h3>
-        <SelectEmploymentTypes label="Занятость" size="fieldset-md" allEmploymentTypes={allEmploymentTypes} onChange={(tps) => setSelectedEmpTypes(tps)} employmentTypes={[]}/>
+        <SelectEmploymentTypes label="Занятость" size="fieldset-md" allEmploymentTypes={allEmploymentTypes} onChange={(tps) => setSelectedEmpTypes(tps)} employmentType={[]}/>
 
         <button className='button button-primary' onClick={handleSave}>Сохранить и опубликовать</button>
       </div>

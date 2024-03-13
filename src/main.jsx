@@ -27,7 +27,7 @@ import EditProfile from './pages/profile/editProfile/EditProfile';
 import SignupHR from './pages/HR/SignupHR';
 import SignupMentor from './pages/Mentor/SignupMentor';
 import AuthLayout from './layout/Auth/AuthLayout';
-import ResumesPage from './pages/resumes/Resumes';
+import Resumes from './pages/resumes/Resumes';
 import SearchVacancy from './pages/search/searchVacancy/SearchVacancy';
 import Register from './pages/register/Register';
 import RenderOnAnonymous from './helpers/RenderOnAnonymous';
@@ -108,7 +108,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/resumes',
-				element: <ResumesPage />,
+				element: <Resumes />,
 			}
 		]
 	},

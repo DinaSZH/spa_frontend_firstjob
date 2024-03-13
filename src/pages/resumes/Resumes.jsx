@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getMyResumes } from '../../store/slices/resumeSlice'
 import { Link } from 'react-router-dom'
 
-export default function ResumesPage() {
+export default function Resumes() {
 
   const dispacth = useDispatch();
   const resumes = useSelector((state) => state.resume.resumes);

@@ -90,9 +90,11 @@ export const createResume = createAsyncThunk('user/createResume', async (createR
       },
     });
     thunkApi.dispatch(uppendResume({newresume: data}));
+    console.log("RESUMEE DATAT: ", data)
     return data; 
   } catch (error) {
     console.log("Error creating resume: ", error.response.data )
+    console.log("RESUMEE DATAT: ", data)
     return rejectWithValue(error.response.data)
   }
 });

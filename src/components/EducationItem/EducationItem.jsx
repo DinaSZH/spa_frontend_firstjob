@@ -2,11 +2,11 @@ const months = ['январь','февраль','март','апрель','ма�
  'сентябрь', 'октябрь','ноябрь','декабрь'];
 
 export default function EducationItem({education, remove}) {
-    const startDate = new Date(education.startDate)
-    const endDate = new Date(education.endDate)
+    // const startDate = new Date(education.startYear)
+    // const endDate = new Date(education.endYear)
     return(
         <fieldset className="working-history" >
-           <span>{months[startDate.getMonth()]} {startDate.getUTCFullYear()} - {months[endDate.getMonth()]}  {endDate.getUTCFullYear()} </span>
+           <span>{education.startYear} - {education.endYear} </span>
            <h4>{education.instanceName}</h4>
            <h4>{education.level}</h4>
            <h4>{education.specialization}</h4>

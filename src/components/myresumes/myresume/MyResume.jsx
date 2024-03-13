@@ -8,7 +8,7 @@ export default function MyResume ({item}) {
     return(<div className="card mtb4">
         <div className='flex resume-title'>
             <img className='mr4' src={resume} alt='resume'/>
-            <Link className="h2 link" href={`/resumes/${item.id}`}>{item.position}</Link>
+            <Link className="h2 link" to={`/resumes/${item.id}`}>{item.position}</Link>
         </div>
 
         <div className="skill flex mt7 ">
