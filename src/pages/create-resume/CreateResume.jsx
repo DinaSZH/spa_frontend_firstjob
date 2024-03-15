@@ -15,6 +15,7 @@ import { MultiSelect } from '@mantine/core';
 import EducationItem from '../../components/EducationItem/EducationItem';
 import { createResume } from '../../store/slices/resumeSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { Checkbox, Group } from '@mantine/core';
 
 export default function CreateResume() {
     const [allSkills, setSkills] = useState([]);
@@ -23,7 +24,7 @@ export default function CreateResume() {
     const [modalExpIsOpen, setModalExpIsOpen] = useState(false);
     const [modalEduIsOpen, setModalEduIsOpen] = useState(false);
 
-    const [city, setCity] = useState();
+    const [city, setCity] = useState("");
     const [gender, setGender] = useState("");
     const [position, setPosition] = useState("");
     const [salary, setSalary] = useState();
@@ -118,14 +119,27 @@ export default function CreateResume() {
         gender,
         city,
         position,
-        skills: skills.map(skill => skill.value),
+        skills,
         salary,
         currency,
         experience,
         about,
         education,
-        employmentType: employmentType.map(type => type.value),
+        employmentType,
       }))  
+      // const data = {
+      //   gender,
+      //   city,
+      //   position,
+      //   skills: skills.map(skill => skill.value),
+      //   salary,
+      //   currency,
+      //   experience,
+      //   about,
+      //   education,
+      //   employmentType: employmentType.map(type => type.value),
+      // }
+      // console.log(data)
     }
 
     useEffect(() => {
@@ -166,13 +180,14 @@ export default function CreateResume() {
        <fieldset className={"fieldset fieldset-sm"} >
             <label className='h1'>City of residence</label>
             <Select
-          placeholder="Search city"
-          data={cities}
-          searchable
-          onSelect={(data) => setCity(data.id)}
-          nothingFoundMessage="Nothing found..."
-          className={"fieldset fieldset-sm h3" } 
-        />
+            placeholder="Search city"
+            data={cities}
+            searchable
+            value={city} 
+            onChange={setCity} 
+            nothingFoundMessage="Nothing found..."
+            className={"fieldset fieldset-sm h3" } 
+          />
         </fieldset>
 
         <h3>Специальность</h3>
@@ -186,8 +201,8 @@ export default function CreateResume() {
           placeholder="Pick value"
           data={allSkills}
           hidePickedOptions
-          onSelect={onSkillsChange}
-          selected={skills.map(skill => ({ label: skill }))}
+          value={skills}
+          onChange={setSelectedSkills}
         />
 
         <fieldset className={"fieldset fieldset-lg" } >
@@ -236,7 +251,32 @@ export default function CreateResume() {
         </fieldset>
 
         <h3>Choose employment type</h3>
-        <SelectEmploymentTypes label="Занятость" size="fieldset-md" allEmploymentTypes={allEmploymentTypes} onChange={(tps) => setSelectedEmpTypes(tps)} employmentType={[]}/>
+        {/* <SelectEmploymentTypes label="Занятость" size="fieldset-md" allEmploymentTypes={allEmploymentTypes} onChange={(tps) => setSelectedEmpTypes(tps)} employmentType={[]}/> */}
+       
+        <fieldset className={"fieldset fieldset-sm"}>
+            <label className='h1'>Employment type</label>
+            <div className='h1'>
+                <Checkbox.Group>
+                    {allEmploymentTypes.map((type) =>
+                        <Group mt="xs" key={type.id}>
+                            <Checkbox value={type.id} label={type.name} className='h1'
+                            checked={employmentType.includes(type.id)}
+                            onChange={(e) => {
+                                const checked = e.currentTarget.checked;
+                                setSelectedEmpTypes(prevState => {
+                                    if (checked) {
+                                        return [...prevState, type.id];
+                                    } else {
+                                        return prevState.filter(item => item !== type.id);
+                                    }
+                                });
+                            }} />
+                        </Group>
+                    )}
+                </Checkbox.Group>
+            </div>
+        </fieldset>
+
 
         <button className='button button-primary' onClick={handleSave}>Сохранить и опубликовать</button>
       </div>

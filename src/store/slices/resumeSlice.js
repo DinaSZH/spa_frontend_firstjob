@@ -61,6 +61,38 @@ export const resumeSlice = createSlice({
         state.error = payload;
       });
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getResumeById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getResumeById.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true; 
+      })
+      .addCase(getResumeById.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(deleteResumeById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteResumeById.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true; 
+      })
+      .addCase(deleteResumeById.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
 })
 
 export const { setMyResumes, uppendResume, setResume, handleDeleteResume} = resumeSlice.actions
@@ -94,15 +126,68 @@ export const createResume = createAsyncThunk('user/createResume', async (createR
     return data; 
   } catch (error) {
     console.log("Error creating resume: ", error.response.data )
-    console.log("RESUMEE DATAT: ", data)
     return rejectWithValue(error.response.data)
+  }
+});
+
+export const getResumeById = createAsyncThunk('user/getResumeById', async (id, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken(); 
+    const { data } = await axios.get(`${END_POINT}/api/client-app/resumes/my/${id}`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    console.log('Fetched resume:', data); // Log fetched data
+    thunkApi.dispatch(setResume({resume: data})); 
+  } catch (error) {
+    console.error('Error getting resume by id:', error);
+    thunkApi.rejectWithValue(error.message);
+  }
+});
+
+export const deleteResumeById = createAsyncThunk('user/deleteResumeById', async (id, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken(); 
+    const { data } = await axios.delete(`${END_POINT}/api/client-app/resumes/my/${id}`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    thunkApi.dispatch(handleDeleteResume(id)); 
+  } catch (error) {
+    console.error('Error deleting the resume:', error);
+    thunkApi.rejectWithValue(error.message);
+  }
+});
+
+export const downloadResumeById = createAsyncThunk('user/downloadResumeById', async (id, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken(); 
+    const response = await axios.get(`${END_POINT}/api/client-app/resumes/${id}/download`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `resume_${id}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    // Освобождаем URL объекта после скачивания
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading the resume:', error);
+    thunkApi.rejectWithValue(error.message);
   }
 });
 
 
 // export const getResumeById = (id) => async (dispatch) => {
 //   try{
-//     const res = await axios.get(`${END_POINT}/api/resume/${id}`);
+//     const res = await axios.get(`${END_POINT}/api/resumes/my/${id}`);
 //     dispatch(setResume({resume: res.data}))
 //   } catch(e) {
 //     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
@@ -119,25 +204,17 @@ export const createResume = createAsyncThunk('user/createResume', async (createR
 //   }  
 // }
 
-export const editResume = (sendData, router) => async (dispatch) => {
-  try{
-    const res = await axios.put(`${END_POINT}/api/resume`, sendData);
-    router.push("/resumes")
-  } catch(e) {
+// export const editResume = (sendData, router) => async (dispatch) => {
+//   try{
+//     const res = await axios.put(`${END_POINT}/api/resume`, sendData);
+//     router.push("/resumes")
+//   } catch(e) {
 
-    alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-  }   
-}
+//     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
+//   }   
+// }
 
-export const deleteResume = (id) => async (dispatch) => {
-  try{
-    const res = await axios.delete(`${END_POINT}/api/resume/${id}`);
-    dispatch(handleDeleteResume(id))
-  } catch(e) {
 
-    alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-  }   
-}
 
 
 export default resumeSlice.reducer 

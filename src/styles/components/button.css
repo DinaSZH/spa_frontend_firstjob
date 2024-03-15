@@ -54,27 +54,23 @@ a{
 }
 
 .button-delete{
-    position: absolute;
-    right: 25px;
-    top: 30px;
     cursor: pointer;
     color: red;
     background-color: #f4f5fb;
     padding: 5px 15px;
     border-radius: 10px;
     font-weight: 700;
+    margin: 10px;
 }
 
 .button-edit{
-    position: absolute;
-    right: 110px;
-    top: 30px;
     cursor: pointer;
     color: rgb(72, 65, 65);   
     background-color: #f4f5fb;
     padding: 5px 15px;
     border-radius: 10px;
     font-weight: 700;
+    margin: 10px;
 }
 
 /* //////////////////////////////////////////// */
