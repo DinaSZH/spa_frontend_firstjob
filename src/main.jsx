@@ -39,6 +39,7 @@ import {
 	useQuery,
   } from '@tanstack/react-query'
 import ResumeId from './pages/resumes/ResumeId';
+import EditResume from './pages/resumes/EditResume';
   
 
 const router = createBrowserRouter([
@@ -114,6 +115,10 @@ const router = createBrowserRouter([
 			{
 				path: '/resumes/:id',
 				element: <ResumeId />,
+			},
+			{
+				path: '/resumes/edit/:id',
+				element: <EditResume />,
 			}
 		]
 	},

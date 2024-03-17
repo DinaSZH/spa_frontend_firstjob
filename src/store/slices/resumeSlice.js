@@ -93,6 +93,22 @@ export const resumeSlice = createSlice({
         state.error = payload;
       });
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(editResumeById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editResumeById.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true; 
+      })
+      .addCase(editResumeById.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
 })
 
 export const { setMyResumes, uppendResume, setResume, handleDeleteResume} = resumeSlice.actions
@@ -183,6 +199,23 @@ export const downloadResumeById = createAsyncThunk('user/downloadResumeById', as
     thunkApi.rejectWithValue(error.message);
   }
 });
+
+export const editResumeById = createAsyncThunk('user/editResumeById', async (data, thunkApi) => {
+  try {
+    const { id, ...rest } = data;
+    const jwt = KeycloakService.getToken(); 
+    const res = await axios.put(`${END_POINT}/api/client-app/resumes/${id}`, rest, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return res.data; 
+  } catch (error) {
+    console.error('Error deleting the resume:', error);
+    thunkApi.rejectWithValue(error.message);
+  }
+});
+
 
 
 // export const getResumeById = (id) => async (dispatch) => {

@@ -16,7 +16,7 @@ export default function MyResume ({item}) {
             </div>
             <div className='flex'>
             <span className='button-edit link' onClick={() => dispatch(downloadResumeById(item.id))}>Download</span>
-            <Link to={`resumes/edit/${item.id}`}><span className='button-edit'>Edit</span></Link>
+            <Link to={`/resumes/edit/${item.id}`}><span className='button-edit'>Edit</span></Link>
             <span className='button-delete' onClick={() => dispatch(deleteResumeById(item.id))}>Delete</span>
             </div>
         </div>
