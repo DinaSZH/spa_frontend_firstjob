@@ -17,6 +17,13 @@ export default function SignupHR() {
       )
     const dispatch = useDispatch()
     const { register, handleSubmit, reset } = useForm()
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [birthdate, setBirthdate] = useState(null);
+    const [description, setDescription] = useState("");
+    const [errors, setErrors] = useState([]);
 
     
     useEffect(() => {
@@ -30,48 +37,104 @@ export default function SignupHR() {
           dispatch(setSignupSuccess(false)); 
       }, []);
 
-    const handleSignup = (data) => {
-        dispatch(registerMentor(data))
-        }
+      const handleSignup = async () => {
+        try {
+            const formattedBirthdate = new Date(birthdate).toISOString().split('T')[0];
+            const newErrors = [];
+    
+            if (firstname.trim() === "") {
+              newErrors.push("Firstname cannot be empty");
+            }
+            if (!/^[a-zA-Z]+$/.test(firstname)) {
+              newErrors.push("Firstname can only contain letters");
+            }
+        
+            // Validation for lastname
+            if (lastname.trim() === "") {
+              newErrors.push("Lastname cannot be empty");
+            }
+            if (!/^[a-zA-Z]+$/.test(lastname)) {
+              newErrors.push("Lastname can only contain letters");
+            }
+        
+            // Validation for phone
+            const phoneRegex = /^\+7\d{10}$/;
+            if (!phoneRegex.test(phone)) {
+              newErrors.push("Invalid phone number format");
+            }
+
+            if (!description || typeof description !== 'string' || description.trim() === "") {
+                newErrors.push("Company cannot be empty");
+            }
+        
+            if (newErrors.length > 0) {
+              setErrors(newErrors);
+              return;
+            }
+            
+            await dispatch(registerMentor({
+              email,
+              firstname,
+              lastname,
+              phone,
+              birthdate:formattedBirthdate,
+              description
+            }));
+          } catch (error) {
+            console.log(error);
+            setError(error);
+          }
+    }
+    
 
 
     return(
         <main>
-            <section className='login-page'>
+             <section className='signup-container'>
                       <div className='login-container '>
-                            <h2>Регистрация для поиска сотрудников</h2>
+                            <h2>Регистрация для менторов</h2>
                             {!success && <h3 className='link'>В завершении на почту придёт пароль</h3>}
                             {success && <Success /> }
                     {!success && <form onSubmit={handleSubmit(handleSignup)} className='form-signup'>
-                            <label>Email</label>
-                            <input className="input" type='email' placeholder='Enter email'  {...register('email')} required/>
+                    <label>Email</label>
+                            <input className="input" type='email' placeholder='Enter email'  onChange={(e) => setEmail(e.target.value)} required/>
 
                             <label>First name</label>
-                            <input className="input" placeholder='Enter first name'  {...register('firstname')} required/>
+                            <input className="input" placeholder='Enter first name'  onChange={(e) => setFirstname(e.target.value)}  required/>
     
                             <label>Last name</label>
-                            <input className="input" placeholder='Enter last name'  {...register('lastname')} required/>
+                            <input className="input" placeholder='Enter last name'  onChange={(e) => setLastname(e.target.value)}  required/>
 
                             <label>Phone</label>
-                            <PhoneInput className="input" placeholder="Enter phone number" {...register('phone')} required />
+                            <PhoneInput  name="phone"  className="input" placeholder="Enter phone number" onChange={(value) => setPhone(value)} required />
 
-                            <label>Birth date</label>
+                            <label>Date</label>
                             <DatePickerInput
-                              placeholder="Birth date"
-                              {...register('birthdate')} required
+                              name="birthdate" 
+                              placeholder="Pick date"
+                              onChange={(date) => setBirthdate(date)}
+                               required
                               className='mb10'
                             />
 
                             <label>Description</label>
                             <Textarea
-                            placeholder="Input description about yourself" {...register('Description')} required/>
+                            placeholder="Input description about yourself" onChange={(e) => setDescription(e.target.value)} required/>
 
-                            {error && (<>{Array.isArray(error) ? (error.map((errorItem, index) => (
-                                    <ErrorMessage key={index} title={errorItem.field} text={errorItem.description} />))
-                                ) : (<p>{`${error.field}: ${error.description}`}</p> )}</>  )}
-                            {errorState && (<>{Array.isArray(errorState) ? (errorState.map((errorItem, index) => (
-                                    <ErrorMessage key={index} text={errorItem} />))
-                                ) : (<p>{`${errorState}`}</p> )}</>  )}
+                            {errors && Array.isArray(errors) && errors.length > 0 && (
+                                <>
+                                    {errors.map((errorItem, index) => (
+                                    <ErrorMessage key={index} title={'Error'} text={errorItem} />
+                                    ))}
+                                </>
+                                )}
+                             {error && Array.isArray(error) && error.length > 0 && (
+                                <>
+                                    {error.map((errorItem, index) => (
+                                    <ErrorMessage key={index} title={errorItem.field} text={errorItem.description} />
+                                    ))}
+                                </>
+                                )}
 
                             <div className='login-footer'>
                                 <button className='button-primary' type='submit' disabled={loading}>

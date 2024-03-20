@@ -3,9 +3,8 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    height: 110vh; 
+    height: 90vh; 
     display: flex;
-    /* background-color: #434040; */
     justify-content: center;
 }
 
@@ -91,4 +90,10 @@
 
 .signup-item a{
     text-align: center;
+}
+
+.signup-container{
+    display: flex;
+    justify-content: center;
+    background-color: #F0F8FF;
 }

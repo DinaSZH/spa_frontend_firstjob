@@ -45,7 +45,7 @@ export const { setError, setSignupSuccess} = authSlice.actions
 
 export const registerHR = createAsyncThunk(
   'auth/register',
-  async ({ email, firstname, lastname }, { rejectWithValue }) => {
+  async ({ email, firstname, lastname, phone, birthdate, company, url }, { rejectWithValue }) => {
     try {
       const config = {
         headers: {
@@ -54,7 +54,7 @@ export const registerHR = createAsyncThunk(
       }
       await axios.post(
         `${END_POINT}/api/client-app/application/hr`,
-        { email, firstname, lastname },
+        { email, firstname, lastname, phone, birthdate, company, url },
         config
       )
     } catch (error) {
@@ -77,7 +77,7 @@ export const registerHR = createAsyncThunk(
 
 export const registerMentor = createAsyncThunk(
   'auth/register',
-  async ({ email, firstname, lastname }, { rejectWithValue }) => {
+  async ({ email, firstname, lastname, phone, birthdate, description }, { rejectWithValue }) => {
     try {
       const config = {
         headers: {
@@ -86,7 +86,7 @@ export const registerMentor = createAsyncThunk(
       }
       await axios.post(
         `${END_POINT}/api/client-app/application/mentor`,
-        { email, firstname, lastname },
+        { email, firstname, lastname, phone, birthdate, description },
         config
       )
     } catch (error) {
