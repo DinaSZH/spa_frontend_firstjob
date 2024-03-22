@@ -4,27 +4,27 @@ import { useSelector } from 'react-redux';
 export default function MyVacancies () {
     // const vacancies = useSelector((state) => state.vacancy.vacancies)
     const vacancies = [{
-        name: 'Software engineer',
+        title: 'Software engineer',
         createdAt:  '23.01.2023',
-        salary_from: 400000,
-        salary_to:800000,
-        salary_type:'KZT',
+        salaryFrom: 400000,
+        salaryTo:800000,
+        сurrency:'KZT',
         skills: ['Node.JS', "SQL", "Vue", 'Javascript']
       },
       {
-        name: 'React engineer',
+        title: 'React engineer',
         createdAt:  '23.01.2023',
-        salary_from: 300000,
-        salary_to:400000,
-        salary_type:'KZT',
+        salaryFrom: 300000,
+        salaryTo:400000,
+        сurrency:'KZT',
         skills: ['React', "Redux", "Vue", 'Javascript']
       },
       {
-        name: 'Backend engineer',
+        title: 'Backend engineer',
         createdAt:  '23.01.2023',
-        salary_from: 100000,
-        salary_to:300000,
-        salary_type:'KZT',
+        salaryFrom: 100000,
+        salaryTo:300000,
+        сurrency:'KZT',
         skills: ['Java', "Spring", "MySQL", 'GIT']
       }]
 

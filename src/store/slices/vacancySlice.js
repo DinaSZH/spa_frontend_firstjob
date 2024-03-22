@@ -3,30 +3,29 @@ import axios from 'axios'
 import { END_POINT } from '../../config/end-point'
 import KeycloakService from '../../services/KeycloakService';
 
-
-export const resumeSlice = createSlice({
-  name: 'resume',
+export const vacancySlice = createSlice({
+  name: 'vacancy',
   initialState: {
-    resumes: [],
-    resume: {},
+    vacancies: [],
+    vacancy: {},
     error: null,
     loading:false,
     success: null
   },
   reducers: {
-    setMyResumes: (state, action) => {
-      state.resumes =  action.payload.resumes
+    setMyVacancies: (state, action) => {
+      state.vacancies =  action.payload.vacancies
     },
-    uppendResume: (state, action) => {
-      state.resumes = [...state.resumes, action.payload.newresume]
+    uppendVacancy: (state, action) => {
+      state.vacancies = [...state.vacancies, action.payload.newvacancy]
     },
-    setResume: (state, action) => {
-      state.resume = action.payload.resume
+    setVacancy: (state, action) => {
+      state.vacancy = action.payload.vacancy
     },
-    handleDeleteResume: (state, action) => {
-      let resumes = [...state.resumes]
-      resumes = resumes.filter(item => item.id !== action.payload)
-      state.resumes = resumes
+    handleDeleteVacancy: (state, action) => {
+      let vacancies = [...state.vacancies]
+      vacancies = vacancies.filter(item => item.id !== action.payload)
+      state.vacancies = vacancies
     }
   },
   extraReducers: (builder) => {
@@ -120,142 +119,85 @@ export const resumeSlice = createSlice({
   },
 })
 
-export const { setMyResumes, uppendResume, setResume, handleDeleteResume} = resumeSlice.actions
+export const { setMyVacancies, uppendVacancy, setVacancy, handleDeleteVacancy} = vacancySlice.actions
 
-export const getMyResumes = createAsyncThunk('user/getResumes', async (_, thunkApi) => {
+
+
+export const getMyVacancies = createAsyncThunk('user/getVacancies', async (_, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.get(`${END_POINT}/api/client-app/resumes/my`, {
+    const { data } = await axios.get(`${END_POINT}/api/content/vacancies/my`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
     console.log('Fetched resumes:', data); // Log fetched data
-    thunkApi.dispatch(setMyResumes({resumes: data})); 
+    thunkApi.dispatch(setMyVacancies({resumes: data})); 
   } catch (error) {
     console.error('Error fetching resumes:', error);
     thunkApi.rejectWithValue(error.message);
   }
 });
 
-export const createResume = createAsyncThunk('user/createResume', async (createResume, thunkApi) => {
+export const createVacancy = createAsyncThunk('user/createVacancy', async (createVacancy, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken();
-    const { data } = await axios.post(`${END_POINT}/api/client-app/resumes`, createResume, {
+    const { data } = await axios.post(`${END_POINT}/api/content/vacancies`, createVacancy, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    thunkApi.dispatch(uppendResume({newresume: data}));
-    console.log("RESUMEE DATAT: ", data)
+    thunkApi.dispatch(uppendVacancy({newvacancy: data}));
+    console.log("Vacancy DATAT: ", data)
     return data; 
   } catch (error) {
-    console.log("Error creating resume: ", error.response.data )
+    console.log("Error creating vacancy: ", error.response.data )
     return rejectWithValue(error.response.data)
   }
 });
 
-export const getResumeById = createAsyncThunk('user/getResumeById', async (id, thunkApi) => {
+export const getVacancyById = createAsyncThunk('user/getVacancyById', async (id, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.get(`${END_POINT}/api/client-app/resumes/my/${id}`, {
+    const { data } = await axios.get(`${END_POINT}/api/content/vacancies/${id}`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    console.log('Fetched resume:', data); // Log fetched data
-    thunkApi.dispatch(setResume({resume: data})); 
+    console.log('Fetched vacancy:', data); // Log fetched data
+    thunkApi.dispatch(setVacancy({vacancy: data})); 
   } catch (error) {
-    console.error('Error getting resume by id:', error);
+    console.error('Error getting vacancy by id:', error);
     thunkApi.rejectWithValue(error.message);
   }
 });
 
-export const deleteResumeById = createAsyncThunk('user/deleteResumeById', async (id, thunkApi) => {
+export const deleteVacancyById = createAsyncThunk('user/deleteVacancyById', async (id, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.delete(`${END_POINT}/api/client-app/resumes/my/${id}`, {
+    const { data } = await axios.delete(`${END_POINT}/api/content/vacancies/${id}`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    thunkApi.dispatch(handleDeleteResume(id)); 
+    thunkApi.dispatch(handleDeleteVacancy(id)); 
   } catch (error) {
-    console.error('Error deleting the resume:', error);
+    console.error('Error deleting the vacancy:', error);
     thunkApi.rejectWithValue(error.message);
   }
 });
 
-export const downloadResumeById = createAsyncThunk('user/downloadResumeById', async (id, thunkApi) => {
+export const editVacancyById = createAsyncThunk('user/editVacancyById', async (data, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const response = await axios.get(`${END_POINT}/api/client-app/resumes/${id}/download`, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-      responseType: 'blob',
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `resume_${id}.pdf`);
-    document.body.appendChild(link);
-    link.click();
-    // Освобождаем URL объекта после скачивания
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Error downloading the resume:', error);
-    thunkApi.rejectWithValue(error.message);
-  }
-});
-
-export const editResumeById = createAsyncThunk('user/editResumeById', async (data, thunkApi) => {
-  try {
-    const jwt = KeycloakService.getToken(); 
-    const res = await axios.put(`${END_POINT}/api/client-app/resumes/my/${data.id}`, data, {
+    const res = await axios.put(`${END_POINT}/api/content/vacancies/${data.id}`, data, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
     return res.data; 
   } catch (error) {
-    console.error('Error editing the resume:', error);
+    console.error('Error editing the vacancy:', error);
     thunkApi.rejectWithValue(error.message);
   }
 });
-
-
-
-// export const getResumeById = (id) => async (dispatch) => {
-//   try{
-//     const res = await axios.get(`${END_POINT}/api/resumes/my/${id}`);
-//     dispatch(setResume({resume: res.data}))
-//   } catch(e) {
-//     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-//   }  
-// }
-
-// export const createResume = (sendData, router) => async (dispatch) => {
-//   try{
-//     const res = await axios.post(`${END_POINT}/api/client-app/resumes`, sendData);
-//     router.push("/resumes")
-//     dispatch(uppendResume({newresume: res.data}))
-//   } catch(e) {
-//     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-//   }  
-// }
-
-// export const editResume = (sendData, router) => async (dispatch) => {
-//   try{
-//     const res = await axios.put(`${END_POINT}/api/resume`, sendData);
-//     router.push("/resumes")
-//   } catch(e) {
-
-//     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-//   }   
-// }
-
-
-
-
-export default resumeSlice.reducer 

@@ -6,7 +6,7 @@ import WorkingHistory from '../../components/FillForm/WorkingHistory/WorkingHist
 import AddEducation from '../../components/FillForm/AddEducation/AddEducation';
 import SelectEmploymentTypes from '../../components/FillForm/SelectEmploymentTypes/SelectEmploymentTypes';
 import { Link, useNavigate } from 'react-router-dom';
-import { Select } from '@mantine/core';
+import { Paper, Select } from '@mantine/core';
 import { END_POINT } from '../../config/end-point';
 import {
   useQuery, useQueryClient,
@@ -150,12 +150,12 @@ export default function CreateResume() {
 
   return (
     <main>
-      <div className='container-background'>
       <div className="container p7">
-        <div className='flex flex-jc-end'>
+        <div className='flex flex-jc-end mb10'>
           <Link className='button button-black ' to="/resumes">Back</Link>
         </div>
-        <h1>Your resume</h1>
+        <Paper radius="md" withBorder p="lg" color='#228BE6' shadow="xs">
+        <h1>Add new resume</h1>
 
         <h3>Основная информация</h3>
         {/* <Input placeholder="" type="text" label="Имя" size="fieldset-md" onChange={(e) => setName(e.target.value)}/>
@@ -279,7 +279,7 @@ export default function CreateResume() {
 
 
         <button className='button button-primary' onClick={handleSave}>Сохранить и опубликовать</button>
-      </div>
+        </Paper>
       </div>
      
       

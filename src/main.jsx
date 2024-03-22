@@ -40,6 +40,10 @@ import {
   } from '@tanstack/react-query'
 import ResumeId from './pages/resumes/ResumeId';
 import EditResume from './pages/resumes/EditResume';
+import Vacancies from './pages/vacancies/Vacancies';
+import CreateVacancy from './pages/create-vacancy/CreateVacancy';
+import VacancyId from './pages/vacancies/VacancyId';
+import EditVacancy from './pages/vacancies/EditVacancy';
   
 
 const router = createBrowserRouter([
@@ -67,7 +71,35 @@ const router = createBrowserRouter([
 			{
 				path: '/search/vacancy',
 				element: <SearchVacancy />,
-			}
+			},
+			{
+				path: '/resumes',
+				element: <Resumes />,
+			},
+			{
+				path: '/resumes/:id',
+				element: <ResumeId />,
+			},
+			{
+				path: '/resumes/edit/:id',
+				element: <EditResume />,
+			},
+			{
+				path: '/vacancies',
+				element: <Vacancies />,
+			},
+			{
+				path: '/vacancies/:id',
+				element: <VacancyId />,
+			},
+			{
+				path: '/create-vacancy',
+				element: <CreateVacancy />
+			},
+			{
+				path: '/vacancy/edit/:id',
+				element: <EditVacancy />,
+			},
 		]
 	},
 	{
@@ -84,41 +116,6 @@ const router = createBrowserRouter([
 			}, {
 				path: 'hr',
 				element: <SignupHR />
-			}
-		]
-	},
-	{
-		path: '/',
-		// element: <RequireAuth><Layout /></RequireAuth>,
-		element: <MainLayout />,
-		children: [
-			{
-				path: '/',
-				element: <Home />
-			},
-      		{
-				path: '/create-resume',
-				element: <CreateResume />
-			},
-			{
-				path: '/profile/:username',
-				element: <Profile />
-			},
-			{
-				path: '/profile/edit',
-				element: <EditProfile />,
-			},
-			{
-				path: '/resumes',
-				element: <Resumes />,
-			},
-			{
-				path: '/resumes/:id',
-				element: <ResumeId />,
-			},
-			{
-				path: '/resumes/edit/:id',
-				element: <EditResume />,
 			}
 		]
 	},

@@ -77,7 +77,7 @@ export default function Profile() {
 
         <div className='vacancy-container flex mb10'>
 
-          <div className='vacancy-container-right'> 
+          <div className='vacancy-container-right mr4'> 
               <div className='vacancy-sidebar'>
                   <img className='usernameImage' src={user} alt='logo'/>
               </div>

@@ -1,5 +1,6 @@
 body{
     margin: 0;
+    background-color: #F0F8FF; 
 }
 
 main{
@@ -124,8 +125,19 @@ a{
     margin-top: 40px;
 }
 
+.mr10{
+    margin-right: 10px;
+}
+
 .mr4{
     margin-right: 20px;
+}
+
+.mr8{
+    margin-right: 80px;
+}
+.ml1{
+    margin-left: 10px;
 }
 
 .mb10{
@@ -162,4 +174,8 @@ a{
 
 .w-full{
     width: 100%;
+}
+
+.h-full{
+    height: 100%;
 }

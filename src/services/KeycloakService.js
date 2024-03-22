@@ -37,6 +37,16 @@ const hasFirstJobUserRole = () => {
   return realmRoles && realmRoles.includes('FIRST-JOB-USER');
 };
 
+const hasFirstJobHRRole = () => {
+  const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
+  return realmRoles && realmRoles.includes('FIRST-JOB-HR');
+};
+
+const hasFirstJobMentorRole = () => {
+  const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
+  return realmRoles && realmRoles.includes('FIRST-JOB-MENTOR');
+};
+
 
 const KeycloakService = {
     initKeycloak,
@@ -50,6 +60,8 @@ const KeycloakService = {
     getPhone,
     getBirthdate,
     hasFirstJobUserRole,
+    hasFirstJobHRRole,
+    hasFirstJobMentorRole,
     getGiven_name,
     getFamily_name,
     getId,

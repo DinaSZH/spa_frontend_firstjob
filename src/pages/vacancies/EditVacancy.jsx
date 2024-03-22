@@ -16,24 +16,20 @@ import EducationItem from '../../components/EducationItem/EducationItem';
 import { createResume, editResumeById, getResumeById } from '../../store/slices/resumeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox, Group } from '@mantine/core';
+import { editVacancyById } from '../../store/slices/vacancySlice';
 
-export default function EditResume() {
-    const [allSkills, setSkills] = useState([]);
-    const [allEmploymentTypes, setEmploymentTypes] = useState([]);
-    const [experience, setExperience] = useState([]);
-    const [modalExpIsOpen, setModalExpIsOpen] = useState(false);
-    const [modalEduIsOpen, setModalEduIsOpen] = useState(false);
-
-    const [city, setCity] = useState("");
-    const [gender, setGender] = useState("");
-    const [position, setPosition] = useState("");
-    const [salary, setSalary] = useState();
+export default function EditVacancy() {
+    const [title, setTitle] = useState("");
+    const [company, setCompany] = useState("");
+    const [address, setAdress] = useState("");
+    const [cityId, setCityId] = useState("");
+    const [fromSalary, setFromSalary] = useState(0);
+    const [toSalary, setToSalary] = useState(0);
     const [currency, setCurrency] = useState("KZT");
-    const [skills, setSelectedSkills] = useState([]);
-    const [education, setEducation] = useState([]);
-   
-    const [employmentType, setSelectedEmpTypes] = useState([]);
-    const [about, setAbout] = useState("");
+    const [employmentTypes, setSelectedEmpTypes] = useState([]);
+    const [experience, setExperience] = useState("");
+    const [description, setDescription] = useState("");
+    const [allEmploymentTypes, setEmploymentTypes] = useState(['Full time', 'Remote']);
 
     const navigate = useNavigate();
     const dispatch  = useDispatch()
@@ -121,8 +117,8 @@ export default function EditResume() {
 
     useEffect(() => {
       if(resume.id){
-        setGender(resume.gender)
-        setCity(resume.city)
+        setTitle(resume.gender)
+        setCityId(resume.cityId)
         setPosition(resume.position)
         setSelectedSkills(resume.skills)
         setSalary(resume.salary)
@@ -137,24 +133,24 @@ export default function EditResume() {
 
 
   const handleSave = () => {
-    dispatch(editResumeById({
+    dispatch(editVacancyById({
       id: resume.id,
-      gender,
-      city,
-      position,
-      skills,
-      salary,
+      title,
+      company,
+      address,
+      cityId,
+      fromSalary,
+      toSalary,
       currency,
+      employmentTypes,
       experience,
-      about,
-      education,
-      employmentType,
+      description,
     }))
    }
 
     useEffect(() => {
       if(success){
-        navigate('/resumes')
+        navigate('/vacancies')
       }
     }, [success])
 
@@ -162,109 +158,58 @@ export default function EditResume() {
     <main>
       <div className="container p7">
         <div className='flex flex-jc-end mb10'>
-          <Link className='button button-black ' to="/resumes">Back</Link>
+          <Link className='button button-black ' to="/vacancies">Back</Link>
         </div>
         <Paper radius="md" withBorder p="lg" color='#228BE6' shadow="xs">
-        <h1>Edit resume</h1>
+        <h1>Edit vacancy</h1>
 
         <h3>Основная информация</h3>
-        {/* <Input placeholder="" type="text" label="Имя" size="fieldset-md" onChange={(e) => setName(e.target.value)}/>
-        <Input placeholder="" type="text" label="Фамилия" size="fieldset-md" onChange={(e) => setLastName(e.target.value)}/>
-        <Input placeholder="" type="text" label="Мобильный телефон" size="fieldset-md" onChange={(e) => setPhone(e.target.value)}/> */}
+        <Input placeholder="" type="text" label="Job title" size="fieldset-lg" onChange={(e) => setTitle(e.target.value)} value={title}/> 
+        <Input placeholder="" type="text" label="Company name" size="fieldset-lg" onChange={(e) => setCompany(e.target.value)} value={company}/> 
+        <Input placeholder="" type="text" label="Address" size="fieldset-lg" onChange={(e) => setAdress(e.target.value)} value={address}/> 
 
-      <fieldset className={"fieldset fieldset-sm" } >
-            <label>Gender</label>
-            <div className='radio-group'>
-                <div className='radio'>
-                  {resume.gender && resume.gender === "MALE" && <input className='radio' type='radio' name='gender' id='g1' onChange={handleGenderChange} value={"MALE"} checked/>}
-                  {!resume.gender || resume.gender !== "MALE" && <input className='radio' type='radio' name='gender' id='g1' onChange={handleGenderChange} value={"MALE"}/>}
-                  <label htmlFor="g1">Male</label>
-                </div>
-                <div className='radio'>
-                {resume.gender && resume.gender === "FEMALE" && <input className='radio' type='radio' name='gender' id='g2' onChange={handleGenderChange} value={"FEMALE"} checked/>}
-                {!resume.gender || resume.gender !== "FEMALE" && <input className='radio' type='radio' name='gender' id='g2' onChange={handleGenderChange} value={"FEMALE"} />}
-                  <label htmlFor="g2">Female</label>
-                </div>  
-            </div>           
+        <fieldset className={"fieldset fieldset-sm"} >
+            <label className='h1'>City of residence</label>
+            <Select
+            placeholder="Search city"
+            data={cities}
+            searchable
+            value={cityId} 
+            onChange={setCityId} 
+            nothingFoundMessage="Nothing found..."
+            className={"fieldset fieldset-sm h3" } 
+          />
         </fieldset>
 
-    
        <fieldset className={"fieldset fieldset-sm"} >
             <label className='h1'>City of residence</label>
             <Select
             placeholder="Search city"
             data={cities}
             searchable
-            value={city} 
-            onChange={setCity} 
+            value={cityId} 
+            onChange={setCityId} 
             nothingFoundMessage="Nothing found..."
             className={"fieldset fieldset-sm h3" } 
           />
         </fieldset>
 
-        <h3>Специальность</h3>
-
-        <Input placeholder="" type="text" label="Желаемая должность" size="fieldset-lg" onChange={(e) => setPosition(e.target.value)} value={position}/> 
-
-        <fieldset className={"fieldset fieldset-sm"} >
-            <label className='h1'>Skills</label>
-        </fieldset>
-        <MultiSelect
-          placeholder="Pick value"
-          data={allSkills}
-          hidePickedOptions
-          value={skills}
-          onChange={setSelectedSkills}
-        />
-
         <fieldset className={"fieldset fieldset-lg" } >
-            <label>Зарплата</label>
+            <span className='mr8'>Salary</span>
 
             <div className='salary'>
-                <input placeholder="" className='input' type="number" size="input" value={salary} onChange={e => setSalary(e.target.value*1)}/>
-                <select className='input' value={currency} onChange={e => setCurrency(e.target.value)}>
-                  <option value={"KZT"}>KZT</option>
-                  <option value={"USD"}>USD</option>
-                  <option value={"RUB"}>RUB</option>
-                </select>
-                на руки
+                <input placeholder="from" className='input' type="number" size="input" value={fromSalary} onChange={e => setFromSalary(e.target.value*1)}/>
+                <input placeholder="to" className='input' type="number" size="input" value={toSalary} onChange={e => setToSalary(e.target.value*1)}/>
+                <Select
+                className='w-full'
+                placeholder="currency"
+                data={['KZT', 'USD', 'RUB']}
+                value={currency} 
+                onChange={setCurrency} 
+                />
             </div>           
         </fieldset>
-
-        <h3>Опыт работы</h3>
-
-        {modalExpIsOpen && <ModalAddExp close={closeModalExp} addWorkingHistory={addWorkingHistory}/>}
-        <fieldset className={"fieldset fieldset-lg" } >
-            <label>Места работы</label>
-
-            <div className='exp'>
-                {experience.map(item => (<WorkingHistory key={item.id}  workingHistory={item} remove={removeWorkingHistory}/>))}
-                <button className='button button-primary-bordered' onClick={() => setModalExpIsOpen(true)}>Добавить место работы</button>
-            </div>           
-        </fieldset>
-
-        <fieldset className={"fieldset fieldset-lg"} >
-            <label>О себе</label>
-            <textarea className="textarea" placeholder="Расскажите о себе" onChange={(e) => setAbout(e.target.value)}  value={about}/>
-        </fieldset>
-
-        {/* <AutoCompleteTags placeholder="" type="text" label="Ключевые навыки" size="fieldset-md" items={allSkills} onSelect={onSkillsChange} selected={skills.length > 0 ? skills.split(",").map(item=> ({name: item})) : []}/> */}
-
-        <h3>Образование</h3>
-
-        {modalEduIsOpen && <AddEducation close={closeModalEdu} addEducation={addEducation}/>}
-        <fieldset className={"fieldset fieldset-lg" } >
-            <label>Образование</label>
-
-            <div className='exp'>
-                {education.map(item => (<EducationItem key={item.id}  education={item} remove={removeEducation}/>))}
-                <button className='button button-primary-bordered' onClick={() => setModalEduIsOpen(true)}>Добавить место учебы</button>
-            </div>           
-        </fieldset>
-
-        <h3>Choose employment type</h3>
-        {/* <SelectEmploymentTypes label="Занятость" size="fieldset-md" allEmploymentTypes={allEmploymentTypes} onChange={(tps) => setSelectedEmpTypes(tps)} employmentType={[]}/> */}
-       
+        
         <fieldset className={"fieldset fieldset-sm"}>
             <label className='h1'>Employment type</label>
             <div className='h1'>
@@ -272,7 +217,7 @@ export default function EditResume() {
                     {allEmploymentTypes.map((type) =>
                         <Group mt="xs" key={type.id}>
                             <Checkbox value={type.id} label={type.name} className='h1'
-                            checked={employmentType.includes(type.id)}
+                            checked={employmentTypes.includes(type.id)}
                             onChange={(e) => {
                                 const checked = e.currentTarget.checked;
                                 setSelectedEmpTypes(prevState => {
@@ -289,6 +234,20 @@ export default function EditResume() {
             </div>
         </fieldset>
 
+        <fieldset className={"fieldset fieldset-sm"} >
+            <label className='h1'>Experience</label>
+            <Select
+              placeholder="Pick value"
+              data={['No experience', 'Less than year', '1-3 years', '3-6 years', '6+ years']}
+              value={experience} 
+              onChange={setExperience} 
+            />
+        </fieldset>
+
+        <fieldset className={"fieldset fieldset-lg"} >
+            <label>Description</label>
+            <textarea className="textarea" placeholder="Vacancy description" value={description} onChange={(e) => setDescription(e.target.value)} />
+        </fieldset>
 
         <button className='button button-primary' onClick={handleSave}>Edit resume</button>
       </Paper>

@@ -49,9 +49,12 @@ function Header() {
           <div className='header-left'>
             <Link to="/"><img className='logo' src={logo} alt='logo'/></Link>
             <Link to="/">Home</Link>
-            <RenderOnAnonymous><Link to="/employer/signup">For employers</Link></RenderOnAnonymous>
+            <Link to="/search/vacancy">Vacancies</Link>
+            <RenderOnAnonymous><Link to="/employer/signup">News</Link></RenderOnAnonymous>
+            <RenderOnAnonymous><Link to="/employer/signup">Tests</Link></RenderOnAnonymous>
             <RenderOnAnonymous><Link to="/mentor/signup">Mentorship</Link></RenderOnAnonymous>
             <RenderOnAuthenticated><Link to="/resumes">Resumes</Link></RenderOnAuthenticated>
+
             
           </div>
 

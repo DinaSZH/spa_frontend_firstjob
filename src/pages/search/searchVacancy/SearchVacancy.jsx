@@ -1,6 +1,6 @@
 
 import Header from '../../../components/header/Header'
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 // import { getSearchedVacancies, getSpecializations, getCities, getExperiences, getSkills, getEmpType } from '@/app/store/slices/vacancySlice';
 import { useEffect, useState } from 'react';
@@ -12,26 +12,47 @@ import MyVacancies from '../../../components/myvacancies/MyVacancies';
 import img1 from '../../../assets/images/img1.png';
 import Sort from '../../../components/Sort/Sort';
 import iconExp from '../../../assets/images/iconExp.png';
+import { Search } from '../../../components/Search/Search';
+import { Select } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 
 
 export default function SearchVacancy() {
-    // const dispatch = useDispatch();
-    // const searchParams = useSearchParams()
+    const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
     // const router = useRouter()
     // const [q, setQ] = useState(searchParams.get("q"))
     // const [specializationId, setSpecialization] = useState(searchParams.get("specializationId"))
     // const [specializationName, setSpecializationName] = useState()
     const [isSpecModalOpen, setSpecModalOpen] = useState(false)
-    // const [cityId, setCity] = useState(searchParams.get("cityId"))
-    // const [experienceId, setExperienceId] = useState(searchParams.get("experienceId"))
-    // const [employmentTypeId, setEmploymentType] = useState(searchParams.get("employmentTypeId"))
+    const [cityId, setCityId] = useState(searchParams.get("cityId"))
+    const [fromSalary, setFromSalary] = useState(searchParams.get("fromSalary"));
+    const [toSalary, setToSalary] = useState(searchParams.get("toSalary"));
+    const [currency, setCurrency] = useState(searchParams.get("currency"));
+    const [experienceId, setExperienceId] = useState(searchParams.get("experienceId"))
+    const [employmentTypeId, setEmploymentType] = useState(searchParams.get("employmentTypeId"))
     // const [salary, setSalary] = useState(searchParams.get("salary"))
     // const [salary_type, setSalaryType] = useState(searchParams.get("salary_type"))
     const closeSepcModal = () => {
         setSpecModalOpen(false)
     }
 
-    const [orderSort, setOrderSort] = useState('asc')
+    const { isPending, isError, data: cities } = useQuery({
+        queryKey: ['cities'],
+        queryFn: async () => {
+          const response = await fetch(`${END_POINT}/api/client-app/resumes/cities`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch cities');
+          }
+          const citiesData = await response.json();
+          // Преобразование данных городов в формат, ожидаемый компонентом Select
+          const transformedCities = citiesData.map(city => ({
+            value: city.id,
+            label: city.name
+          }));
+          return transformedCities;
+        },
+      });
 
     // const handleOnSpecChange = (e) => {
     //     setSpecializationName(e.target.dataset.name)
@@ -82,86 +103,76 @@ export default function SearchVacancy() {
     let empTypes = ['Полная занятость', 'Частичная занятость', 'Проектная работа', 'Волонетрство', 'Стажировка'];
     return (
     <main>
-        <Header />
-
         <div className="container mt7">
-            <div className='flex search'>
+            {/* <div className='flex search'>
                 <fieldset className="fieldset-vertical pt7 flex" style={{width: `100%`}}>
                         <input className="input" placeholder="Название" type="text" />
                 </fieldset>
                 <button className='button button-black' style={{width: `10%`}}>Найти</button>
-            </div>
+            </div> */}
+            <Search />
                 
-                <div>
+                {/* <div>
                  <Sort orderSort={orderSort} onClickOrder={(i) => setOrderSort(i)}  />
-                </div>
+                </div> */}
 
                 <div className='flex '>
 
                     <div className='search-left flex flex-cl' style={{width: `25%`}}>
-                    <div className='vacancy-container-right'> 
-                            <div className='vacancy-sidebar'>
-                                <img className='companyLogo' src={img1} alt='logo'/>
-                                <h1>User name</h1>
-                            </div>
 
-                            <div className='divider'></div>
-                                <div className='flex gap flex-jc-c flex-ai-c'>
-                                    <img className='iconExp' style={{width: `20px`, height:`20px`}} src={iconExp} alt='iconExp'/>
-                                  <Link href='/applies'><p className='gray text-center'>Applied Jobs</p></Link>  
-                                </div>
-                                
-                         </div>  
+                        <div className='search-component vacancy-container-right mtb4'>                             
+        
+                        <fieldset className={"fieldset-vertical fieldset-md"} >
+                            <label>City</label>
+                            <Select
+                            placeholder="Search city"
+                            data={cities}
+                            searchable
+                            value={cityId} 
+                            onChange={setCityId} 
+                            nothingFoundMessage="Nothing found..."
+                            className={"fieldset fieldset-sm h3" } 
+                        />
+                        </fieldset>
 
-                        <div className='search-component vacancy-container-right'>                             
-                            <fieldset className="fieldset-vertical">
-                                <label>Указать специализацию</label>
-                                {/* {specializationName && <p>{specializationName}</p>} */}
-                                <p className="link" onClick={() => setSpecModalOpen(true)}>Указать специализацию</p>
-                            </fieldset>
-                            {isSpecModalOpen && <ModalSelectSpec close={closeSepcModal} onChange={handleOnSpecChange} value={specializationId * 1}/>}
-
-                            <AutoCompleteSelect placeholder="" type="text" label="Город проживания" size="fieldset-md fieldset-vertical" />
-
-                            <fieldset className="fieldset-vertical fieldset-md">
-                                <label>Предполагаемый уровень дохода в месяц</label>
-                                <div className="input-group">
-                                    <input className="input" placeholder="От" type="text"/>
-                                
-                                    <select className="input" name="salary_type" >
-                                        <option value={"KZT"}>KZT</option>
-                                        <option value={"USD"}>USD</option>
-                                        <option value={"RUB"}>RUB</option>
-                                    </select>
-                                </div>
-                                
-                            </fieldset>
+                        <fieldset className="fieldset-vertical fieldset-md">
+                            <label>Предполагаемый уровень дохода в месяц</label>
+                            <div className="input-group">
+                                <input className="input-default" placeholder="От" type="number" onChange={e => setFromSalary(e.target.value*1)}/>
+                            
+                                <Select
+                                className='w-full h-full'
+                                placeholder="currency"
+                                data={['KZT', 'USD', 'RUB']}
+                                value={currency} 
+                                onChange={setCurrency} 
+                                />
+                                    </div>
+                            
+                        </fieldset>
 
 
 
-                            <fieldset className="fieldset-vertical fieldset-md">
-                                <label>Опыт работы</label>
-                                <div>
-                                    {experiences.map(exp => <div className="radio" key={exp.id}>
-                                        <input type="radio" value={exp.id} name="exp" />
-                                        <label>{exp.duration}</label>
-                                    </div>)}
+                        <fieldset className={"fieldset-vertical fieldset-sm"} >
+                            <label className='h1'>Experience</label>
+                            <Select
+                            placeholder="Pick value"
+                            data={['No experience', 'Less than year', '1-3 years', '3-6 years', '6+ years']}
+                            value={experienceId} 
+                            onChange={setExperienceId} 
+                            />
+                        </fieldset>
 
-                                </div>
-                                
-                            </fieldset>
 
-                            <fieldset className="fieldset-vertical fieldset-md">
-                                <label>Тип занятости</label>
-                                <div>
-                                    {empTypes.map(et => <div className="radio" key={et.id}>
-                                        <input type="radio" value={et.id} name="empType" onChange={(e) => setEmploymentType(e.target.value)}/>
-                                        <label>{et.name}</label>
-                                    </div>)}
-
-                                </div>
-                                
-                            </fieldset>
+                        <fieldset className={"fieldset-vertical fieldset-sm"} >
+                            <label className='h1'>Employment type</label>
+                            <Select
+                            placeholder="Pick value"
+                            data={['Full time', 'Remote']}
+                            value={currency} 
+                            onChange={setCurrency} 
+                            />
+                        </fieldset>
 
                         </div>
 

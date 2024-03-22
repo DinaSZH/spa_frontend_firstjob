@@ -7,6 +7,14 @@
     outline: none;
 }
 
+.input-default{
+    border-radius: 4px;
+    padding: 0 20px;
+    width: 100%;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
 .input:focus{
     border: 1px solid #1785E5;
 }
