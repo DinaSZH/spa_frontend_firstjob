@@ -2,25 +2,22 @@ import Header from '../../components/header/Header'
 import MyResumes from '../../components/myresumes/MyResumes'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getMyResumes, getResumeById } from '../../store/slices/resumeSlice'
 import { Link, useParams } from 'react-router-dom'
 import arrow from '../../assets/images/arrow-left.png';
 import { Button, Paper } from '@mantine/core';
-import { IconCalendarMonth,IconBooks, IconClipboardText, IconGenderFemale, IconGenderMale, IconMail, IconMapPin, IconPhone, IconPremiumRights, IconUserCircle, IconTool, IconSettings } from '@tabler/icons-react';
+import { IconCalendarMonth,IconBooks, IconClipboardText, IconGenderFemale, IconGenderMale, IconMail, IconMapPin, IconPhone, IconPremiumRights, IconUserCircle, IconTool, IconSettings, IconLocationSearch, IconBriefcase } from '@tabler/icons-react';
+import { getVacancyById } from '../../store/slices/vacancySlice'
 
 export default function VacancyId() {
 
     const dispatch = useDispatch();
     const {id} = useParams();
-    const vacancy = useSelector(state => state.resume.resume)
+    const vacancy = useSelector(state => state.vacancy.vacancy)
 
     useEffect(() => {
-        dispatch(getResumeById(id))
+        dispatch(getVacancyById(id))
     }, [])
 
-    let skills = ['React', 'Javascript', 'Node.JS'];
-    // let skills = []
-    // if(resume.skills) skills = resume.skills.split(",")
 
   return (
     <main>
@@ -40,83 +37,39 @@ export default function VacancyId() {
             </div>
             <div className='flex mb10'><IconMapPin className='mr10'/> {vacancy.city}, {vacancy.country}</div>
             <div className='flex flex-ai-c mb10'>
-                   <IconCalendarMonth className='mr10'/> Birthday: {vacancy.birthdate}
+                   <IconCalendarMonth className='mr10'/> Created date: {vacancy.updatedAt ? vacancy.updatedAt.split("T")[0] : ''}
             </div>
-            <div className='flex flex-ai-c'>
+            {/* <div className='flex flex-ai-c'>
                 {vacancy.gender === 'FEMALE' ? <IconGenderFemale className='mr10'/> : <IconGenderMale className='mr10'/>}
                 Gender: {vacancy.gender}
-            </div>
+            </div> */}
             <h2>Contacts</h2>
-            <div className='flex flex-ai-c mb10'><IconMail className='mr10'/> {vacancy.email}</div>
-            <div className='flex flex-ai-c'><IconPhone className='mr10'/> {vacancy.phone}</div>
+            <div className='flex flex-ai-c mb10'><IconBriefcase className='mr10'/>Company: {vacancy.company}</div>
+            <div className='flex flex-ai-c mb10'><IconMail className='mr10'/>Email: {vacancy.hrEmail}</div>
+            <div className='flex flex-ai-c mb10'><IconLocationSearch className='mr10'/>Address:  {vacancy.address}</div>
+            {/* <div className='flex flex-ai-c'><IconPhone className='mr10'/> {vacancy.phone}</div> */}
 
         </div>
 
         <div className='divider'></div>
-          <h2 className='flex flex-ai-c'><IconClipboardText color='#228BE6' size={50} className='mr10'/> vacancy Details</h2>
+          <h2 className='flex flex-ai-c'><IconClipboardText color='#228BE6' size={50} className='mr10'/> Vacancy Details</h2>
           <div className='flex flex-jc-sb'>
-                <h2>{vacancy.position}</h2>
+                <h2>{vacancy.title}</h2>
                 <h2 className='flex flex-ai-c'>
-                   <IconPremiumRights className='mr10'/> {vacancy.salary}{vacancy.currency}
+                   <IconPremiumRights className='mr10'/> {vacancy.salaryFrom}-{vacancy.salaryTo} {vacancy.currency}
                 </h2>
             </div>
-            <p>{vacancy.about}</p>
-
-        <div className='divider'></div>
-
-        <div className='backgroundBlock'>
-            <h2 className='flex flex-ai-c'><IconBooks color='#228BE6' size={50} className='mr10'/>Education</h2>
-            
-            {vacancy.education && vacancy.education.map((item, index) => (
-                <div className='flex working-history ' key={index}>
-                    <div className='working-history-date mr4'>
-                        {item.startYear} - {item.endYear}
-                    </div>
-
-                    <div className='flex flex-cl'>
-                        <h3 className='text'>{item.instanceName}</h3>
-                        <p>{item.specialization}</p>
-                    </div>
-                </div>
-            ))}
-        </div>
-        <div className='divider'></div>
-
-        <div className='backgroundBlock'>
-            <h2 className='flex flex-ai-c'><IconTool color='#228BE6' size={50} className='mr10'/>Experience</h2>
-            
-            {vacancy.experience && vacancy.experience.map((item, index) => (
-                <div className='flex working-history ' key={index}>
-                    <div className='working-history-date mr4'>
-                        {item.startDate} - {item.endDate}
-                    </div>
-
-                    <div className='flex flex-cl'>
-                        <h3 className='text'>{item.position}</h3>
-                        <h4>{item.company}</h4>
-                        <p>{item.description}</p>
-                    </div>
-                </div>
-            ))}
-           
-        </div>
-
-        <div className='divider'></div>
-
-        {vacancy && vacancy.skills && (<div className='backgroundBlock'>
-            <h2 className='flex flex-ai-c'><IconSettings color='#228BE6' size={50} className='mr10'/>Skills</h2>
-            
-            <div className="skill flex ">
-
-                {vacancy.skills.map((skill, index) => (
-                  <span key={index} className="p3">
-                    {skill}
-                  </span>
+            <div className='flex flex-ai-c mb10'><IconTool className='mr10'/>Experience:  <p className='box'>{vacancy.experience}</p> </div>
+            <div className='flex flex-ai-c mb10'><IconBooks className='mr10'/> <span className='mr10'>Employment Type: </span>
+            {vacancy.employmentType && vacancy.employmentType.map((item, index) => (
+                    <p className='box' key={index}>{item}</p>
                 ))}
-              </div>
-        </div>)}
+            </div>
+            <h3>Description</h3>
+            <p>{vacancy.description}</p>
 
         <div className='divider'></div>
+
         </div>
         </Paper>
       </div>

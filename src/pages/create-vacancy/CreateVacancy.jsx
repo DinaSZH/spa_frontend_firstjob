@@ -1,28 +1,25 @@
 import Input from '../../components/FillForm/input/input';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import ModalAddExp from '../../components/FillForm/ModalAddExp/ModalAddExp';
-import WorkingHistory from '../../components/FillForm/WorkingHistory/WorkingHistory';
-import AddEducation from '../../components/FillForm/AddEducation/AddEducation';
-import SelectEmploymentTypes from '../../components/FillForm/SelectEmploymentTypes/SelectEmploymentTypes';
 import { Link, useNavigate } from 'react-router-dom';
-import { Paper, Select } from '@mantine/core';
-import { END_POINT } from '../../config/end-point';
+import { Checkbox, Group, Paper, Select } from '@mantine/core';
+import { POINT_CONTENT } from '../../config/end-point';
 import {
   useQuery, useQueryClient,
 } from '@tanstack/react-query'
 import { MultiSelect } from '@mantine/core';
-import EducationItem from '../../components/EducationItem/EducationItem';
 import { createResume } from '../../store/slices/resumeSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Checkbox, Group } from '@mantine/core';
+import { createVacancy } from '../../store/slices/vacancySlice';
+import AutoCompleteSelect from '../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect';
 
 export default function CreateVacancy() {
 
     const [title, setTitle] = useState("");
     const [company, setCompany] = useState("");
     const [address, setAdress] = useState("");
-    const [cityId, setCityId] = useState("");
+    const [cityId, setCityId] = useState();
+    const [cities, setCities] = useState([])
     const [fromSalary, setFromSalary] = useState(0);
     const [toSalary, setToSalary] = useState(0);
     const [currency, setCurrency] = useState("KZT");
@@ -37,40 +34,63 @@ export default function CreateVacancy() {
       (state) => state.resume
     )
 
-    const { isPending, isError, data: cities } = useQuery({
-      queryKey: ['cities'],
-      queryFn: async () => {
-        const response = await fetch(`${END_POINT}/api/client-app/resumes/cities`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch cities');
-        }
-        const citiesData = await response.json();
-        // Преобразование данных городов в формат, ожидаемый компонентом Select
-        const transformedCities = citiesData.map(city => ({
-          value: city.id,
-          label: city.name
-        }));
-        return transformedCities;
-      },
+    // const { isPending, isError, data: cities } = useQuery({
+    //   queryKey: ['cities'],
+    //   queryFn: async () => {
+    //     const response = await fetch(`${POINT_CONTENT}/api/content/vacancies/cities`);
+    //     if (!response.ok) {
+    //       throw new Error('Failed to fetch cities');
+    //     }
+    //     const citiesData = await response.json();
+    //     const transformedCities = citiesData.map(city => ({
+    //       value: city.id,
+    //       label: city.name
+    //     }));
+    //     return transformedCities;
+    //   },
+    // });
+
+    useEffect(() => {
+
+      axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then(res => {
+        setCities(res.data)
+    })
+  }, [])
+
+  const formatExperience = (experience) => {
+    switch (experience) {
+      case 'No experience':
+        return 'NO_EXPERIENCE';
+      case 'Less than year':
+        return 'LESS_THAN_YEAR';
+      case '1-3 years':
+        return 'ONE_TO_THREE';
+      case '3-6 years':
+        return 'THREE_TO_SIX';
+      case '6+ years':
+        return 'MORE_THAN_SIX';
+      default:
+        return ''; 
+    }
+  };
+
+  const formatEmploymentTypes = (selectedTypes) => {
+    const formattedTypes = selectedTypes.map(type => {
+      switch (type) {
+        case 'Full time':
+          return 'FULL_TIME';
+        case 'Remote':
+          return 'REMOTE';
+        default:
+          return '';
+      }
     });
+    return formattedTypes;
+  };
 
-  //   useEffect(() => {
-  //     axios.get(`${END_POINT}/api/client-app/resumes/skills`).then(res => {
-  //       const skillsData = res.data;
-  //       setSkills(skillsData.map(skill => ({
-  //         value: skill.id,
-  //         label: skill.name
-  //       })));
-  //      })
-
-  //     axios.get(`${END_POINT}/api/client-app/resumes/employment-types`).then(res => {
-  //       setEmploymentTypes(res.data)
-  //     })
-  // }, [])
-
-
+  
     const handleSave = ()=> {
-      dispatch(createResume({
+      const data = {
         title,
         company,
         address,
@@ -78,10 +98,13 @@ export default function CreateVacancy() {
         fromSalary,
         toSalary,
         currency,
-        employmentTypes,
-        experience,
+        employmentTypes: formatEmploymentTypes(employmentTypes),
+        experience: formatExperience(experience),
         description,
-      }))  
+      }
+      console.log("DAATA VACANCY:", data)
+      dispatch(createVacancy(data))  
+      navigate('/vacancies');
     }
 
     useEffect(() => {
@@ -105,7 +128,7 @@ export default function CreateVacancy() {
         <Input placeholder="" type="text" label="Company name" size="fieldset-lg" onChange={(e) => setCompany(e.target.value)}/> 
         <Input placeholder="" type="text" label="Address" size="fieldset-lg" onChange={(e) => setAdress(e.target.value)}/> 
     
-       <fieldset className={"fieldset fieldset-sm"} >
+       {/* <fieldset className={"fieldset fieldset-sm"} >
             <label className='h1'>City of residence</label>
             <Select
             placeholder="Search city"
@@ -116,7 +139,9 @@ export default function CreateVacancy() {
             nothingFoundMessage="Nothing found..."
             className={"fieldset fieldset-sm h3" } 
           />
-        </fieldset>
+        </fieldset> */}
+        <AutoCompleteSelect placeholder="" type="text" label="Город проживания" size="fieldset-md" items={cities} onSelect={(data) => setCityId(data.id)}/>
+
 
         <fieldset className={"fieldset fieldset-lg" } >
             <span className='mr8'>Salary</span>
@@ -134,7 +159,7 @@ export default function CreateVacancy() {
             </div>           
         </fieldset>
 
-        <fieldset className={"fieldset fieldset-sm"} >
+        {/* <fieldset className={"fieldset fieldset-sm"} >
             <label className='h1'>Employment type</label>
             <Select
               placeholder="Pick value"
@@ -142,33 +167,18 @@ export default function CreateVacancy() {
               value={currency} 
               onChange={setCurrency} 
             />
-        </fieldset>
+        </fieldset> */}
 
-        <h3>Choose employment type</h3>
-        <fieldset className={"fieldset fieldset-sm"}>
+        <fieldset className={"fieldset fieldset-sm"} >
             <label className='h1'>Employment type</label>
-            <div className='h1'>
-                <Checkbox.Group>
-                    {allEmploymentTypes.map((type) =>
-                        <Group mt="xs" key={type.id}>
-                            <Checkbox value={type.id} label={type.name} className='h1'
-                            checked={employmentTypes.includes(type.id)}
-                            onChange={(e) => {
-                                const checked = e.currentTarget.checked;
-                                setSelectedEmpTypes(prevState => {
-                                    if (checked) {
-                                        return [...prevState, type.id];
-                                    } else {
-                                        return prevState.filter(item => item !== type.id);
-                                    }
-                                });
-                            }} />
-                        </Group>
-                    )}
-                </Checkbox.Group>
-            </div>
+        <MultiSelect
+          placeholder="Pick value"
+          data={['Full time', 'Remote']}
+          hidePickedOptions
+          value={employmentTypes}
+          onChange={setSelectedEmpTypes}
+        />
         </fieldset>
-
 
         <fieldset className={"fieldset fieldset-sm"} >
             <label className='h1'>Experience</label>

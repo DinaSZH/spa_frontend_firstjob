@@ -32,3 +32,27 @@
     width: 15px;
     height: 15px;
 }
+
+.radio-wrapper{
+    position: relative;
+}
+
+.custom-radio .mantine-radio-label {
+    order: -1;
+    margin-right: 8px; 
+}
+
+.mantine-Radio-inner{
+    order: -1;
+    margin-right: 8px;
+}
+
+.m-89c4f5e4{
+    order: -1;
+    margin-right: 8px;
+}
+
+.m-8ee546b8{
+    order: -1;
+    margin-right: 8px;
+}

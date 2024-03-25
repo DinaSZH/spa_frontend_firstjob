@@ -100,15 +100,6 @@ export const resumeSlice = createSlice({
         state.error = null;
       })
       .addCase(editResumeById.fulfilled, (state, action) => {
-        const updateItem = action.payload;
-        console.log(updateItem);
-        const index = state.resumes.findIndex(
-          (item) => item._id === updateItem._id
-        );
-        if (index!==-1) {
-          state.resumes[index] = updateItem;
-        }
-      state.response = "update";
         state.loading = false;
         state.success = true; 
       })
@@ -209,20 +200,30 @@ export const downloadResumeById = createAsyncThunk('user/downloadResumeById', as
   }
 });
 
-export const editResumeById = createAsyncThunk('user/editResumeById', async (data, thunkApi) => {
-  try {
-    const jwt = KeycloakService.getToken(); 
-    const res = await axios.put(`${END_POINT}/api/client-app/resumes/my/${data.id}`, data, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-    return res.data; 
-  } catch (error) {
-    console.error('Error editing the resume:', error);
-    thunkApi.rejectWithValue(error.message);
+export const editResumeById = createAsyncThunk('user/editResumeById', async ({ id, updatedResume }, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken(); 
+      const response = await axios.put(
+        `${END_POINT}/api/client-app/resumes/my/${id}`,
+        updatedResume,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("Data after editing resume:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error editing the resume:', error);
+      console.log('Error response data:', error.response ? error.response.data : error.message);
+      return thunkApi.rejectWithValue(error.response ? error.response.data : error.message);
+    }
   }
-});
+);
+
+
 
 
 

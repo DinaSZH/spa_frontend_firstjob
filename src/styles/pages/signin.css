@@ -95,5 +95,7 @@
 .signup-container{
     display: flex;
     justify-content: center;
+    align-items: center;
+    padding: 40px;
     background-color: #F0F8FF;
 }

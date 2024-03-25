@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { END_POINT } from '../../config/end-point'
+import { POINT_CONTENT } from '../../config/end-point'
 import KeycloakService from '../../services/KeycloakService';
 
 export const vacancySlice = createSlice({
   name: 'vacancy',
   initialState: {
+    allVacancies: [],
     vacancies: [],
     vacancy: {},
     error: null,
@@ -13,6 +14,9 @@ export const vacancySlice = createSlice({
     success: null
   },
   reducers: {
+    setAllVacancies: (state, action) => {
+      state.allVacancies =  action.payload.allVacancies
+    },
     setMyVacancies: (state, action) => {
       state.vacancies =  action.payload.vacancies
     },
@@ -30,15 +34,15 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getMyResumes.pending, (state) => {
+      .addCase(getAllVacancies.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getMyResumes.fulfilled, (state, { payload }) => {
+      .addCase(getAllVacancies.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true; 
       })
-      .addCase(getMyResumes.rejected, (state, { payload }) => {
+      .addCase(getAllVacancies.rejected, (state, { payload }) => {
         console.error('Error from backend:', payload);
         state.loading = false;
         state.error = payload;
@@ -46,15 +50,15 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createResume.pending, (state) => {
+      .addCase(getMyVacancies.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createResume.fulfilled, (state, { payload }) => {
+      .addCase(getMyVacancies.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true; 
       })
-      .addCase(createResume.rejected, (state, { payload }) => {
+      .addCase(getMyVacancies.rejected, (state, { payload }) => {
         console.error('Error from backend:', payload);
         state.loading = false;
         state.error = payload;
@@ -62,15 +66,15 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getResumeById.pending, (state) => {
+      .addCase(createVacancy.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getResumeById.fulfilled, (state, { payload }) => {
+      .addCase(createVacancy.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true; 
       })
-      .addCase(getResumeById.rejected, (state, { payload }) => {
+      .addCase(createVacancy.rejected, (state, { payload }) => {
         console.error('Error from backend:', payload);
         state.loading = false;
         state.error = payload;
@@ -78,15 +82,15 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(deleteResumeById.pending, (state) => {
+      .addCase(getVacancyById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteResumeById.fulfilled, (state, { payload }) => {
+      .addCase(getVacancyById.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true; 
       })
-      .addCase(deleteResumeById.rejected, (state, { payload }) => {
+      .addCase(getVacancyById.rejected, (state, { payload }) => {
         console.error('Error from backend:', payload);
         state.loading = false;
         state.error = payload;
@@ -94,24 +98,32 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(editResumeById.pending, (state) => {
+      .addCase(deleteVacancyById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(editResumeById.fulfilled, (state, action) => {
-        const updateItem = action.payload;
-        console.log(updateItem);
-        const index = state.resumes.findIndex(
-          (item) => item._id === updateItem._id
-        );
-        if (index!==-1) {
-          state.resumes[index] = updateItem;
-        }
+      .addCase(deleteVacancyById.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true; 
+      })
+      .addCase(deleteVacancyById.rejected, (state, { payload }) => {
+        console.error('Error from backend:', payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(editVacancyById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editVacancyById.fulfilled, (state, action) => {
       state.response = "update";
         state.loading = false;
         state.success = true; 
       })
-      .addCase(editResumeById.rejected, (state, { payload }) => {
+      .addCase(editVacancyById.rejected, (state, { payload }) => {
         console.error('Error from backend:', payload);
         state.loading = false;
         state.error = payload;
@@ -119,22 +131,33 @@ export const vacancySlice = createSlice({
   },
 })
 
-export const { setMyVacancies, uppendVacancy, setVacancy, handleDeleteVacancy} = vacancySlice.actions
+export const { setAllVacancies, setMyVacancies, uppendVacancy, setVacancy, handleDeleteVacancy} = vacancySlice.actions
 
 
-
-export const getMyVacancies = createAsyncThunk('user/getVacancies', async (_, thunkApi) => {
+export const getAllVacancies = createAsyncThunk('user/getAllVacancies', async (_, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.get(`${END_POINT}/api/content/vacancies/my`, {
+    const { data } = await axios.get(`${POINT_CONTENT}/api/content/vacancies`);
+    console.log('Fetched all vacancies:', data); 
+    thunkApi.dispatch(setAllVacancies({allVacancies: data})); 
+  } catch (error) {
+    console.error('Error fetching all vacancies:', error);
+    thunkApi.rejectWithValue(error.message);
+  }
+});
+
+export const getMyVacancies = createAsyncThunk('user/getMyVacancies', async (_, thunkApi) => {
+  try {
+    const jwt = KeycloakService.getToken(); 
+    const { data } = await axios.get(`${POINT_CONTENT}/api/content/vacancies/my`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    console.log('Fetched resumes:', data); // Log fetched data
-    thunkApi.dispatch(setMyVacancies({resumes: data})); 
+    console.log('Fetched vacancies:', data); // Log fetched data
+    thunkApi.dispatch(setMyVacancies({vacancies: data})); 
   } catch (error) {
-    console.error('Error fetching resumes:', error);
+    console.error('Error fetching vacancies:', error);
     thunkApi.rejectWithValue(error.message);
   }
 });
@@ -142,7 +165,7 @@ export const getMyVacancies = createAsyncThunk('user/getVacancies', async (_, th
 export const createVacancy = createAsyncThunk('user/createVacancy', async (createVacancy, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken();
-    const { data } = await axios.post(`${END_POINT}/api/content/vacancies`, createVacancy, {
+    const { data } = await axios.post(`${POINT_CONTENT}/api/content/vacancies`, createVacancy, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -159,7 +182,7 @@ export const createVacancy = createAsyncThunk('user/createVacancy', async (creat
 export const getVacancyById = createAsyncThunk('user/getVacancyById', async (id, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.get(`${END_POINT}/api/content/vacancies/${id}`, {
+    const { data } = await axios.get(`${POINT_CONTENT}/api/content/vacancies/${id}`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -175,7 +198,7 @@ export const getVacancyById = createAsyncThunk('user/getVacancyById', async (id,
 export const deleteVacancyById = createAsyncThunk('user/deleteVacancyById', async (id, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.delete(`${END_POINT}/api/content/vacancies/${id}`, {
+    const { data } = await axios.delete(`${POINT_CONTENT}/api/content/vacancies/${id}`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -190,7 +213,7 @@ export const deleteVacancyById = createAsyncThunk('user/deleteVacancyById', asyn
 export const editVacancyById = createAsyncThunk('user/editVacancyById', async (data, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const res = await axios.put(`${END_POINT}/api/content/vacancies/${data.id}`, data, {
+    const res = await axios.put(`${POINT_CONTENT}/api/content/vacancies/${data.id}`, data, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -201,3 +224,5 @@ export const editVacancyById = createAsyncThunk('user/editVacancyById', async (d
     thunkApi.rejectWithValue(error.message);
   }
 });
+
+export default vacancySlice.reducer

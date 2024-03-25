@@ -114,39 +114,28 @@ export default function CreateResume() {
     }
 
 
-    const handleSave = ()=> {
-      dispatch(createResume({
-        gender,
-        city,
-        position,
-        skills,
-        salary,
-        currency,
-        experience,
-        about,
-        education,
-        employmentType,
-      }))  
-      // const data = {
-      //   gender,
-      //   city,
-      //   position,
-      //   skills: skills.map(skill => skill.value),
-      //   salary,
-      //   currency,
-      //   experience,
-      //   about,
-      //   education,
-      //   employmentType: employmentType.map(type => type.value),
-      // }
-      // console.log(data)
-    }
-
-    useEffect(() => {
-      if(success){
-        navigate('/resumes')
+    const handleSave = async () => {
+      try {
+        // Dispatch the action to create the resume
+        await dispatch(
+          createResume({
+            gender,
+            city,
+            position,
+            skills,
+            salary,
+            currency,
+            experience,
+            about,
+            education,
+            employmentType,
+          })
+        );
+        navigate('/resumes');
+      } catch (error) {
+        console.error('Error creating resume:', error);
       }
-    }, [success])
+    };
 
   return (
     <main>
@@ -158,10 +147,6 @@ export default function CreateResume() {
         <h1>Add new resume</h1>
 
         <h3>Основная информация</h3>
-        {/* <Input placeholder="" type="text" label="Имя" size="fieldset-md" onChange={(e) => setName(e.target.value)}/>
-        <Input placeholder="" type="text" label="Фамилия" size="fieldset-md" onChange={(e) => setLastName(e.target.value)}/>
-        <Input placeholder="" type="text" label="Мобильный телефон" size="fieldset-md" onChange={(e) => setPhone(e.target.value)}/> */}
-
         <fieldset className={"fieldset fieldset-sm" } >
             <label>Gender</label>
             <div className='radio-group'>

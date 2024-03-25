@@ -130,33 +130,40 @@ export default function EditResume() {
         setExperience(resume.experience)
         setAbout(resume.about)
         setEducation(resume.education)
-        setSelectedEmpTypes(resume.employmentType.map(et=> et.id))
+        setSelectedEmpTypes(resume.employmentType)
         }
         console.log("CITYY", resume.city)
   }, [resume])
 
+  const handleSave = async () => {
+    try {
+      const editedResumeData = {
+        gender,
+        city,
+        position,
+        skills,
+        salary,
+        currency,
+        experience,
+        about,
+        education,
+        employmentType,
+      };
+      console.log(editedResumeData)
 
-  const handleSave = () => {
-    dispatch(editResumeById({
-      id: resume.id,
-      gender,
-      city,
-      position,
-      skills,
-      salary,
-      currency,
-      experience,
-      about,
-      education,
-      employmentType,
-    }))
-   }
-
-    useEffect(() => {
-      if(success){
-        navigate('/resumes')
-      }
-    }, [success])
+      await dispatch(editResumeById({
+        id: resume.id,
+        updatedResume: editedResumeData,
+      }));
+  
+        navigate('/resumes');
+    
+    } catch (error) {
+      console.error('Error editing resume:', error);
+    }
+  };
+  
+  
 
   return (
     <main>
@@ -189,16 +196,16 @@ export default function EditResume() {
         </fieldset>
 
     
-       <fieldset className={"fieldset fieldset-sm"} >
-            <label className='h1'>City of residence</label>
-            <Select
+        <fieldset className={"fieldset fieldset-sm"}>
+          <label className='h1'>City of residence</label>
+          <Select
             placeholder="Search city"
             data={cities}
             searchable
             value={city} 
             onChange={setCity} 
             nothingFoundMessage="Nothing found..."
-            className={"fieldset fieldset-sm h3" } 
+            className={"fieldset fieldset-sm h3"} 
           />
         </fieldset>
 

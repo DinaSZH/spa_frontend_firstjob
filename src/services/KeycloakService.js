@@ -31,22 +31,22 @@ const getPhone = () => keycloak.tokenParsed?.phone;
 const getBirthdate = () => keycloak.tokenParsed?.birthdate;
 const getGiven_name = () => keycloak.tokenParsed?.given_name;
 const getFamily_name = () => keycloak.tokenParsed?.family_name;
+const getRole = () => keycloak.tokenParsed?.realm_access?.roles;
 
-const hasFirstJobUserRole = () => {
+const getUserRole = () => {
   const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
-  return realmRoles && realmRoles.includes('FIRST-JOB-USER');
+  return realmRoles ? realmRoles.find(role => role === 'FIRST-JOB-USER') : null;
 };
 
-const hasFirstJobHRRole = () => {
+const getHRRole = () => {
   const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
-  return realmRoles && realmRoles.includes('FIRST-JOB-HR');
+  return realmRoles ? realmRoles.find(role => role === 'FIRST-JOB-HR') : null;
 };
 
-const hasFirstJobMentorRole = () => {
+const getMentorRole = () => {
   const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
-  return realmRoles && realmRoles.includes('FIRST-JOB-MENTOR');
+  return realmRoles ? realmRoles.find(role => role === 'FIRST-JOB-MENTOR') : null;
 };
-
 
 const KeycloakService = {
     initKeycloak,
@@ -59,13 +59,14 @@ const KeycloakService = {
     getUsername,
     getPhone,
     getBirthdate,
-    hasFirstJobUserRole,
-    hasFirstJobHRRole,
-    hasFirstJobMentorRole,
     getGiven_name,
     getFamily_name,
+    getRole,
     getId,
     getKeycloak: () => keycloak,
+    getUserRole,
+    getHRRole,
+    getMentorRole
 };
 
 export default KeycloakService;

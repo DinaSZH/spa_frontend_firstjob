@@ -23,6 +23,11 @@ h4, .h4{
     cursor: pointer;
 }
 
+.cursor{
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .error{
     color: #ff0000;
 }

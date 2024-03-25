@@ -7,7 +7,7 @@ const Success = () => {
   const navigate = useNavigate();
   const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
   return (
-    <div>
+    <div className='flex h-full flex-cl flex-jc-c flex-ai-c'>
         <Notification withCloseButton={false}  icon={checkIcon} style={{width: '520px', height: '150px', border: '1px solid rgb(211 207 207)'}} color="teal" title="Your data has been sent successfully!" >
             Please check your email! <br></br>
             The answer will come to you by email

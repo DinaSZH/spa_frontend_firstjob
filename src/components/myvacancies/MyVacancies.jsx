@@ -1,38 +1,23 @@
 import MyVacancy from "./myvacancy/MyVacancy";
 import { useSelector } from 'react-redux';
-
-export default function MyVacancies () {
-    // const vacancies = useSelector((state) => state.vacancy.vacancies)
-    const vacancies = [{
-        title: 'Software engineer',
-        createdAt:  '23.01.2023',
-        salaryFrom: 400000,
-        salaryTo:800000,
-        сurrency:'KZT',
-        skills: ['Node.JS', "SQL", "Vue", 'Javascript']
-      },
-      {
-        title: 'React engineer',
-        createdAt:  '23.01.2023',
-        salaryFrom: 300000,
-        salaryTo:400000,
-        сurrency:'KZT',
-        skills: ['React', "Redux", "Vue", 'Javascript']
-      },
-      {
-        title: 'Backend engineer',
-        createdAt:  '23.01.2023',
-        salaryFrom: 100000,
-        salaryTo:300000,
-        сurrency:'KZT',
-        skills: ['Java', "Spring", "MySQL", 'GIT']
-      }]
+import { Title, Text, Button, Container, Group } from '@mantine/core';
+import classes from './MyVacancies.module.css';
 
 
-    const showVacancies = vacancies.map(item => (<MyVacancy 
-        item={item}
-        key={item.id}
-        />));
+export default function MyVacancies ({vacancies}) {
+   
+    const showVacancies = vacancies && vacancies.length > 0 ? vacancies.map(item => (
+        <MyVacancy 
+          item={item}
+          key={item.id}
+        />
+      )) : <Container className={classes.root}>
+      <Title className={classes.title}>There is no vacancies.</Title>
+      <Text c="dimmed" size="lg" ta="center" className={classes.description}>
+      You do not have any vacancies, create a vacancy by clicking on the button "Create Vacancy"
+      </Text>
+    </Container>;
+
     return(<div>
         {showVacancies}
     </div>)

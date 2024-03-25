@@ -11,7 +11,6 @@ const Home = () => {
             <div>
               <h1>First Job</h1>
               <p>Job for everyone</p>
-              <p>{KeycloakService.hasFirstJobUserRole()}</p>
               <div>
               <button className='button'>
                   Search

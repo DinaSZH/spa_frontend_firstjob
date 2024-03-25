@@ -127,11 +127,11 @@ export default function EditProfile() {
 
         <div className='vacancy-container flex mb10'>
 
-          <div className='vacancy-container-right'> 
+          {/* <div className='vacancy-container-right'> 
               <div className='vacancy-sidebar'>
                   <img className='usernameImage' src={user} alt='logo'/>
               </div>
-          </div>
+          </div> */}
 
             <div className='vacancy-container-left '>
                     {loader ? <Loader color="blue" /> : <div>

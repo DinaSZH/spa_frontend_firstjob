@@ -38,6 +38,13 @@
     margin-left: auto;
 }
 
+.box{
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #ECEFF0;
+    margin: 0px 10px;
+}
+
 .textarea{
     height: 200px;
     border-radius: 4px;

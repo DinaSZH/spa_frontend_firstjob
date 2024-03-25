@@ -1,6 +1,15 @@
-body{
+html, #root, main {
+    height: 100%;
     margin: 0;
-    background-color: #F0F8FF; 
+    padding: 0;
+  }
+  
+body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #F0F8FF;
+    /* background-color: #F0F8FF;  */
 }
 
 main{
@@ -22,6 +31,11 @@ body, div, input, a, li, ul, ol, textarea, span, p, h1, h2, h3, aside, main{
 
 .container-background{
     border: 30px solid #336be2;
+}
+
+.border-gray{
+    border: 1px solid #d4d5d8;
+    border-radius: 10px;
 }
 
 a{
@@ -140,6 +154,10 @@ a{
     margin-left: 10px;
 }
 
+.ml3{
+    margin-left: 30px;
+}
+
 .mb10{
     margin-bottom: 10px;
 }
@@ -150,6 +168,10 @@ a{
 
 .mb20{
     margin-bottom: 20px;
+}
+
+.mb40{
+    margin-bottom: 40px;
 }
 
 .ck-powered-by {

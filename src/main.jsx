@@ -44,6 +44,7 @@ import Vacancies from './pages/vacancies/Vacancies';
 import CreateVacancy from './pages/create-vacancy/CreateVacancy';
 import VacancyId from './pages/vacancies/VacancyId';
 import EditVacancy from './pages/vacancies/EditVacancy';
+import CreateTest from './pages/create-test/CreateTest';
   
 
 const router = createBrowserRouter([
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
 				path: '/vacancy/edit/:id',
 				element: <EditVacancy />,
 			},
+			{
+				path: '/create-test',
+				element: <CreateTest />
+			}
 		]
 	},
 	{
@@ -119,6 +124,16 @@ const router = createBrowserRouter([
 			}
 		]
 	},
+	// {
+	// 	path: '/test',
+	// 	element: <RenderOnAnonymous><AuthLayout /></RenderOnAnonymous>,
+	// 	children: [
+	// 		{
+	// 			path: '',
+	// 			element: <Register />
+	// 		},
+	// 	]
+	// },
 	{
 		path: '*',
 		// element: <RequireAuth><Layout /></RequireAuth>,

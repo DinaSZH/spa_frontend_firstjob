@@ -126,3 +126,12 @@ a{
 .button-black:hover{
     background: #080713;
 }
+
+.remove-button{
+    cursor: pointer;
+    position: absolute;
+    right: 5px;
+    top: -10px;
+    font-size: 23px;
+    color: red;
+}

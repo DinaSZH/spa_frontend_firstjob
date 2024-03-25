@@ -13,13 +13,15 @@ import img1 from '../../../assets/images/img1.png';
 import Sort from '../../../components/Sort/Sort';
 import iconExp from '../../../assets/images/iconExp.png';
 import { Search } from '../../../components/Search/Search';
-import { Select } from '@mantine/core';
+import { Loader, Select } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { getAllVacancies } from '../../../store/slices/vacancySlice';
 
 
 export default function SearchVacancy() {
     const dispatch = useDispatch();
     const [searchParams, setSearchParams] = useSearchParams();
+    const [loading, setLoading] = useState(true);
     // const router = useRouter()
     // const [q, setQ] = useState(searchParams.get("q"))
     // const [specializationId, setSpecialization] = useState(searchParams.get("specializationId"))
@@ -45,7 +47,6 @@ export default function SearchVacancy() {
             throw new Error('Failed to fetch cities');
           }
           const citiesData = await response.json();
-          // Преобразование данных городов в формат, ожидаемый компонентом Select
           const transformedCities = citiesData.map(city => ({
             value: city.id,
             label: city.name
@@ -53,69 +54,25 @@ export default function SearchVacancy() {
           return transformedCities;
         },
       });
+    
+    const vacancies = useSelector((state) => state.vacancy.allVacancies)
 
-    // const handleOnSpecChange = (e) => {
-    //     setSpecializationName(e.target.dataset.name)
-    //     setSpecialization(e.target.value * 1)
-    //     closeSepcModal()
-    // }
+    useEffect(() => {
+        dispatch(getAllVacancies())
+      }, [])
 
-    // const handleSearch = () => {
-    //     dispatch(getSearchedVacancies({
-    //         q,
-    //         specializationId,
-    //         cityId,
-    //         experienceId,
-    //         employmentTypeId,
-    //         salary,
-    //         salary_type
-    //     }, router))
-    // }
-
-
-
-    // useEffect(handleSearch, [specializationId, cityId, employmentTypeId, salary, salary_type, experienceId])
-
-
-    // useEffect(() => {
-    //     handleSearch()
-
-    //     dispatch(getSpecializations())
-    //     dispatch(getCities())
-    //     dispatch(getExperiences()),
-    //     dispatch(getSkills())
-    //     dispatch(getEmpType())
-    // }, [])
-
-    // const handleChangeExp = e => {
-    //     setExperienceId(e.target.value)
-    // }
-
-    // const cities = useSelector(state=>state.vacancy.cities)
-    // const experiences = useSelector(state=>state.vacancy.experiences)
-    // const empTypes = useSelector(state=>state.vacancy.empTypes)
-
-
-    // const vacancies = useSelector(state => state.vacancy.vacancies)
-    // console.log(vacancies)
+      useEffect(() => {
+        if(vacancies){
+         setLoading(false);
+        }
+      }, [vacancies]);
 
     let experiences = ['Нет опыта', 'От 1 до 3 лет', 'От 3 до 6 лет', 'Более 6 лет'];
     let empTypes = ['Полная занятость', 'Частичная занятость', 'Проектная работа', 'Волонетрство', 'Стажировка'];
     return (
     <main>
         <div className="container mt7">
-            {/* <div className='flex search'>
-                <fieldset className="fieldset-vertical pt7 flex" style={{width: `100%`}}>
-                        <input className="input" placeholder="Название" type="text" />
-                </fieldset>
-                <button className='button button-black' style={{width: `10%`}}>Найти</button>
-            </div> */}
             <Search />
-                
-                {/* <div>
-                 <Sort orderSort={orderSort} onClickOrder={(i) => setOrderSort(i)}  />
-                </div> */}
-
                 <div className='flex '>
 
                     <div className='search-left flex flex-cl' style={{width: `25%`}}>
@@ -180,11 +137,11 @@ export default function SearchVacancy() {
                         </div>
                     
 
+                    {loading ? <div style={{width: `80%`, paddingLeft: `40px`}} className='flex flex-jc-c mt7'><Loader color="blue" /></div> 
+                    : 
                     <div style={{width: `80%`, paddingLeft: `40px`}}>
-
-                        <MyVacancies />
-
-                    </div>
+                        <MyVacancies vacancies={vacancies}/>
+                    </div>}
                 </div>
         </div>
     </main>
