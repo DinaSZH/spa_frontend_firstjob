@@ -182,11 +182,7 @@ export const createVacancy = createAsyncThunk('user/createVacancy', async (creat
 export const getVacancyById = createAsyncThunk('user/getVacancyById', async (id, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const { data } = await axios.get(`${POINT_CONTENT}/api/content/vacancies/${id}`, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
+    const { data } = await axios.get(`${POINT_CONTENT}/api/content/vacancies/${id}`);
     console.log('Fetched vacancy:', data); // Log fetched data
     thunkApi.dispatch(setVacancy({vacancy: data})); 
   } catch (error) {
@@ -210,19 +206,27 @@ export const deleteVacancyById = createAsyncThunk('user/deleteVacancyById', asyn
   }
 });
 
-export const editVacancyById = createAsyncThunk('user/editVacancyById', async (data, thunkApi) => {
+export const editVacancyById = createAsyncThunk('user/editVacancyById', async ({ id, updatedVacancy }, thunkApi) => {
   try {
     const jwt = KeycloakService.getToken(); 
-    const res = await axios.put(`${POINT_CONTENT}/api/content/vacancies/${data.id}`, data, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-    return res.data; 
+    const response = await axios.put(
+      `${POINT_CONTENT}/api/content/vacancies/${id}`,
+      updatedVacancy,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log("Data after editing resume:", response.data);
+    return response.data;
   } catch (error) {
-    console.error('Error editing the vacancy:', error);
-    thunkApi.rejectWithValue(error.message);
+    console.error('Error editing the resume:', error);
+    console.log('Error response data:', error.response ? error.response.data : error.message);
+    return thunkApi.rejectWithValue(error.response ? error.response.data : error.message);
   }
-});
+}
+);
 
 export default vacancySlice.reducer

@@ -25,7 +25,7 @@ export default function VacancyId() {
         <div className='flex flex-ai-c flex-jc-sb ptb7'>
           <Button variant="outline" radius='md'><Link className='link' to="/vacancies"><img className='arrow link' src={arrow} alt='arrow'/>All vacancies</Link></Button>
             
-          <Link className='button button-black' href={`/edit-vacancy/${vacancy.id}`}>Редактировать</Link>
+          <Link className='button button-black' to={`/vacancy/edit/${vacancy.id}`}>Редактировать</Link>
         </div> 
 
         <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">

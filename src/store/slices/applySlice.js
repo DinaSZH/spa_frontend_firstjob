@@ -144,6 +144,8 @@ export const {setTestPreviw, setTest,  appendApply, setApplies, removeApply, set
     }
   });
 
+  
+
 // export const getEmployeeApplies = (data) => (dispatch) => {
 //     axios.get(`${END_POINT}/api/applies/employee`).then(res => {
 //       dispatch(setApplies(res.data))

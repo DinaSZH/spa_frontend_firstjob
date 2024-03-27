@@ -26,32 +26,15 @@ export default function CreateVacancy() {
     const [employmentTypes, setSelectedEmpTypes] = useState([]);
     const [experience, setExperience] = useState("");
     const [description, setDescription] = useState("");
-    const [allEmploymentTypes, setEmploymentTypes] = useState(['Full time', 'Remote']);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { error, loading, success } = useSelector(
-      (state) => state.resume
+      (state) => state.vacancy
     )
 
-    // const { isPending, isError, data: cities } = useQuery({
-    //   queryKey: ['cities'],
-    //   queryFn: async () => {
-    //     const response = await fetch(`${POINT_CONTENT}/api/content/vacancies/cities`);
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch cities');
-    //     }
-    //     const citiesData = await response.json();
-    //     const transformedCities = citiesData.map(city => ({
-    //       value: city.id,
-    //       label: city.name
-    //     }));
-    //     return transformedCities;
-    //   },
-    // });
 
     useEffect(() => {
-
       axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then(res => {
         setCities(res.data)
     })

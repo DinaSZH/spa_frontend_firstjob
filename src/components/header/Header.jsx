@@ -151,6 +151,11 @@ const mockdata = [
     title: 'Test',
     link: '/tests'
   },
+  {
+    icon: IconAward,
+    title: 'Create Test',
+    link: '/create-test'
+  },
 ];
 export default function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);

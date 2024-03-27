@@ -35,17 +35,17 @@ const getRole = () => keycloak.tokenParsed?.realm_access?.roles;
 
 const getUserRole = () => {
   const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
-  return realmRoles ? realmRoles.find(role => role === 'FIRST-JOB-USER') : null;
+  return realmRoles ? !!realmRoles.find(role => role === 'FIRST-JOB-USER') : false;
 };
 
 const getHRRole = () => {
   const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
-  return realmRoles ? realmRoles.find(role => role === 'FIRST-JOB-HR') : null;
+  return realmRoles ? !!realmRoles.find(role => role === 'FIRST-JOB-HR') : false;
 };
 
 const getMentorRole = () => {
   const realmRoles = keycloak.tokenParsed?.realm_access?.roles;
-  return realmRoles ? realmRoles.find(role => role === 'FIRST-JOB-MENTOR') : null;
+  return realmRoles ? !!realmRoles.find(role => role === 'FIRST-JOB-MENTOR') : false;
 };
 
 const KeycloakService = {
