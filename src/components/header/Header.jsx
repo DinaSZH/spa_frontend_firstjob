@@ -1,172 +1,100 @@
-
-
-// function Header() {
-  
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-//   const [isLoggedIn, setIsLoggedIn] = useState(KeycloakService.isLoggedIn());
-//   const { profile } = useSelector(
-//     (state) => state.profile
-//   )
-
-//   useEffect(() => {
-//     const updateAuthenticationStatus = () => {
-//       setIsLoggedIn(KeycloakService.isLoggedIn());
-//     };
-
-//     KeycloakService.getKeycloak().onAuthSuccess = updateAuthenticationStatus;
-
-//     return () => {
-//       KeycloakService.getKeycloak().onAuthSuccess = null;
-//     };
-//   }, [isLoggedIn]);
-
-//   const createUserProfile = () => {
-//     dispatch(createProfile());
-//     navigate('/profile');
-//   }
-
-//   return (
-//     <header className="header">
-//       <div className="container">
-//         <div className="header-inner"> 
-//           <div className='header-left'>
-//             <Link to="/"><img className='logo' src={logo} alt='logo'/></Link>
-//             <Link to="/">Home</Link>
-//             <Link to="/search/vacancy">Vacancies</Link>
-//             <RenderOnAnonymous><Link to="/employer/signup">News</Link></RenderOnAnonymous>
-//             <RenderOnAnonymous><Link to="/employer/signup">Tests</Link></RenderOnAnonymous>
-//             <RenderOnAnonymous><Link to="/mentor/signup">Mentorship</Link></RenderOnAnonymous>
-//             <RenderOnAuthenticated><Link to="/resumes">Resumes</Link></RenderOnAuthenticated>
-
-            
-//           </div>
-
-//           <div className='header-right'>
-//             {!isLoggedIn&& (
-//               <div className='flex gap'>
-//                 <button onClick={() => navigate('/register')} className='button no-mr'>
-//                   Sign Up
-//                 </button>
-//                 <button  onClick={() => KeycloakService.doLogin()} className='button no-mr'>
-//                   Sign In
-//                 </button>
-//               </div>
-//             )}
-            
-//             {isLoggedIn && (
-//               <>
-//                <Menu shadow="md" width={200} >
-//                   <Menu.Target >
-//                     <Button >{KeycloakService.getUsername()}</Button>
-//                   </Menu.Target>
-
-//                   <Menu.Dropdown>
-//                     <Menu.Label>Application</Menu.Label>
-//                     {profile && <Menu.Item onClick={() => navigate('/profile/:username')} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
-//                       Profile
-//                     </Menu.Item>}
-//                     {!profile && <Menu.Item onClick={createUserProfile} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
-//                       Create profile
-//                     </Menu.Item>}
-
-//                     <Menu.Divider />
-//                     <Menu.Item  onClick={() => KeycloakService.doLogout({redirectUri: 'http://localhost:3000/'})}
-//                       color="red"
-//                       leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
-//                     >
-//                       Logout account
-//                     </Menu.Item>
-//                   </Menu.Dropdown>
-//                 </Menu>
-//               </>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// }
-
-// export default Header;
-
-
-//////////////////////////////////////
 import {
-  HoverCard,Group,Button,UnstyledButton,Text,SimpleGrid,ThemeIcon, Anchor,
-  Divider,Center,Box,Burger,Drawer,Collapse,ScrollArea,rem,useMantineTheme, Menu,} from '@mantine/core';
+  HoverCard,
+  Group,
+  Button,
+  UnstyledButton,
+  Text,
+  SimpleGrid,
+  ThemeIcon,
+  Anchor,
+  Divider,
+  Center,
+  Box,
+  Burger,
+  Drawer,
+  Collapse,
+  ScrollArea,
+  rem,
+  useMantineTheme,
+  Menu,
+} from "@mantine/core";
 // import { MantineLogo } from '@mantinex/mantine-logo';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure } from "@mantine/hooks";
 import {
-  IconNotification,IconCode,IconBook,IconChartPie3,IconFingerprint,IconCoin, IconChevronDown, IconClipboardPlus, IconClipboardText, IconAward,
-} from '@tabler/icons-react';
-import classes from './Header.module.css';
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; 
-import logo from '../../assets/images/logo.png'
-import KeycloakService from '../../services/KeycloakService';
-import {
-  IconSettings,
-  IconTrash,
-} from '@tabler/icons-react';
+  IconNotification,
+  IconCode,
+  IconBook,
+  IconChartPie3,
+  IconFingerprint,
+  IconCoin,
+  IconChevronDown,
+  IconClipboardPlus,
+  IconClipboardText,
+  IconAward,
+} from "@tabler/icons-react";
+import classes from "./Header.module.css";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/images/logo.png";
+import KeycloakService from "../../services/KeycloakService";
+import { IconSettings, IconTrash } from "@tabler/icons-react";
 import RenderOnAuthenticated from "../../helpers/RenderOnAuthenticated";
 import RenderOnAnonymous from "../../helpers/RenderOnAnonymous";
-import { useDispatch, useSelector } from 'react-redux';
-import { createProfile } from '../../store/slices/profileSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { createProfile } from "../../store/slices/profileSlice";
 
 const mockdata = [
   {
     icon: IconCode,
-    title: 'My Resumes',
-    link: '/resumes'
+    title: "My Resumes",
+    link: "/resumes",
   },
   {
     icon: IconBook,
-    title: 'Create resume',
-    link: '/create-resume'
+    title: "Create resume",
+    link: "/create-resume",
   },
   {
     icon: IconChartPie3,
-    title: 'Applies',
-    link: '/applies'
+    title: "Applies",
+    link: "/applies",
   },
   //HR
   {
     icon: IconClipboardText,
-    title: 'My Vacancies',
-    link: '/vacancies'
+    title: "My Vacancies",
+    link: "/vacancies",
   },
   {
     icon: IconCode,
-    title: 'Create vacancy',
-    link: '/create-vacancy'
+    title: "Create vacancy",
+    link: "/create-vacancy",
   },
   {
     icon: IconNotification,
-    title: 'HR applies',
-    link: '/resumes'
+    title: "HR applies",
+    link: "/resumes",
   },
   {
     icon: IconAward,
-    title: 'Test',
-    link: '/tests'
+    title: "Test",
+    link: "/tests",
   },
   {
     icon: IconAward,
-    title: 'Create Test',
-    link: '/create-test'
+    title: "Create Test",
+    link: "/create-test",
   },
 ];
 export default function Header() {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
+    useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(KeycloakService.isLoggedIn());
-  const { profile } = useSelector(
-    (state) => state.profile
-  )
+  const { profile } = useSelector((state) => state.profile);
 
   useEffect(() => {
     const updateAuthenticationStatus = () => {
@@ -182,35 +110,40 @@ export default function Header() {
 
   const createUserProfile = () => {
     dispatch(createProfile());
-    navigate('/profile');
-  }
+    navigate("/profile");
+  };
 
   const links = mockdata.map((item) => (
     <Link to={item.link} className={classes.link}>
-         <UnstyledButton className={classes.subLink} key={item.title}>
-          <Group wrap="nowrap" align="flex-start">
-            <ThemeIcon size={34} variant="default" radius="md">
-              <item.icon style={{ width: rem(22), height: rem(22) }} color={theme.colors.blue[6]} />
-            </ThemeIcon>
-            <div>
-              <Text size="sm" fw={500}>
-                {item.title}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {item.description}
-              </Text>
-            </div>
-          </Group>
-        </UnstyledButton>
+      <UnstyledButton className={classes.subLink} key={item.title}>
+        <Group wrap="nowrap" align="flex-start">
+          <ThemeIcon size={34} variant="default" radius="md">
+            <item.icon
+              style={{ width: rem(22), height: rem(22) }}
+              color={theme.colors.blue[6]}
+            />
+          </ThemeIcon>
+          <div>
+            <Text size="sm" fw={500}>
+              {item.title}
+            </Text>
+            <Text size="xs" c="dimmed">
+              {item.description}
+            </Text>
+          </div>
+        </Group>
+      </UnstyledButton>
     </Link>
   ));
 
   return (
-    <Box >
+    <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           {/* <MantineLogo size={30} /> */}
-          <Link to="/"><img className='logo' src={logo} alt='logo'/></Link>
+          <Link to="/">
+            <img className="logo" src={logo} alt="logo" />
+          </Link>
 
           <Group h="100%" gap={0} visibleFrom="sm">
             <Link to="/" className={classes.link}>
@@ -220,7 +153,13 @@ export default function Header() {
               Vacancies
             </Link>
             <RenderOnAuthenticated>
-              <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
+              <HoverCard
+                width={600}
+                position="bottom"
+                radius="md"
+                shadow="md"
+                withinPortal
+              >
                 <HoverCard.Target>
                   <a href="#" className={classes.link}>
                     <Center inline>
@@ -235,7 +174,7 @@ export default function Header() {
                   </a>
                 </HoverCard.Target>
 
-                <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
+                <HoverCard.Dropdown style={{ overflow: "hidden" }}>
                   <Group justify="space-between" px="md">
                     <Text fw={500}>Features</Text>
                     <Anchor href="#" fz="xs">
@@ -246,7 +185,9 @@ export default function Header() {
                   <Divider my="sm" />
 
                   <SimpleGrid cols={2} spacing={0}>
-                    {links}
+                    {links.map((link, index) => (
+                      <div key={index}>{link}</div>
+                    ))}
                   </SimpleGrid>
 
                   <div className={classes.dropdownFooter}>
@@ -274,37 +215,71 @@ export default function Header() {
           </Group>
 
           <Group visibleFrom="sm">
-            {!isLoggedIn&& (
-              <div className='flex gap'>
-                 <Button variant="default" onClick={() => KeycloakService.doLogin()} className='button no-mr'>
+            {!isLoggedIn && (
+              <div className="flex gap">
+                <Button
+                  variant="default"
+                  onClick={() => KeycloakService.doLogin()}
+                  className="button no-mr"
+                >
                   Log In
                 </Button>
-                <Button onClick={() => navigate('/register')} className='button no-mr'>
+                <Button
+                  onClick={() => navigate("/register")}
+                  className="button no-mr"
+                >
                   Sign Up
                 </Button>
               </div>
             )}
-            
+
             {isLoggedIn && (
               <>
-               <Menu shadow="md" width={200} >
-                  <Menu.Target >
-                    <Button >{KeycloakService.getUsername()}</Button>
+                <Menu shadow="md" width={200}>
+                  <Menu.Target>
+                    <Button>{KeycloakService.getUsername()}</Button>
                   </Menu.Target>
 
                   <Menu.Dropdown>
                     <Menu.Label>Application</Menu.Label>
-                    {profile && <Menu.Item onClick={() => navigate('/profile')} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
-                      Profile
-                    </Menu.Item>}
-                    {!profile && <Menu.Item onClick={createUserProfile} leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
-                      Create profile
-                    </Menu.Item>}
+                    {profile && (
+                      <Menu.Item
+                        onClick={() => navigate("/profile")}
+                        leftSection={
+                          <IconSettings
+                            style={{ width: rem(14), height: rem(14) }}
+                          />
+                        }
+                      >
+                        Profile
+                      </Menu.Item>
+                    )}
+                    {!profile && (
+                      <Menu.Item
+                        onClick={createUserProfile}
+                        leftSection={
+                          <IconSettings
+                            style={{ width: rem(14), height: rem(14) }}
+                          />
+                        }
+                      >
+                        Create profile
+                      </Menu.Item>
+                    )}
 
                     <Menu.Divider />
-                    <Menu.Item  onClick={() => KeycloakService.doLogout({redirectUri: 'http://localhost:3000/'})}
+                    <Menu.Item
+                      onClick={() =>
+                        KeycloakService.doLogout({
+                          redirectUri: "http://localhost:3000/",
+                        })
+                      }
                       color="red"
-                      leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+                      leftSection={
+                        <IconTrash
+                          style={{ width: rem(14), height: rem(14) }}
+                        />
+                      }
                     >
                       Logout account
                     </Menu.Item>
@@ -314,7 +289,11 @@ export default function Header() {
             )}
           </Group>
 
-          <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+          <Burger
+            opened={drawerOpened}
+            onClick={toggleDrawer}
+            hiddenFrom="sm"
+          />
         </Group>
       </header>
 
@@ -355,12 +334,13 @@ export default function Header() {
           <Divider my="sm" />
 
           <Group justify="center" grow pb="xl" px="md">
-            <Button  variant="default"  onClick={() => KeycloakService.doLogin()}>Log in</Button>
-            <Button onClick={() => navigate('/register')}>Sign up</Button>
+            <Button variant="default" onClick={() => KeycloakService.doLogin()}>
+              Log in
+            </Button>
+            <Button onClick={() => navigate("/register")}>Sign up</Button>
           </Group>
         </ScrollArea>
       </Drawer>
     </Box>
   );
 }
-

@@ -45,6 +45,7 @@ import CreateVacancy from './pages/create-vacancy/CreateVacancy';
 import VacancyId from './pages/vacancies/VacancyId';
 import EditVacancy from './pages/vacancies/EditVacancy';
 import CreateTest from './pages/create-test/CreateTest';
+import Tests from './pages/tests/Tests';
   
 
 const router = createBrowserRouter([
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
 			{
 				path: '/create-test',
 				element: <CreateTest />
+			},
+			{
+				path: '/tests',
+				element: <Tests />
 			}
 		]
 	},
