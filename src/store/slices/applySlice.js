@@ -163,6 +163,35 @@ export const createApplyVacancy = createAsyncThunk(
   }
 );
 
+export const getVacancyApplies = createAsyncThunk(
+  "user/getVacancyApplies",
+  async (_, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${POINT_CONTENT}/api/content/applications`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Fetched applies:", data);
+      thunkApi.dispatch(setApplies(data));
+    } catch (error) {
+      console.error("Error fetching applies:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+////////////////////////////////////////////////
 export const getTestPreview = createAsyncThunk(
   "user/getTestPreview",
   async (id, thunkApi) => {

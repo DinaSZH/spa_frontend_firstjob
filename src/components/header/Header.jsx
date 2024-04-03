@@ -73,7 +73,7 @@ const mockdata = [
   {
     icon: IconNotification,
     title: "HR applies",
-    link: "/resumes",
+    link: "/applies/hr",
   },
   {
     icon: IconAward,

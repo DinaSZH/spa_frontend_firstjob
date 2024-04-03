@@ -1,203 +1,223 @@
-html, #root, main {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-body{
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #F0F8FF;
-    /* background-color: #F0F8FF;  */
+html,
+#root,
+main {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-main{
-    margin:0;
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f8ff;
+  /* background-color: #F0F8FF;  */
 }
 
-body, div, input, a, li, ul, ol, textarea, span, p, h1, h2, h3, aside, main{
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+main {
+  margin: 0;
 }
 
-.container{
-    max-width: 1250px;
-    width: 100%;
-    padding: 0 20px;
-    display: block;
-    margin: 0 auto;
+body,
+div,
+input,
+a,
+li,
+ul,
+ol,
+textarea,
+span,
+p,
+h1,
+h2,
+h3,
+aside,
+main {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.container-background{
-    border: 30px solid #336be2;
+.container {
+  max-width: 1250px;
+  width: 100%;
+  padding: 0 20px;
+  display: block;
+  margin: 0 auto;
 }
 
-.border-gray{
-    border: 1px solid #d4d5d8;
-    border-radius: 10px;
+.container-background {
+  border: 30px solid #336be2;
 }
 
-a{
-    text-decoration: none;
+.border-gray {
+  border: 1px solid #d4d5d8;
+  border-radius: 10px;
 }
 
-.flex{
-    display: flex;
+a {
+  text-decoration: none;
 }
 
-.flex-cl{
-    flex-direction: column;
+.flex {
+  display: flex;
 }
 
-.flex-jc-c{
-    justify-content: center;
+.flex-cl {
+  flex-direction: column;
 }
 
-.flex-jc-sb{
-    justify-content: space-between;
+.flex-jc-c {
+  justify-content: center;
 }
 
-.flex-jc-end{
-    justify-content: flex-end;
-}
-.flex-ai-c{
-    align-items: center;
+.flex-jc-sb {
+  justify-content: space-between;
 }
 
-.flex-ai-sb{
-    align-items: space-between;
+.flex-jc-end {
+  justify-content: flex-end;
+}
+.flex-ai-c {
+  align-items: center;
 }
 
-.p0{
-    padding: 0;
+.flex-ai-sb {
+  align-items: space-between;
 }
 
-.p1{
-    padding: 5px;
+.p0 {
+  padding: 0;
 }
 
-.p2{
-    padding: 10px;
+.p1 {
+  padding: 5px;
 }
 
-.p3{
-    padding: 15px;
+.p2 {
+  padding: 10px;
 }
 
-.p4{
-    padding: 20px;
+.p3 {
+  padding: 15px;
 }
 
-.p7{
-    padding: 40px;
+.p4 {
+  padding: 20px;
 }
 
-.ptb7{
-    padding: 40px 0;
+.p7 {
+  padding: 40px;
 }
 
-.m1{
-    margin: 5px;
+.ptb7 {
+  padding: 40px 0;
 }
 
-.m2{
-    margin: 10px;
+.m1 {
+  margin: 5px;
 }
 
-.m3{
-    margin: 15px;
+.m2 {
+  margin: 10px;
 }
 
-.m4{
-    margin: 20px;
+.m3 {
+  margin: 15px;
 }
 
-.m7{
-    margin: 40px;
+.m4 {
+  margin: 20px;
 }
 
-.mtb2{
-    margin: 10px 0;
+.m7 {
+  margin: 40px;
 }
 
-.mtb4{
-    margin: 20px 0;
+.mtb2 {
+  margin: 10px 0;
 }
-.mtb7{
-    margin: 40px 0;
+
+.mtb4 {
+  margin: 20px 0;
+}
+.mtb7 {
+  margin: 40px 0;
 }
 .mt2 {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
-.mt24{
-    margin-top: 24px;
+.mt24 {
+  margin-top: 24px;
 }
 
 .mt7 {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
-.mr10{
-    margin-right: 10px;
+.mr10 {
+  margin-right: 10px;
 }
 
-.mr4{
-    margin-right: 20px;
+.mr4 {
+  margin-right: 20px;
 }
 
-.mr8{
-    margin-right: 80px;
+.mr8 {
+  margin-right: 80px;
 }
-.ml1{
-    margin-left: 10px;
-}
-
-.ml3{
-    margin-left: 30px;
+.ml1 {
+  margin-left: 10px;
 }
 
-.mb10{
-    margin-bottom: 10px;
+.ml3 {
+  margin-left: 30px;
 }
 
-.mb5{
-    margin-bottom: 5px;
+.mb10 {
+  margin-bottom: 10px;
 }
 
-.mb20{
-    margin-bottom: 20px;
+.mb5 {
+  margin-bottom: 5px;
 }
 
-.mb40{
-    margin-bottom: 40px;
+.mb20 {
+  margin-bottom: 20px;
+}
+
+.mb40 {
+  margin-bottom: 40px;
 }
 
 .ck-powered-by {
-    display: none;
+  display: none;
 }
 
-.backgroundBlock{
-    background-color: #fff;
+.backgroundBlock {
+  background-color: #fff;
 }
 
-.no-mr{
-    margin: 0px;
+.backgroundBlue {
+  background-color: #f0f8ff;
 }
 
-.w-100{
-    width: 100%;
+.no-mr {
+  margin: 0px;
 }
 
-.gap{
-    gap: 20px;
+.w-100 {
+  width: 100%;
 }
 
-.w-full{
-    width: 100%;
+.gap {
+  gap: 20px;
 }
 
-.h-full{
-    height: 100%;
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
 }

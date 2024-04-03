@@ -11,6 +11,7 @@ import {
   getVacancyById,
 } from "../../store/slices/vacancySlice";
 import AutoCompleteSelect from "../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect";
+import { getMyTests } from "../../store/slices/applySlice";
 
 export default function EditVacancy() {
   const [title, setTitle] = useState("");
@@ -42,16 +43,19 @@ export default function EditVacancy() {
 
   useEffect(() => {
     dispatch(getVacancyById(id));
+    dispatch(getMyTests());
   }, []);
 
   useEffect(() => {
     if (tests) {
+      console.log("Tests:", tests);
       setAllTests(
         tests.map((test) => ({
           value: test.id.toString(),
           label: test.name,
         }))
       );
+      // console.log("TEST ID VAVAVAV", tests[vacancy.testId].name);
     }
   }, [tests]);
 
@@ -67,6 +71,7 @@ export default function EditVacancy() {
       setSelectedEmpTypes(vacancy.employmentType);
       setExperience(vacancy.experience);
       setDescription(vacancy.description);
+      setTestId(tests[vacancy.testId]);
     }
     console.log(vacancy);
   }, [vacancy]);
@@ -127,21 +132,22 @@ export default function EditVacancy() {
         employmentTypes: formatEmploymentTypes(employmentType),
         experience: formatExperience(experience),
         description,
+        testId,
       };
       console.log("EDITED VACANCY", editedVacancyData);
       console.log("selectedCity ", selectedCity);
       console.log("cityId", vacancy.city);
 
-      await dispatch(
-        editVacancyById({
-          id: vacancy.id,
-          updatedVacancy: editedVacancyData,
-        })
-      );
+      // await dispatch(
+      //   editVacancyById({
+      //     id: vacancy.id,
+      //     updatedVacancy: editedVacancyData,
+      //   })
+      // );
 
       navigate("/vacancies");
     } catch (error) {
-      console.error("Error editing resume:", error);
+      console.error("Error editing vacancy:", error);
     }
   };
 
