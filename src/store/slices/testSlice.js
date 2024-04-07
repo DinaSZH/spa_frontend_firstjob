@@ -9,6 +9,7 @@ export const testSlice = createSlice({
     tests: [],
     test: {},
     fullTest: {},
+    certifications: [],
   },
   reducers: {
     setTestPreviw: (state, action) => {
@@ -22,6 +23,9 @@ export const testSlice = createSlice({
     },
     setMyTests: (state, action) => {
       state.tests = action.payload.tests;
+    },
+    setMyCertifications: (state, action) => {
+      state.certifications = action.payload.certifications;
     },
   },
   extraReducers: (builder) => {
@@ -88,10 +92,31 @@ export const testSlice = createSlice({
         state.error = payload;
       });
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getMyCertifications.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyCertifications.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(getMyCertifications.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      });
+  },
 });
 
-export const { setTestPreviw, setTest, uppendTest, setMyTests } =
-  testSlice.actions;
+export const {
+  setTestPreviw,
+  setTest,
+  uppendTest,
+  setMyTests,
+  setMyCertifications,
+} = testSlice.actions;
 
 export const getTestPreview = createAsyncThunk(
   "user/getTestPreview",
@@ -182,4 +207,53 @@ export const getMyTests = createAsyncThunk(
   }
 );
 
+export const getMyCertifications = createAsyncThunk(
+  "user/getMyCertifications",
+  async (email, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${POINT_CONTENT}/api/content/certification?email=${email}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Fetched certifications:", data);
+      thunkApi.dispatch(setMyTests({ tests: data }));
+    } catch (error) {
+      console.error("Error fetching certifications:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const downloadCertificationById = createAsyncThunk(
+  "user/downloadCertificationById",
+  async (id, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const response = await axios.get(
+        `${POINT_CONTENT}/api/content/certification/${id}/download`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `certification_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading the certification:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
 export default testSlice.reducer;

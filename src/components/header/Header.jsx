@@ -196,7 +196,7 @@ export default function Header() {
             <Link to="/news" className={classes.link}>
               News
             </Link>
-            <Link to="/mentorss" className={classes.link}>
+            <Link to="/mentors" className={classes.link}>
               Mentorship
             </Link>
           </Group>
