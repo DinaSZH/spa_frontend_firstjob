@@ -9,9 +9,9 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { getMyTests } from "../../store/slices/applySlice";
 import { IconCertificate } from "@tabler/icons-react";
 import classes from "./Tests.module.css";
+import { getMyTests } from "../../store/slices/testSlice";
 
 export default function Tests() {
   const dispatch = useDispatch();

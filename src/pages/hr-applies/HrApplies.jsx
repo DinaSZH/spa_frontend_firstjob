@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import KeycloakService from "../../services/KeycloakService";
-import { Anchor, Loader, SegmentedControl, Table, Text } from "@mantine/core";
+import {
+  Anchor,
+  Button,
+  Group,
+  Loader,
+  SegmentedControl,
+  Table,
+  Text,
+} from "@mantine/core";
 import { Paper } from "@mantine/core";
 import { getProfile } from "../../store/slices/profileSlice";
 import Applies from "../../components/Applies/Applies";
@@ -59,16 +67,31 @@ export default function HrApplies() {
 
   const filteredApplies = applies.filter((item) => item.status === status);
 
-  const rows = data.map((row) => {
+  const rows = applies.map((row) => {
     return (
-      <Table.Tr key={row.title}>
+      <Table.Tr key={row.id}>
         <Table.Td>
-          <Text fw={500}>{row.title}</Text>
+          <Text fw={500}>{row.email}</Text>
+        </Table.Td>
+        <Table.Td>
+          <Text fw={500}>
+            {row.firstname} {row.lastname}
+          </Text>
         </Table.Td>
         <Table.Td>
           <Anchor component="button" fz="sm">
-            {row.author}
+            {row.position}
           </Anchor>
+        </Table.Td>
+        <Table.Td>
+          <Group gap={10} justify="flex-end">
+            <Button variant="filled" size="xs" color="green">
+              Invite
+            </Button>
+            <Button variant="filled" size="xs" color="red">
+              Decline
+            </Button>
+          </Group>
         </Table.Td>
       </Table.Tr>
     );
@@ -106,6 +129,9 @@ export default function HrApplies() {
                 <Table verticalSpacing="xs">
                   <Table.Thead>
                     <Table.Tr>
+                      <Table.Th>
+                        <Text fw={700}>Email</Text>
+                      </Table.Th>
                       <Table.Th>
                         <Text fw={700}>Username</Text>
                       </Table.Th>

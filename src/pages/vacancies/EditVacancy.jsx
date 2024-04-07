@@ -11,7 +11,7 @@ import {
   getVacancyById,
 } from "../../store/slices/vacancySlice";
 import AutoCompleteSelect from "../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect";
-import { getMyTests } from "../../store/slices/applySlice";
+import { getMyTests } from "../../store/slices/testSlice";
 
 export default function EditVacancy() {
   const [title, setTitle] = useState("");
@@ -33,7 +33,7 @@ export default function EditVacancy() {
   const { id } = useParams();
   const vacancy = useSelector((state) => state.vacancy.vacancy);
   const { error, loading, success } = useSelector((state) => state.vacancy);
-  const tests = useSelector((state) => state.apply.tests);
+  const tests = useSelector((state) => state.test.tests);
 
   useEffect(() => {
     axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {

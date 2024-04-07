@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import {
-  createApplyVacancy,
-  getTestPreview,
-} from "../../../store/slices/applySlice";
+import { createApplyVacancy } from "../../../store/slices/applySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -21,6 +18,7 @@ import { Button, Modal, Radio, Text } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
 import { POINT_CONTENT } from "../../../config/end-point";
 import { deleteVacancyById } from "../../../store/slices/newsSlice";
+import { getTestPreview } from "../../../store/slices/testSlice";
 
 export default function MyVacancy({ item }) {
   const dispatch = useDispatch();
@@ -33,8 +31,8 @@ export default function MyVacancy({ item }) {
   const [openedApply, { open: openApply, close: closeApply }] =
     useDisclosure(false);
   const [applicationStatus, setApplicationStatus] = useState(null);
-  const testPreviewData = useSelector((state) => state.apply.test);
-  const fullTestData = useSelector((state) => state.apply.fullTest);
+  const testPreviewData = useSelector((state) => state.test.test);
+  const fullTestData = useSelector((state) => state.test.fullTest);
   const [isUserVacancy, setIsUserVacancy] = useState(false);
   const [selectedResume, setSelectedResume] = useState();
 

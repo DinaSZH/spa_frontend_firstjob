@@ -2,7 +2,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button, Divider, Title, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { submitTest } from "../../store/slices/applySlice";
+import { submitTest } from "../../store/slices/testSlice";
 
 export default function ModalTest({
   opened,

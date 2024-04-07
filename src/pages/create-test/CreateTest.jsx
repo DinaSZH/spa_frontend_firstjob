@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import TestQuestion from "../../components/testQuestion/TestQuestion";
 import { IconCircleX } from "@tabler/icons-react";
-import { createTest } from "../../store/slices/applySlice";
+import { createTest } from "../../store/slices/testSlice";
 
 export default function CreateTest() {
   const [name, setName] = useState("");

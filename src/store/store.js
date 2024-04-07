@@ -6,6 +6,7 @@ import resumeReducer from "./slices/resumeSlice";
 import vacancyReducer from "./slices/vacancySlice";
 import applyReducer from "./slices/applySlice";
 import newsReducer from "./slices/newsSlice";
+import testReducer from "./slices/testSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,5 +16,6 @@ export const store = configureStore({
     vacancy: vacancyReducer,
     apply: applyReducer,
     news: newsReducer,
+    test: testReducer,
   },
 });

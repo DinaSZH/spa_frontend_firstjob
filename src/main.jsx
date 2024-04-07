@@ -119,10 +119,6 @@ const router = createBrowserRouter([
         element: <Tests />,
       },
       {
-        path: "/applies/user",
-        element: <Tests />,
-      },
-      {
         path: "/applies/vacancy/:id",
         element: <VacancyApplies />,
       },

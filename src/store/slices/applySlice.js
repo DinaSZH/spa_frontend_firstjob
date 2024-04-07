@@ -7,10 +7,8 @@ export const applySlice = createSlice({
   name: "apply",
   initialState: {
     applies: [],
+    userApplies: [],
     apply: {},
-    tests: [],
-    test: {},
-    fullTest: {},
   },
   reducers: {
     appendApply: (state, action) => {
@@ -18,6 +16,9 @@ export const applySlice = createSlice({
     },
     setApplies: (state, action) => {
       state.applies = action.payload;
+    },
+    setUserApplies: (state, action) => {
+      state.userApplies = action.payload;
     },
     removeApply: (state, action) => {
       let applies = [...state.applies];
@@ -33,18 +34,6 @@ export const applySlice = createSlice({
         return item;
       });
       state.applies = applies;
-    },
-    setTestPreviw: (state, action) => {
-      state.test = action.payload.test;
-    },
-    setTest: (state, action) => {
-      state.fullTest = action.payload.fullTest;
-    },
-    uppendTest: (state, action) => {
-      state.tests = [...state.tests, action.payload.newtest];
-    },
-    setMyTests: (state, action) => {
-      state.tests = action.payload.tests;
     },
   },
   extraReducers: (builder) => {
@@ -65,31 +54,15 @@ export const applySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getTestPreview.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(getTestPreview.fulfilled, (state, { payload }) => {
-        state.status = "succeeded";
-        state.status = action.payload.status;
-      })
-      .addCase(getTestPreview.rejected, (state, { payload }) => {
-        console.error("Error from backend:", payload);
-        state.status = "failed";
-        state.error = action.payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(submitTest.pending, (state) => {
+      .addCase(getVacancyApplies.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(submitTest.fulfilled, (state, { payload }) => {
+      .addCase(getVacancyApplies.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true;
       })
-      .addCase(submitTest.rejected, (state, { payload }) => {
+      .addCase(getVacancyApplies.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
@@ -97,31 +70,15 @@ export const applySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createTest.pending, (state) => {
+      .addCase(getUserApplies.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createTest.fulfilled, (state, { payload }) => {
+      .addCase(getUserApplies.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true;
       })
-      .addCase(createTest.rejected, (state, { payload }) => {
-        console.error("Error from backend:", payload);
-        state.loading = false;
-        state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(getMyTests.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getMyTests.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(getMyTests.rejected, (state, { payload }) => {
+      .addCase(getUserApplies.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
@@ -130,12 +87,9 @@ export const applySlice = createSlice({
 });
 
 export const {
-  setTestPreviw,
-  setTest,
-  uppendTest,
-  setMyTests,
   appendApply,
   setApplies,
+  setUserApplies,
   removeApply,
   setApplyStatus,
 } = applySlice.actions;
@@ -185,101 +139,64 @@ export const getVacancyApplies = createAsyncThunk(
   }
 );
 
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-export const getTestPreview = createAsyncThunk(
-  "user/getTestPreview",
-  async (id, thunkApi) => {
+export const inviteApply = (applyId) => (dispatch) => {
+  axios
+    .put(`${END_POINT}/api/applies/accept/employee`, { applyId })
+    .then((res) => {
+      dispatch(setApplyStatus({ applyId, status: "INVITATION" }));
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+
+export const getUserApplies = createAsyncThunk(
+  "user/getUserApplies",
+  async (status, thunkApi) => {
+    // Accepting the status parameter
     try {
       const jwt = KeycloakService.getToken();
+      const url = status
+        ? `${POINT_CONTENT}/api/content/applications/user?status=${status}`
+        : `${POINT_CONTENT}/api/content/applications/user`;
       const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/${id}/preview`,
+        url, // Using the status parameter in the URL if provided
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
         }
       );
-      thunkApi.dispatch(setTestPreviw({ test: data }));
+      console.log("Fetched applies:", data);
+      thunkApi.dispatch(setUserApplies(data));
     } catch (error) {
-      console.error("Error getTestPreview:", error);
+      console.error("Error fetching applies:", error);
       thunkApi.rejectWithValue(error.message);
     }
   }
 );
 
-export const submitTest = createAsyncThunk(
-  "user/submitTest",
-  async ({ id, answers, resumeId }, thunkApi) => {
-    try {
-      const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
-        `${POINT_CONTENT}/api/content/vacancies/${id}/submit?resumeId=${resumeId}`,
-        { answers },
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error("Error sumbit test to the vacancy:", error);
-      thunkApi.rejectWithValue(error.message);
-    }
-  }
-);
+// export const acceptApply = (applyId) => (dispatch) => {
+//   axiosInstance.post(`/users/applications/hr/${applyId}/confirm`).then(res => {
 
-export const createTest = createAsyncThunk(
-  "user/createTest",
-  async (testData, thunkApi) => {
-    try {
-      const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
-        `${POINT_CONTENT}/api/content/tests/hr`,
-        testData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
-      console.log(data);
-      thunkApi.dispatch(uppendTest({ newtest: data }));
-    } catch (error) {
-      console.error("Error create test:", error);
-      thunkApi.rejectWithValue(error.message);
-    }
-  }
-);
+//     dispatch(setApplyStatusHR({applyId, status: "confirmed"}))
+//     alert("Successfully confirmed")
+//   }).catch(e => {
+//     console.log(e)
+//     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
+//   })
+// }
 
-export const getMyTests = createAsyncThunk(
-  "user/getMyTests",
-  async (_, thunkApi) => {
-    try {
-      const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/hr`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
-      console.log("Fetched tests:", data);
-      thunkApi.dispatch(setMyTests({ tests: data }));
-    } catch (error) {
-      console.error("Error fetching tests:", error);
-      thunkApi.rejectWithValue(error.message);
-    }
-  }
-);
+// export const declineApply = (applyId) => (dispatch) => {
+//   axios.put(`${END_POINT}/api/applies/decline/employee`, {applyId}).then(res => {
+//     dispatch(setApplyStatus({applyId, status: "DECLINED"}))
+//   }).catch(e => {
+//     console.log(e)
+//   })
+// }
+
+////////////////////////////////////////////////
+////////////////////////////////////////////////
 
 // export const getEmployeeApplies = (data) => (dispatch) => {
 //     axios.get(`${END_POINT}/api/applies/employee`).then(res => {

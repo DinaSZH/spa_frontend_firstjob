@@ -1,21 +1,30 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import KeycloakService from "../../services/KeycloakService";
-import { Anchor, Loader, Table, Text } from "@mantine/core";
-import { getProfile } from "../../store/slices/profileSlice";
+import {
+  Anchor,
+  Button,
+  Group,
+  Loader,
+  SegmentedControl,
+  Table,
+  Text,
+} from "@mantine/core";
+import { Paper } from "@mantine/core";
+import { getUserApplies } from "../../store/slices/applySlice";
+import classes from "./UserApplies.module.css";
+import { getMyResumes } from "../../store/slices/resumeSlice";
 
 const data = [
   {
     title: "Foundation",
     author: "Isaac Asimov",
-    year: 1951,
     reviews: { positive: 2223, negative: 259 },
   },
   {
     title: "Frankenstein",
     author: "Mary Shelley",
-    year: 1818,
     reviews: { positive: 5677, negative: 1265 },
   },
   {
@@ -46,25 +55,41 @@ const data = [
 
 export default function UserApplies() {
   const dispatch = useDispatch();
-
-  const [loader, setLoader] = useState(true);
-  const navigate = useNavigate();
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
-    dispatch(getProfile());
-  }, []);
+    dispatch(getUserApplies(status));
+    dispatch(getMyResumes());
+  }, [dispatch, status]);
 
-  const rows = data.map((row) => {
+  const userApplies = useSelector((state) => state.apply.userApplies);
+  const resumes = useSelector((state) => state.resume.resumes);
+
+  const filteredApplies = userApplies.filter((item) => item.status === status);
+  const handleStatusChange = (selectedStatus) => {
+    setStatus(selectedStatus);
+  };
+
+  const rows = userApplies.map((row) => {
+    const resume = resumes.find((item) => item.id === row.resumeId);
+    const resumePosition = resume ? resume.position : "Unknown";
     return (
-      <Table.Tr key={row.title}>
+      <Table.Tr key={row.id}>
         <Table.Td>
-          <Text fw={500}>{row.title}</Text>
+          <Text fw={500}>{row.status}</Text>
         </Table.Td>
-        <Table.Td fz="sm">{row.year}</Table.Td>
         <Table.Td>
-          <Anchor component="button" fz="sm">
-            {row.author}
+          <Anchor component={Link} to={`/vacancies/${row.vacancy.id}`} fz="sm">
+            {row.vacancy.title}, {row.vacancy.company}
           </Anchor>
+        </Table.Td>
+        <Table.Td>
+          <Anchor component={Link} to={`/resumes/${row.resumeId}`} fz="sm">
+            {resumePosition}
+          </Anchor>
+        </Table.Td>
+        <Table.Td>
+          <Text fw={500}>{row.appliedAt.split("T")[0]}</Text>
         </Table.Td>
       </Table.Tr>
     );
@@ -72,29 +97,63 @@ export default function UserApplies() {
 
   return (
     <main>
-      <div className="container p7">
-        <Text size="lg" c="blue">
-          My Applies
+      <div className="container p7 backgroundBlue mt7">
+        <Text size="lg" c="blue" className="mb20">
+          <p>My Applies</p>
         </Text>
-        <Table.ScrollContainer minWidth={800}>
-          <Table verticalSpacing="xs">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>
-                  <Text fw={700}>Position</Text>
-                </Table.Th>
-                <Table.Th>
-                  <Text fw={700}></Text>
-                  Date
-                </Table.Th>
-                <Table.Th>
-                  <Text fw={700}>Status</Text>
-                </Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>{rows}</Table.Tbody>
-          </Table>
-        </Table.ScrollContainer>
+
+        <Paper shadow="md" radius="lg">
+          <div className={classes.wrapper}>
+            <div className={classes.contacts}>
+              <Text fz="lg" fw={700} className={classes.title} c="#fff">
+                Contact information
+              </Text>
+
+              <SegmentedControl
+                orientation="vertical"
+                fullWidth
+                size="md"
+                radius="md"
+                data={[
+                  "All applies",
+                  "APPLIED",
+                  "TEST FAILED",
+                  "INVITED",
+                  "DECLINED",
+                ]}
+                value={status}
+                onChange={handleStatusChange}
+              />
+            </div>
+
+            <div className="ml1">
+              <Text fz="lg" fw={700} className={classes.title}>
+                Users apply
+              </Text>
+              <Table.ScrollContainer minWidth={600} className="mb20">
+                <Table verticalSpacing="xs">
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>
+                        <Text fw={700}>Status</Text>
+                      </Table.Th>
+                      <Table.Th>
+                        <Text fw={700}>Vacancy</Text>
+                      </Table.Th>
+                      <Table.Th>
+                        <Text fw={700}>Resume</Text>
+                      </Table.Th>
+                      <Table.Th>
+                        <Text fw={700}>Date</Text>
+                      </Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>{rows}</Table.Tbody>
+                </Table>
+              </Table.ScrollContainer>
+            </div>
+          </div>
+        </Paper>
       </div>
     </main>
   );
