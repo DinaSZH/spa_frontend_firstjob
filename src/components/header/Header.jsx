@@ -43,23 +43,7 @@ import RenderOnAnonymous from "../../helpers/RenderOnAnonymous";
 import { useDispatch, useSelector } from "react-redux";
 import { createProfile } from "../../store/slices/profileSlice";
 
-const mockdata = [
-  {
-    icon: IconCode,
-    title: "My Resumes",
-    link: "/resumes",
-  },
-  {
-    icon: IconBook,
-    title: "Create resume",
-    link: "/create-resume",
-  },
-  {
-    icon: IconChartPie3,
-    title: "Applies",
-    link: "/applies",
-  },
-  //HR
+const linksHR = [
   {
     icon: IconClipboardText,
     title: "My Vacancies",
@@ -84,6 +68,24 @@ const mockdata = [
     icon: IconAward,
     title: "Create Test",
     link: "/create-test",
+  },
+];
+
+const linksUser = [
+  {
+    icon: IconCode,
+    title: "My Resumes",
+    link: "/resumes",
+  },
+  {
+    icon: IconBook,
+    title: "Create resume",
+    link: "/create-resume",
+  },
+  {
+    icon: IconChartPie3,
+    title: "Applies",
+    link: "/applies",
   },
 ];
 export default function Header() {
@@ -112,8 +114,10 @@ export default function Header() {
     dispatch(createProfile());
     navigate("/profile");
   };
+  const isHR = KeycloakService.getHRRole();
+  const linksSelected = isHR ? linksHR : linksUser;
 
-  const links = mockdata.map((item) => (
+  const links = linksSelected.map((item) => (
     <Link to={item.link} className={classes.link}>
       <UnstyledButton className={classes.subLink} key={item.title}>
         <Group wrap="nowrap" align="flex-start">
@@ -177,9 +181,6 @@ export default function Header() {
                 <HoverCard.Dropdown style={{ overflow: "hidden" }}>
                   <Group justify="space-between" px="md">
                     <Text fw={500}>Features</Text>
-                    <Anchor href="#" fz="xs">
-                      View all
-                    </Anchor>
                   </Group>
 
                   <Divider my="sm" />
@@ -189,29 +190,15 @@ export default function Header() {
                       <div key={index}>{link}</div>
                     ))}
                   </SimpleGrid>
-
-                  <div className={classes.dropdownFooter}>
-                    <Group justify="space-between">
-                      <div>
-                        <Text fw={500} fz="sm">
-                          Get started
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                          Their food sources have decreased, and their numbers
-                        </Text>
-                      </div>
-                      <Button variant="default">Get started</Button>
-                    </Group>
-                  </div>
                 </HoverCard.Dropdown>
               </HoverCard>
             </RenderOnAuthenticated>
-            <a href="#" className={classes.link}>
+            <Link to="/news" className={classes.link}>
               News
-            </a>
-            <a href="#" className={classes.link}>
+            </Link>
+            <Link to="/mentorss" className={classes.link}>
               Mentorship
-            </a>
+            </Link>
           </Group>
 
           <Group visibleFrom="sm">

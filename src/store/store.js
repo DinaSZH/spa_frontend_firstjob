@@ -1,19 +1,19 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from "@reduxjs/toolkit";
 //import filter from './slices/filterSlice'
-import authReducer from './slices/authSlice'
-import profileReducer from './slices/profileSlice'
-import resumeReducer from './slices/resumeSlice'
-import vacancyReducer from './slices/vacancySlice'
-import applyReducer from './slices/applySlice'
+import authReducer from "./slices/authSlice";
+import profileReducer from "./slices/profileSlice";
+import resumeReducer from "./slices/resumeSlice";
+import vacancyReducer from "./slices/vacancySlice";
+import applyReducer from "./slices/applySlice";
+import newsReducer from "./slices/newsSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    profile:profileReducer,
+    profile: profileReducer,
     resume: resumeReducer,
     vacancy: vacancyReducer,
     apply: applyReducer,
+    news: newsReducer,
   },
-})
-
-
+});

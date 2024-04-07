@@ -1,40 +1,47 @@
-h1{
-    font-size: 24px;
+h1 {
+  font-size: 24px;
 }
 
-.h2{
-    font-size: 20px;
-    font-weight: 700;
+.h2 {
+  font-size: 20px;
+  font-weight: 700;
 }
 
-h3, .h3{
-    font-size: 16px;
-    font-weight: 700;
+h3,
+.h3 {
+  font-size: 16px;
+  font-weight: 700;
 }
 
-h4, .h4{
-    font-size: 14px;
-    font-weight: 700;
+h4,
+.h4 {
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.link{
-    color: #589BEB;
-    text-decoration: none;
-    cursor: pointer;
+.link {
+  color: #589beb;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.cursor{
-    text-decoration: none;
-    cursor: pointer;
+.cursor {
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.error{
-    color: #ff0000;
+.error {
+  color: #ff0000;
 }
 
-.text{
-    font-family: "Mona Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 22px;
+.text {
+  font-family: "Mona Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.navLink {
+  text-decoration: "none";
+  color: "inherit";
 }

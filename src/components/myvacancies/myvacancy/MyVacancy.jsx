@@ -20,7 +20,7 @@ import KeycloakService from "../../../services/KeycloakService";
 import { Button, Modal, Radio, Text } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
 import { POINT_CONTENT } from "../../../config/end-point";
-import { getMyResumes } from "../../../store/slices/resumeSlice";
+import { deleteVacancyById } from "../../../store/slices/newsSlice";
 
 export default function MyVacancy({ item }) {
   const dispatch = useDispatch();
@@ -40,18 +40,18 @@ export default function MyVacancy({ item }) {
 
   useEffect(() => {
     if (openedTest) {
-      close(); // Close Modal when ModalTest is opened
+      close();
     }
   }, [openedTest]);
 
   useEffect(() => {
-    dispatch(getMyResumes());
-  }, []);
+    const userId = KeycloakService.getEmail();
+    setIsUserVacancy(item.hrEmail === userId);
+  }, [item, item.applicationStatus]);
 
   useEffect(() => {
-    const userId = KeycloakService.getId();
-    setIsUserVacancy(item.userId === userId);
-  }, [item]);
+    renderApplicationStatus();
+  }, [item.applicationStatus]);
 
   const handleApply = async () => {
     setLoading(true);
@@ -109,31 +109,27 @@ export default function MyVacancy({ item }) {
     }
   };
 
-  const renderActions = () => {
-    // console.log("KeycloakService.getHRRole()", KeycloakService.getHRRole());
-    // console.log("KeycloakService.getUserRole()", KeycloakService.getUserRole());
-    // console.log("KeycloakService.getId()", KeycloakService.getId());
-    // console.log(isUserVacancy);
-    if (KeycloakService.getHRRole() && isUserVacancy) {
-      return (
-        <div className="flex">
-          <Link to={`/vacancy/edit/${item.id}`}>
-            <span className="button-edit">Edit</span>
-          </Link>
-          <span
-            className="button-delete"
-            onClick={() => dispatch(deleteResumeById(item.id))}
-          >
-            Delete
-          </span>
-        </div>
-      );
-    } else if (KeycloakService.getUserRole()) {
-      return renderApplicationStatus();
-    } else {
-      return <div className="flex"></div>;
-    }
-  };
+  // const renderActions = () => {
+  //   if (KeycloakService.getHRRole() && isUserVacancy) {
+  //     return (
+  //       <div className="flex">
+  //         <Link to={`/vacancy/edit/${item.id}`}>
+  //           <span className="button-edit">Edit</span>
+  //         </Link>
+  //         <span
+  //           className="button-delete"
+  //           onClick={() => dispatch(deleteVacancyById(item.id))}
+  //         >
+  //           Delete
+  //         </span>
+  //       </div>
+  //     );
+  //   } else if (KeycloakService.getUserRole()) {
+  //     return renderApplicationStatus();
+  //   } else {
+  //     return <div className="flex"></div>;
+  //   }
+  // };
 
   return (
     <div className="card mtb4">
@@ -144,7 +140,20 @@ export default function MyVacancy({ item }) {
             {item.title}
           </Link>
         </div>
-        {renderActions()}
+        {KeycloakService.getUserRole() && renderApplicationStatus()}
+        {KeycloakService.getHRRole() && isUserVacancy && (
+          <div className="flex">
+            <Link to={`/vacancy/edit/${item.id}`}>
+              <span className="button-edit">Edit</span>
+            </Link>
+            <span
+              className="button-delete"
+              onClick={() => dispatch(deleteVacancyById(item.id))}
+            >
+              Delete
+            </span>
+          </div>
+        )}
       </div>
       <h2 className="flex flex-ai-c">
         <IconPremiumRights className="mr10" /> {item.salaryFrom}-{" "}
