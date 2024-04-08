@@ -7,6 +7,7 @@ import vacancyReducer from "./slices/vacancySlice";
 import applyReducer from "./slices/applySlice";
 import newsReducer from "./slices/newsSlice";
 import testReducer from "./slices/testSlice";
+import mentorReducer from "./slices/mentorSlice";
 
 export const store = configureStore({
   reducer: {
@@ -17,5 +18,6 @@ export const store = configureStore({
     apply: applyReducer,
     news: newsReducer,
     test: testReducer,
+    mentor: mentorReducer,
   },
 });

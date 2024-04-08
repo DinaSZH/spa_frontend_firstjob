@@ -36,7 +36,7 @@ export function News() {
       <Button onClick={open} className="mb20">
         Add news
       </Button>
-      <Text className={classes.title}>Новости</Text>
+      <Text className={classes.title}>News</Text>
       {allNews &&
         allNews.map((item) => (
           <React.Fragment key={item.id}>
@@ -47,6 +47,7 @@ export function News() {
               <SimpleGrid
                 spacing={{ base: 20, sm: 30 }}
                 cols={{ base: 1, sm: 2 }}
+                className={classes.card}
               >
                 <Image src={item.imageUrl} className={classes.mobileImage} />
                 <Image src={item.imageUrl} className={classes.desktopImage} />

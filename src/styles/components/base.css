@@ -213,6 +213,9 @@ a {
 .gap {
   gap: 20px;
 }
+.gap10 {
+  gap: 10px;
+}
 
 .w-full {
   width: 100%;

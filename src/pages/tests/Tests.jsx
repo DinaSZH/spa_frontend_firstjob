@@ -35,7 +35,7 @@ export default function Tests() {
           </button>
         </div>
 
-        {tests.length > 0 ? (
+        {tests && tests.length > 0 ? (
           <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
             {tests &&
               tests.map((item) => (

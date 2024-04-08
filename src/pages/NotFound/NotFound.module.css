@@ -7,6 +7,16 @@
   padding-bottom: rem(80px);
 }
 
+.card {
+  padding: 20px 0px;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: var(--mantine-shadow-md);
+  }
+}
+
 .title {
   font-weight: 900;
   font-size: rem(34px);

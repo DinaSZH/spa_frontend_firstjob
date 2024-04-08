@@ -51,6 +51,8 @@ import UserApplies from "./pages/user-applies/UserApplies";
 import HrApplies from "./pages/hr-applies/HrApplies";
 import { News } from "./pages/news/News";
 import { NewsById } from "./pages/news/NewsById";
+import { Mentors } from "./pages/Mentor/Mentors";
+import { MentorsById } from "./pages/Mentor/MentorsById";
 
 const router = createBrowserRouter([
   {
@@ -137,6 +139,14 @@ const router = createBrowserRouter([
       {
         path: "/news/:id",
         element: <NewsById />,
+      },
+      {
+        path: "/mentors",
+        element: <Mentors />,
+      },
+      {
+        path: "/mentors/:id",
+        element: <MentorsById />,
       },
     ],
   },
