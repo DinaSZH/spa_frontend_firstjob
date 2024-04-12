@@ -32,7 +32,7 @@ export function News() {
   }, []);
 
   return (
-    <Container className="container p7">
+    <Container size="lg" py="xl">
       <Button onClick={open} className="mb20">
         Add news
       </Button>

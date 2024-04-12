@@ -14,7 +14,6 @@ import {
   Textarea,
 } from "@mantine/core";
 import { POINT_CONTENT } from "../../config/end-point";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { Group, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -25,7 +24,6 @@ export default function CreateMentor() {
   const [cities, setCities] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, success } = useSelector((state) => state.resume);
 
   useEffect(() => {
     axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {
@@ -114,7 +112,7 @@ export default function CreateMentor() {
 
   return (
     <main>
-      <Container size={1250} mt={40} mb={40} className="mb40">
+      <Container size="lg" py="xl">
         <Group justify="flex-end">
           <Button
             onClick={() => navigate("/profile")}
@@ -138,6 +136,7 @@ export default function CreateMentor() {
                 placeholder="Input Telegram link"
                 {...form.getInputProps("telegramLink")}
               />
+
               <TextInput
                 mt="sm"
                 label="Position"

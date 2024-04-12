@@ -1,33 +1,33 @@
 import React from "react";
-import { Notification, rem } from "@mantine/core";
+import { Button, Flex, Notification, rem } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Success = () => {
   const navigate = useNavigate();
   const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
   return (
-    <div className="flex h-full flex-cl flex-jc-c flex-ai-c p4">
+    <Flex
+      gap="md"
+      justify="flex-start"
+      align="flex-start"
+      direction="column"
+      wrap="wrap"
+      className="mt24"
+    >
       <Notification
         withCloseButton={false}
         icon={checkIcon}
-        style={{
-          width: "520px",
-          height: "150px",
-          border: "1px solid rgb(211 207 207)",
-        }}
+        withBorder
         color="teal"
         title="Your data has been sent successfully!"
+        style={{ width: "100%" }}
       >
         Please check your email! <br></br>
         The answer will come to you by email
       </Notification>
-      <div className="login-footer">
-        <button onClick={() => navigate("/")} className="button-primary mt24">
-          Back to main page
-        </button>
-      </div>
-    </div>
+      <Button onClick={() => navigate("/")}>Back to main page</Button>
+    </Flex>
   );
 };
 
