@@ -96,39 +96,6 @@ export const newsSlice = createSlice({
         state.error = payload;
       });
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(deleteVacancyById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deleteVacancyById.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(deleteVacancyById.rejected, (state, { payload }) => {
-        console.error("Error from backend:", payload);
-        state.loading = false;
-        state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(editVacancyById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(editVacancyById.fulfilled, (state, action) => {
-        state.response = "update";
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(editVacancyById.rejected, (state, { payload }) => {
-        console.error("Error from backend:", payload);
-        state.loading = false;
-        state.error = payload;
-      });
-  },
 });
 
 export const {
@@ -211,57 +178,6 @@ export const getNewsById = createAsyncThunk(
     } catch (error) {
       console.error("Error getting news by id:", error);
       thunkApi.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const deleteVacancyById = createAsyncThunk(
-  "user/deleteVacancyById",
-  async (id, thunkApi) => {
-    try {
-      const jwt = KeycloakService.getToken();
-      const { data } = await axios.delete(
-        `${POINT_CONTENT}/api/content/vacancies/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
-      thunkApi.dispatch(handleDeleteVacancy(id));
-    } catch (error) {
-      console.error("Error deleting the vacancy:", error);
-      thunkApi.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const editVacancyById = createAsyncThunk(
-  "user/editVacancyById",
-  async ({ id, updatedVacancy }, thunkApi) => {
-    try {
-      const jwt = KeycloakService.getToken();
-      const response = await axios.put(
-        `${POINT_CONTENT}/api/content/vacancies/${id}`,
-        updatedVacancy,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Data after editing resume:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Error editing the resume:", error);
-      console.log(
-        "Error response data:",
-        error.response ? error.response.data : error.message
-      );
-      return thunkApi.rejectWithValue(
-        error.response ? error.response.data : error.message
-      );
     }
   }
 );

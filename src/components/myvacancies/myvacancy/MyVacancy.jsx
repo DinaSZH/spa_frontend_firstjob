@@ -17,8 +17,8 @@ import KeycloakService from "../../../services/KeycloakService";
 import { Button, Modal, Radio, Text } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
 import { POINT_CONTENT } from "../../../config/end-point";
-import { deleteVacancyById } from "../../../store/slices/newsSlice";
 import { getTestPreview } from "../../../store/slices/testSlice";
+import { deleteVacancyById } from "../../../store/slices/vacancySlice";
 
 export default function MyVacancy({ item }) {
   const dispatch = useDispatch();

@@ -88,6 +88,15 @@ const linksUser = [
     link: "/applies",
   },
 ];
+
+const linksMentor = [
+  {
+    icon: IconBook,
+    title: "Create mentor profile",
+    link: "/create-mentor",
+  },
+];
+
 export default function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
@@ -115,7 +124,16 @@ export default function Header() {
     navigate("/profile");
   };
   const isHR = KeycloakService.getHRRole();
-  const linksSelected = isHR ? linksHR : linksUser;
+  const isMentor = KeycloakService.getMentorRole();
+  let linksSelected;
+
+  if (isHR) {
+    linksSelected = linksHR;
+  } else if (isMentor) {
+    linksSelected = linksMentor;
+  } else {
+    linksSelected = linksUser;
+  }
 
   const links = linksSelected.map((item) => (
     <Link to={item.link} className={classes.link}>

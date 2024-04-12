@@ -60,7 +60,7 @@ export function Mentors() {
   return (
     <div className="container p7">
       <Center>
-        <Text size="xl" fw={700}>
+        <Text size="xl" mb={10} fw={700}>
           Find your mentor
         </Text>
       </Center>

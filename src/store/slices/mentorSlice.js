@@ -19,7 +19,7 @@ export const mentorSlice = createSlice({
     setMentor: (state, action) => {
       state.mentor = action.payload.mentor;
     },
-    uppendResume: (state, action) => {
+    uppendMentor: (state, action) => {
       state.mentors = [...state.mentors, action.payload.newmentor];
     },
     setResume: (state, action) => {
@@ -52,7 +52,7 @@ export const mentorSlice = createSlice({
 export const {
   setAllMentors,
   setMentor,
-  uppendResume,
+  uppendMentor,
   setResume,
   handleDeleteResume,
 } = mentorSlice.actions;
@@ -83,6 +83,30 @@ export const getMentorsById = createAsyncThunk(
     } catch (error) {
       console.error("Error getting mentors by id:", error);
       thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const createMentorProfile = createAsyncThunk(
+  "user/createMentorProfile",
+  async (createMentor, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.post(
+        `${POINT_CONTENT}/api/content/mentor`,
+        createMentor,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      thunkApi.dispatch(uppendMentor({ newmentor: data }));
+      console.log("Mentor DATAT: ", data);
+      return data;
+    } catch (error) {
+      console.log("Error creating resume: ", error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

@@ -53,6 +53,7 @@ import { News } from "./pages/news/News";
 import { NewsById } from "./pages/news/NewsById";
 import { Mentors } from "./pages/Mentor/Mentors";
 import { MentorsById } from "./pages/Mentor/MentorsById";
+import CreateMentor from "./pages/create-mentor/CreateMentor";
 
 const router = createBrowserRouter([
   {
@@ -147,6 +148,10 @@ const router = createBrowserRouter([
       {
         path: "/mentors/:id",
         element: <MentorsById />,
+      },
+      {
+        path: "/create-mentor",
+        element: <CreateMentor />,
       },
     ],
   },

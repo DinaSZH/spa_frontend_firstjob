@@ -136,14 +136,15 @@ export default function EditVacancy() {
       };
       console.log("EDITED VACANCY", editedVacancyData);
       console.log("selectedCity ", selectedCity);
+      console.log("cityIdL Value ", cityId);
       console.log("cityId", vacancy.city);
 
-      // await dispatch(
-      //   editVacancyById({
-      //     id: vacancy.id,
-      //     updatedVacancy: editedVacancyData,
-      //   })
-      // );
+      await dispatch(
+        editVacancyById({
+          id: vacancy.id,
+          updatedVacancy: editedVacancyData,
+        })
+      );
 
       navigate("/vacancies");
     } catch (error) {
