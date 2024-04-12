@@ -1,18 +1,18 @@
-.working-history{
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 20px;
+.working-history {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  margin: 20px 0px;
+  margin-bottom: 20px;
 }
 
-.working-history span{
-    color: #1785e5;
+.working-history span {
+  color: #1785e5;
 }
 
-.working-history-date{
-    display: flex;
-    align-items:center;
-    width: 130px;
-    /* margin-block-start: 1.33em; */
+.working-history-date {
+  display: flex;
+  align-items: center;
+  width: 130px;
+  /* margin-block-start: 1.33em; */
 }
-
