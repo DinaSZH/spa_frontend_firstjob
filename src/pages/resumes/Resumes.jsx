@@ -3,11 +3,13 @@ import MyResumes from "../../components/myresumes/MyResumes";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getMyResumes } from "../../store/slices/resumeSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Container, Group, Text } from "@mantine/core";
 
 export default function Resumes() {
   const dispacth = useDispatch();
   const resumes = useSelector((state) => state.resume.resumes);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispacth(getMyResumes());
@@ -15,15 +17,22 @@ export default function Resumes() {
 
   return (
     <main>
-      <div className="container">
-        <div className="flex flex-ai-c flex-jc-sb ptb7">
-          <h1>My Resumes</h1>
-          <Link className="button button-black" to="/create-resume">
-            Create Resume
-          </Link>
-        </div>
+      <Container size="lg" py="xl">
+        <Group justify="space-between">
+          <Text size="xl" fw={700} mb="lg">
+            My Resumes
+          </Text>
+          <Button
+            onClick={() => navigate("/create-resume")}
+            variant="filled"
+            color="rgba(61, 61, 61, 1)"
+            mb={10}
+          >
+            Create resume
+          </Button>
+        </Group>
         <MyResumes resumes={resumes} />
-      </div>
+      </Container>
     </main>
   );
 }

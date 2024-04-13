@@ -13,7 +13,6 @@ import EducationItem from "../../components/EducationItem/EducationItem";
 import { createResume } from "../../store/slices/resumeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Checkbox, Group } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import {
   Box,
   Button,
@@ -28,7 +27,6 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { YearPickerInput } from "@mantine/dates";
 
 export default function CreateResume() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -171,7 +169,7 @@ export default function CreateResume() {
       <Container size="lg" py="xl">
         <Group justify="flex-end">
           <Button
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/resumes")}
             variant="filled"
             color="rgba(61, 61, 61, 1)"
             mb={10}
