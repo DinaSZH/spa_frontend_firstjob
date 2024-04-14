@@ -12,18 +12,20 @@ import {
   IconPremiumRights,
   IconTool,
 } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import KeycloakService from "../../../services/KeycloakService";
 import { Button, Modal, Radio, Text } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
 import { POINT_CONTENT } from "../../../config/end-point";
 import { getTestPreview } from "../../../store/slices/testSlice";
 import { deleteVacancyById } from "../../../store/slices/vacancySlice";
+import { Chip, Flex, Group, Paper } from "@mantine/core";
+import { IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";
 
 export default function MyVacancy({ item }) {
   const dispatch = useDispatch();
   const resumes = useSelector((state) => state.resume.resumes);
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const [openedTest, { open: openTest, close: closeTest }] =
@@ -33,6 +35,7 @@ export default function MyVacancy({ item }) {
   const [applicationStatus, setApplicationStatus] = useState(null);
   const testPreviewData = useSelector((state) => state.test.test);
   const fullTestData = useSelector((state) => state.test.fullTest);
+  const fullTestMain = useSelector((state) => state.apply.testMain);
   const [isUserVacancy, setIsUserVacancy] = useState(false);
   const [selectedResume, setSelectedResume] = useState();
 
@@ -130,46 +133,72 @@ export default function MyVacancy({ item }) {
   // };
 
   return (
-    <div className="card mtb4">
-      <div className="flex flex-ai-c resume-title flex-jc-sb">
-        <div className="flex">
-          <IconLicense className="mr10" size={50} />
-          <Link className="h2 link" to={`/vacancies/${item.id}`}>
-            {item.title}
-          </Link>
-        </div>
-        {KeycloakService.getUserRole() && renderApplicationStatus()}
-        {KeycloakService.getHRRole() && isUserVacancy && (
-          <div className="flex">
-            <Link to={`/vacancy/edit/${item.id}`}>
-              <span className="button-edit">Edit</span>
+    <>
+      <Paper withBorder shadow="xl" p="xl" my={20}>
+        <Group justify="space-between">
+          <Flex mih={50} gap="md" justify="center" direction="row" wrap="wrap">
+            <IconLicense className="mr10" size={50} />
+            <Link className="h2 link" to={`/vacancies/${item.id}`}>
+              {item.title}
             </Link>
-            <span
-              className="button-delete"
-              onClick={() => dispatch(deleteVacancyById(item.id))}
-            >
-              Delete
-            </span>
+          </Flex>
+          <Flex mih={50} gap="sm" align="center" direction="row" wrap="wrap">
+            {KeycloakService.getUserRole() && renderApplicationStatus()}
+            {KeycloakService.getHRRole() && isUserVacancy && (
+              <div className="flex gap10">
+                <Chip
+                  color="gray"
+                  variant="light"
+                  size="md"
+                  defaultChecked
+                  icon={<IconEdit style={{ width: 16, height: 16 }} />}
+                  onClick={() => navigate(`/vacancy/edit/${item.id}`)}
+                >
+                  Edit
+                </Chip>
+                <Chip
+                  icon={<IconTrash style={{ width: 16, height: 16 }} />}
+                  color="red"
+                  variant="light"
+                  size="md"
+                  onClick={() => dispatch(deleteVacancyById(item.id))}
+                  defaultChecked
+                >
+                  Delete
+                </Chip>
+              </div>
+            )}
+            {/* <Chip
+            icon={<IconDownload style={{ width: 16, height: 16 }} />}
+            variant="light"
+            size="md"
+            onClick={() => dispatch(downloadResumeById(item.id))}
+            defaultChecked
+          >
+            Download
+          </Chip> */}
+          </Flex>
+        </Group>
+        <Flex mt={10} gap="sm" direction="column" wrap="wrap">
+          <div className="flex flex-ai-c">
+            <IconPremiumRights className="mr10" /> {item.salaryFrom}-{" "}
+            {item.salaryTo} {item.currency}
           </div>
-        )}
-      </div>
-      <h2 className="flex flex-ai-c">
-        <IconPremiumRights className="mr10" /> {item.salaryFrom}-{" "}
-        {item.salaryTo} {item.currency}
-      </h2>
-      <div className="flex mb10">
-        <IconMapPin className="mr10" /> {item.city}, {item.country}
-      </div>
-      <div className="skill flex flex-ai-c ">
-        <div className="flex">
-          <IconTool className="mr10" />
-          {item.experience}
-        </div>
-        <div className="date flex">
-          <IconCalendarMonth />
-          <p>{item.createdAt ? item.createdAt.split("T")[0] : ""}</p>
-        </div>
-      </div>
+          <div className="flex">
+            <IconMapPin className="mr10" /> {item.city}, {item.country}
+          </div>
+        </Flex>
+        <Group justify="space-between">
+          <div className="flex">
+            <IconTool className="mr10" />
+            {item.experience}
+          </div>
+          <div className="flex flex-ai-c">
+            <IconCalendarMonth className="mr10" />
+            <p>{item.createdAt ? item.createdAt.split("T")[0] : ""}</p>
+          </div>
+        </Group>
+      </Paper>
       <Modal opened={opened} onClose={close} title="Test preview" centered>
         <div className="h2 link">
           You need to pass a test in order to apply for a vacancy
@@ -210,7 +239,7 @@ export default function MyVacancy({ item }) {
       <ModalTest
         opened={openedTest}
         close={closeTest}
-        fullTestData={fullTestData}
+        fullTestData={fullTestMain}
         item={item}
         resumeId={selectedResume}
       />
@@ -256,6 +285,6 @@ export default function MyVacancy({ item }) {
           </div>
         )}
       </Modal>
-    </div>
+    </>
   );
 }

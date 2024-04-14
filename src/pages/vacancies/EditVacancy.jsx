@@ -2,23 +2,37 @@ import Input from "../../components/FillForm/input/input";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { MultiSelect, Paper, Select } from "@mantine/core";
 import { POINT_CONTENT } from "../../config/end-point";
 import { useDispatch, useSelector } from "react-redux";
 import { Checkbox, Group } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
 import {
   editVacancyById,
   getVacancyById,
 } from "../../store/slices/vacancySlice";
 import AutoCompleteSelect from "../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect";
 import { getMyTests } from "../../store/slices/testSlice";
+import {
+  MultiSelect,
+  Box,
+  Button,
+  Container,
+  Flex,
+  NumberInput,
+  Paper,
+  Select,
+  Text,
+  Space,
+  TextInput,
+  Textarea,
+} from "@mantine/core";
 
 export default function EditVacancy() {
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [address, setAdress] = useState("");
   const [cityId, setCityId] = useState();
-  const [cities, setCities] = useState([]);
+  // const [cities, setCities] = useState([]);
   const [salaryFrom, setFromSalary] = useState();
   const [salaryTo, setToSalary] = useState();
   const [currency, setCurrency] = useState("KZT");
@@ -34,12 +48,30 @@ export default function EditVacancy() {
   const vacancy = useSelector((state) => state.vacancy.vacancy);
   const { error, loading, success } = useSelector((state) => state.vacancy);
   const tests = useSelector((state) => state.test.tests);
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  useEffect(() => {
-    axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {
-      setCities(res.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {
+  //     setCities(res.data);
+  //   });
+  // }, []);
+  const { data: cities } = useQuery({
+    queryKey: ["cities"],
+    queryFn: async () => {
+      const response = await fetch(
+        `${POINT_CONTENT}/api/content/vacancies/cities`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch cities");
+      }
+      const citiesData = await response.json();
+      const transformedCities = citiesData.map((city) => ({
+        value: city.id.toString(),
+        label: city.name,
+      }));
+      return transformedCities;
+    },
+  });
 
   useEffect(() => {
     dispatch(getVacancyById(id));
@@ -93,6 +125,25 @@ export default function EditVacancy() {
     }
   };
 
+  const formatCurrency = (currency) => {
+    switch (currency) {
+      case "$":
+        return "USD";
+      case "₸":
+        return "KZT";
+      case "₽":
+        return "RUB";
+      case "USD":
+        return "USD";
+      case "KZT":
+        return "KZT";
+      case "RUB":
+        return "RUB";
+      default:
+        return "";
+    }
+  };
+
   const formatEmploymentTypes = (selectedTypes) => {
     const formattedTypes = selectedTypes.map((type) => {
       switch (type) {
@@ -107,25 +158,45 @@ export default function EditVacancy() {
     return formattedTypes;
   };
 
-  const formatCurrency = (currency) => {
-    switch (currency) {
-      case "$":
-        return "USD";
-      case "₸":
-        return "KZT";
-      default:
-        return "";
-    }
+  const updateFormValidity = () => {
+    const isValid =
+      title &&
+      company &&
+      address &&
+      cityId &&
+      salaryFrom &&
+      salaryTo &&
+      currency &&
+      employmentType &&
+      experience &&
+      description;
+
+    setIsFormValid(isValid);
   };
+
+  useEffect(() => {
+    updateFormValidity();
+  }, [
+    title,
+    company,
+    address,
+    cityId,
+    salaryFrom,
+    salaryTo,
+    currency,
+    employmentType,
+    experience,
+    description,
+  ]);
 
   const handleSave = async () => {
     try {
-      const selectedCity = cities.find((c) => c.id === cityId);
+      const selectedCity = cities.find((c) => c.name === cityId);
       const editedVacancyData = {
         title,
         company,
         address,
-        cityId: selectedCity.id ? selectedCity.id : cityId,
+        cityId: Number(cityId),
         fromSalary: salaryFrom,
         toSalary: salaryTo,
         currency: formatCurrency(currency),
@@ -138,6 +209,9 @@ export default function EditVacancy() {
       console.log("selectedCity ", selectedCity);
       console.log("cityIdL Value ", cityId);
       console.log("cityId", vacancy.city);
+      // console.log("selectedCity ", selectedCity);
+      // console.log("cityIdL Value ", cityId);
+      // console.log("cityId", vacancy.city);
 
       await dispatch(
         editVacancyById({
@@ -160,95 +234,117 @@ export default function EditVacancy() {
 
   return (
     <main>
-      <div className="container p7">
-        <div className="flex flex-jc-end mb10">
-          <Link className="button button-black " to="/vacancies">
-            Back
-          </Link>
-        </div>
+      <Container size="lg" py="xl">
+        <Group justify="flex-end">
+          <Button
+            onClick={() => navigate("/vacancies")}
+            variant="filled"
+            color="rgba(61, 61, 61, 1)"
+            mb={10}
+          >
+            Go to vacancies
+          </Button>
+        </Group>
+        <Text size="xl" fw={700} mb="lg">
+          Edit vacancy
+        </Text>
+
         <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
-          <h1>Edit vacancy</h1>
+          <Box mx="auto">
+            <Text fw={700} size="xl" mt="sm">
+              Basic information
+            </Text>
+            <TextInput
+              mt="sm"
+              label="Job title"
+              placeholder="Input title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
 
-          <h3>Основная информация</h3>
-          <Input
-            placeholder=""
-            type="text"
-            label="Job title"
-            size="fieldset-lg"
-            onChange={(e) => setTitle(e.target.value)}
-            value={title}
-          />
-          <Input
-            placeholder=""
-            type="text"
-            label="Company name"
-            size="fieldset-lg"
-            onChange={(e) => setCompany(e.target.value)}
-            value={company}
-          />
-          <Input
-            placeholder=""
-            type="text"
-            label="Address"
-            size="fieldset-lg"
-            onChange={(e) => setAdress(e.target.value)}
-            value={address}
-          />
+            <TextInput
+              mt="sm"
+              label="Company name"
+              placeholder="Input company name"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              required
+            />
 
-          <AutoCompleteSelect
-            placeholder=""
-            type="text"
-            label="Город проживания"
-            size="fieldset-md"
-            items={cities}
-            onSelect={(data) => setCityId(data.id)}
-            selected={vacancy.city}
-          />
+            <TextInput
+              mt="sm"
+              label="Address"
+              placeholder="Input address"
+              value={address}
+              onChange={(e) => setAdress(e.target.value)}
+              required
+            />
 
-          <fieldset className={"fieldset fieldset-lg"}>
-            <span className="mr8">Salary</span>
+            <Select
+              mt="sm"
+              label="City"
+              placeholder={cityId}
+              data={cities}
+              searchable
+              value={cityId}
+              onChange={setCityId}
+              nothingFoundMessage="Nothing found..."
+              required
+            />
 
-            <div className="salary">
-              <input
-                placeholder="from"
-                className="input"
-                type="number"
-                size="input"
+            <Flex
+              mih={50}
+              gap="sm"
+              justify="flex-start"
+              align="flex-start"
+              direction="row"
+              wrap="wrap"
+            >
+              <NumberInput
+                mt="sm"
+                label="From salary"
+                placeholder="Input from salary"
+                min={0}
+                max={10000000000}
                 value={salaryFrom}
-                onChange={(e) => setFromSalary(e.target.value * 1)}
+                onChange={setFromSalary}
               />
-              <input
-                placeholder="to"
-                className="input"
-                type="number"
-                size="input"
+
+              <NumberInput
+                mt="sm"
+                label="To salary"
+                placeholder="Input to salary"
+                min={0}
+                max={10000000000}
                 value={salaryTo}
-                onChange={(e) => setToSalary(e.target.value * 1)}
+                onChange={setToSalary}
               />
               <Select
-                className="w-full"
-                placeholder="currency"
+                mt="sm"
+                label="Currency"
+                placeholder="Pick value"
                 data={["KZT", "USD", "RUB"]}
                 value={currency}
                 onChange={setCurrency}
+                required
               />
-            </div>
-          </fieldset>
+            </Flex>
 
-          <fieldset className={"fieldset fieldset-sm"}>
-            <label className="h1">Employment type</label>
             <MultiSelect
+              mt="sm"
+              label="Employment Type"
               placeholder="Pick value"
               data={["Full time", "Remote"]}
               hidePickedOptions
               value={employmentType}
               onChange={setSelectedEmpTypes}
+              required
             />
-          </fieldset>
 
-          <fieldset className={"fieldset fieldset-sm"}>
-            <label className="h1">Experience</label>
             <Select
+              mt="sm"
+              label="Experience"
               placeholder="Pick value"
               data={[
                 "No experience",
@@ -259,36 +355,41 @@ export default function EditVacancy() {
               ]}
               value={experience}
               onChange={setExperience}
+              required
             />
-          </fieldset>
 
-          <fieldset className={"fieldset fieldset-lg"}>
-            <label>Description</label>
-            <textarea
-              className="textarea"
-              placeholder="Vacancy description"
+            <Textarea
+              mt="sm"
+              label="Description"
+              placeholder="Input description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
             />
-          </fieldset>
-
-          {tests && (
-            <fieldset className={"fieldset fieldset-sm"}>
-              <label className="h1">Choose test</label>
+            {tests ? (
               <Select
-                placeholder="Pick value"
+                mt="sm"
+                label="Choose test"
+                placeholder={tests[vacancy.testId]}
                 data={allTests}
                 value={testId}
                 onChange={setTestId}
               />
-            </fieldset>
-          )}
-
-          <button className="button button-primary mt24" onClick={handleSave}>
-            Edit resume
-          </button>
+            ) : (
+              <Link to="/create-test">Добавить тест</Link>
+            )}
+            <Button
+              onClick={handleSave}
+              disabled={!isFormValid}
+              type="submit"
+              mt="lg"
+            >
+              Edit vacancy
+            </Button>
+          </Box>
         </Paper>
-      </div>
+      </Container>
+      <Space h="lg" />
     </main>
   );
 }

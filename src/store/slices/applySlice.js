@@ -9,6 +9,7 @@ export const applySlice = createSlice({
     applies: [],
     userApplies: [],
     apply: {},
+    testMain: {},
   },
   reducers: {
     appendApply: (state, action) => {
@@ -34,6 +35,9 @@ export const applySlice = createSlice({
         return item;
       });
       state.applies = applies;
+    },
+    setTest: (state, action) => {
+      state.testMain = action.payload.testMain;
     },
   },
   extraReducers: (builder) => {
@@ -92,6 +96,7 @@ export const {
   setUserApplies,
   removeApply,
   setApplyStatus,
+  setTest,
 } = applySlice.actions;
 
 export const createApplyVacancy = createAsyncThunk(
@@ -109,7 +114,7 @@ export const createApplyVacancy = createAsyncThunk(
         }
       );
       console.log(data);
-      thunkApi.dispatch(setTest({ fullTest: data }));
+      thunkApi.dispatch(setTest({ testMain: data }));
     } catch (error) {
       console.error("Error apply to the vacancy:", error);
       thunkApi.rejectWithValue(error.message);

@@ -53,7 +53,7 @@ export default function ResumeId() {
         <Group justify="space-between">
           <Button onClick={() => navigate(`/resumes`)} variant="light" mb={10}>
             <img className="arrow link" src={arrow} alt="arrow" />
-            My resumes
+            My resume
           </Button>
           {/* <Button
             onClick={() => navigate(`/edit-resume/${resume.id}`)}

@@ -15,7 +15,7 @@ import { getMyTests } from "../../store/slices/testSlice";
 
 export default function Tests() {
   const dispatch = useDispatch();
-  const tests = useSelector((state) => state.apply.tests);
+  const tests = useSelector((state) => state.test.tests);
   const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
 
