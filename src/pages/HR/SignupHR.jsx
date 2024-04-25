@@ -25,7 +25,7 @@ export default function SignupHR() {
     (state) => state.auth
   );
   const dispatch = useDispatch();
-  const [errors, setErrors] = useState([]);
+  const [errors, setError] = useState([]);
 
   useEffect(() => {
     if (success) {
@@ -177,7 +177,7 @@ export default function SignupHR() {
                     ))}
                   </>
                 )}
-                {error && Array.isArray(error) && error.length > 0 && (
+                {error && Array.isArray(error) && error.length > 0 ? (
                   <>
                     {error.map((errorItem, index) => (
                       <ErrorMessage
@@ -188,6 +188,10 @@ export default function SignupHR() {
                       />
                     ))}
                   </>
+                ) : (
+                  error && (
+                    <ErrorMessage title={error} text={error} className="mt2" />
+                  )
                 )}
 
                 <Button type="submit" mt="lg" disabled={loading}>

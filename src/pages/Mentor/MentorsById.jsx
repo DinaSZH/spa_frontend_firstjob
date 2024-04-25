@@ -21,7 +21,7 @@ export function MentorsById() {
     dispatch(getMentorsById(id));
   }, []);
   return (
-    <Container className="container p7">
+    <Container size="lg" py="xl">
       <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
         <Text className={classes.title} mt={5}>
           {" "}

@@ -87,6 +87,11 @@ const linksUser = [
     title: "Applies",
     link: "/applies",
   },
+  {
+    icon: IconAward,
+    title: "My Certifications",
+    link: "/user/certifications",
+  },
 ];
 
 const linksMentor = [
@@ -216,6 +221,9 @@ export default function Header() {
             </Link>
             <Link to="/mentors" className={classes.link}>
               Mentorship
+            </Link>
+            <Link to="/platform/tests" className={classes.link}>
+              Test Platform
             </Link>
           </Group>
 

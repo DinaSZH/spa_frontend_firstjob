@@ -12,7 +12,19 @@ import img1 from "../../../assets/images/img1.png";
 import Sort from "../../../components/Sort/Sort";
 import iconExp from "../../../assets/images/iconExp.png";
 import { Search } from "../../../components/Search/Search";
-import { Loader, Select } from "@mantine/core";
+import {
+  Container,
+  Grid,
+  Loader,
+  Select,
+  Text,
+  Paper,
+  Flex,
+  NumberInput,
+  Button,
+  Center,
+  Group,
+} from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import {
   getAllAuthVacancies,
@@ -70,11 +82,13 @@ export default function SearchVacancy() {
   const vacancies = useSelector((state) => state.vacancy.allVacancies);
 
   useEffect(() => {
-    if (KeycloakService.isLoggedIn()) {
-      dispatch(getAllAuthVacancies());
-    } else {
-      dispatch(getAllVacancies());
-    }
+    // if (KeycloakService.isLoggedIn()) {
+    //   dispatch(getAllAuthVacancies());
+    // } else {
+    //   dispatch(getAllVacancies());
+    // }
+
+    dispatch(getAllVacancies());
   }, []);
 
   useEffect(() => {
@@ -98,6 +112,107 @@ export default function SearchVacancy() {
   ];
   return (
     <main>
+      <Container size="xl" mt={40}>
+        <Search />
+        <Grid mt={40}>
+          <Grid.Col span="auto">
+            <Paper shadow="xs" withBorder p="md">
+              <Text size="lg" fw={700} mb={20}>
+                Filters
+              </Text>
+              <Text size="md" fw={600}>
+                City:
+              </Text>
+              <Select
+                placeholder="Search city"
+                data={cities}
+                searchable
+                value={cityId}
+                onChange={setCityId}
+                nothingFoundMessage="Nothing found..."
+              />
+
+              <Flex
+                mih={50}
+                gap="sm"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                wrap="wrap"
+                mt="sm"
+              >
+                <NumberInput
+                  label="From salary"
+                  placeholder="Input from salary"
+                  min={0}
+                  max={10000000000}
+                  value={fromSalary}
+                  onChange={setFromSalary}
+                />
+                <Select
+                  label="Currency"
+                  placeholder="Pick value"
+                  data={["KZT", "USD", "RUB"]}
+                  value={currency}
+                  onChange={setCurrency}
+                />
+              </Flex>
+              <Text size="md" mt={20} fw={600}>
+                Experience:
+              </Text>
+              <Select
+                placeholder="Pick value"
+                data={[
+                  "No experience",
+                  "Less than year",
+                  "1-3 years",
+                  "3-6 years",
+                  "6+ years",
+                ]}
+                value={experienceId}
+                onChange={setExperienceId}
+              />
+              <Text size="md" mt={20} fw={600}>
+                Employment type:
+              </Text>
+              <Select
+                placeholder="Pick value"
+                data={["Full time", "Remote"]}
+                value={currency}
+                onChange={setCurrency}
+              />
+              <Group grow mt={20}>
+                <Button loading={loading} mt="sm" variant="outline" radius="xl">
+                  Search
+                </Button>
+                <Button
+                  color="red"
+                  loading={loading}
+                  mt="sm"
+                  variant="outline"
+                  radius="xl"
+                >
+                  Reset
+                </Button>
+              </Group>
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={9}>
+            {loading ? (
+              <div
+                style={{ paddingLeft: `40px` }}
+                className="flex flex-jc-c mt7"
+              >
+                <Loader color="blue" />
+              </div>
+            ) : (
+              <div style={{ paddingLeft: `40px` }}>
+                <MyVacancies vacancies={vacancies} />
+              </div>
+            )}
+          </Grid.Col>
+        </Grid>
+      </Container>
       <div className="container mt7">
         <Search />
         <div className="flex ">

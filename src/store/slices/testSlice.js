@@ -7,6 +7,7 @@ export const testSlice = createSlice({
   name: "test",
   initialState: {
     tests: [],
+    platformTests: [],
     test: {},
     fullTest: {},
     certifications: [],
@@ -23,6 +24,9 @@ export const testSlice = createSlice({
     },
     setMyTests: (state, action) => {
       state.tests = action.payload.tests;
+    },
+    setPlatformTests: (state, action) => {
+      state.platformTests = action.payload.platformTests;
     },
     setMyCertifications: (state, action) => {
       state.certifications = action.payload.certifications;
@@ -116,6 +120,7 @@ export const {
   uppendTest,
   setMyTests,
   setMyCertifications,
+  setPlatformTests,
 } = testSlice.actions;
 
 export const getTestPreview = createAsyncThunk(
@@ -256,4 +261,27 @@ export const downloadCertificationById = createAsyncThunk(
     }
   }
 );
+
+export const getPlatformTests = createAsyncThunk(
+  "user/getPlatformTests",
+  async (_, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${POINT_CONTENT}/api/content/tests/platform`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Fetched tests:", data);
+      thunkApi.dispatch(setPlatformTests({ platformTests: data }));
+    } catch (error) {
+      console.error("Error fetching tests:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
 export default testSlice.reducer;

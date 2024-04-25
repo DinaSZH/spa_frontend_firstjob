@@ -144,15 +144,16 @@ export const getMyVacancies = createAsyncThunk(
 
 export const createNews = createAsyncThunk(
   "user/createNews",
-  async (createNews, thunkApi) => {
+  async (formData, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
       const { data } = await axios.post(
         `${POINT_CONTENT}/api/content/news`,
-        createNews,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );

@@ -14,7 +14,7 @@ import axios from "axios";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import MainLayout from "./layout/MainLayout";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import KeycloakService from "./services/KeycloakService";
 // import { store } from './store/store.ts';
 // import { Success } from './components/Success/Success.tsx';
@@ -54,6 +54,10 @@ import { NewsById } from "./pages/news/NewsById";
 import { Mentors } from "./pages/Mentor/Mentors";
 import { MentorsById } from "./pages/Mentor/MentorsById";
 import CreateMentor from "./pages/create-mentor/CreateMentor";
+import PlatformTest from "./pages/platform-test/PlatformTest";
+import UserCertifications from "./pages/UserCertifications/UserCertifications";
+import MentorProfile from "./pages/MentorProfile/MentorProfile";
+import EditMentor from "./pages/edit-mentor/EditMentor";
 
 const router = createBrowserRouter([
   {
@@ -152,6 +156,22 @@ const router = createBrowserRouter([
       {
         path: "/create-mentor",
         element: <CreateMentor />,
+      },
+      {
+        path: "/edit-mentor",
+        element: <EditMentor />,
+      },
+      {
+        path: "/profile/mentor",
+        element: <MentorProfile />,
+      },
+      {
+        path: "/platform/tests",
+        element: <PlatformTest />,
+      },
+      {
+        path: "/user/certifications",
+        element: <UserCertifications />,
       },
     ],
   },

@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, NumberInput, Select, TextInput } from "@mantine/core";
-import { CheckIcon, Divider, Input, Radio, RadioGroup } from "@mantine/core";
+import {
+  Button,
+  Group,
+  NumberInput,
+  Paper,
+  Select,
+  TextInput,
+} from "@mantine/core";
+import {
+  Container,
+  CheckIcon,
+  Divider,
+  Input,
+  Radio,
+  RadioGroup,
+} from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 
 import TestQuestion from "../../components/testQuestion/TestQuestion";
@@ -16,7 +30,7 @@ export default function CreateTest() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, success } = useSelector((state) => state.resume);
+  const { error, loading, success } = useSelector((state) => state.test);
 
   const handleSave = () => {
     const data = {
@@ -45,6 +59,7 @@ export default function CreateTest() {
   const addQuestion = () => {
     const newId = questions.length + 1;
     const newQuestion = {
+      id: newId,
       question: "",
       answers: Array.from({ length: 4 }, () => ({
         answer: "",
@@ -80,7 +95,112 @@ export default function CreateTest() {
 
   return (
     <main>
-      <div>
+      <Container size="lg" py="xl">
+        <Group justify="flex-end">
+          <Button
+            onClick={() => navigate("/tests")}
+            variant="filled"
+            color="rgba(51, 44, 44, 1)"
+            mb={10}
+          >
+            Go to My tests
+          </Button>
+        </Group>
+
+        <Paper
+          mt={20}
+          radius="md"
+          withBorder
+          p="lg"
+          color="#228BE6"
+          shadow="xs"
+        >
+          <h1>Test</h1>
+          <TextInput
+            mt={10}
+            label="Name"
+            placeholder="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+
+          <TextInput
+            mt={10}
+            label="Description"
+            placeholder="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <NumberInput
+            mt={10}
+            mb={10}
+            label="Threshold Score"
+            placeholder="Threshold Score"
+            min={1}
+            value={thresholdScore}
+            onChange={(value) => setThresholdScore(value)}
+          />
+
+          <div>
+            {questions.map((question, index) => (
+              <div key={question.id}>
+                <div
+                  onClick={() => removeQuestion(question.id)}
+                  className="cursor error flex flex-jc-end"
+                >
+                  <IconCircleX />
+                </div>
+                <TextInput
+                  placeholder={`Enter question ${index + 1}`}
+                  label={`Question ${index + 1}`}
+                  required
+                  value={question.question}
+                  onChange={(e) => handleQuestionChange(index, e.target.value)}
+                />
+                <Divider my="sm" />
+                <div className="mb20">
+                  {question.answers.map((answer, answerIndex) => (
+                    <div key={answerIndex} className="flex gap mb20">
+                      <Radio
+                        value={`q${answerIndex + 1}`}
+                        icon={CheckIcon}
+                        checked={answer.isRight}
+                        onChange={() =>
+                          handleRightAnswerChange(index, answerIndex)
+                        }
+                      />
+                      <Input
+                        variant="default"
+                        placeholder={`Variant ${answerIndex + 1}`}
+                        className="w-full"
+                        value={answer.answer}
+                        onChange={(e) =>
+                          handleAnswerChange(index, answerIndex, e.target.value)
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <Button variant="outline" onClick={addQuestion}>
+            Add question
+          </Button>
+
+          <div>
+            <Button
+              className="button button-primary"
+              mt={20}
+              onClick={handleSave}
+            >
+              Save and Publish
+            </Button>
+          </div>
+        </Paper>
+      </Container>
+      {/* <div>
         <div className="container p7">
           <div className="flex flex-jc-end">
             <Link className="button button-black " to="/tests">
@@ -176,7 +296,7 @@ export default function CreateTest() {
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }
