@@ -6,6 +6,7 @@ import KeycloakService from "../../services/KeycloakService";
 export const mentorSlice = createSlice({
   name: "mentor",
   initialState: {
+    mentorProfile: null,
     mentors: [],
     mentor: {},
     error: null,
@@ -13,6 +14,9 @@ export const mentorSlice = createSlice({
     success: null,
   },
   reducers: {
+    setProfile: (state, action) => {
+      state.mentorProfile = action.payload;
+    },
     setAllMentors: (state, action) => {
       state.mentors = action.payload.mentors;
     },
@@ -50,12 +54,33 @@ export const mentorSlice = createSlice({
 });
 
 export const {
+  setProfile,
   setAllMentors,
   setMentor,
   uppendMentor,
   setResume,
   handleDeleteResume,
 } = mentorSlice.actions;
+
+export const getMentorProfile = createAsyncThunk(
+  "user/getMentorProfile",
+  async (_, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${POINT_CONTENT}/api/content/mentor/my`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      thunkApi.dispatch(setProfile(data));
+    } catch (error) {
+      thunkApi.dispatch(setError(error.message));
+    }
+  }
+);
 
 export const getAllMentors = createAsyncThunk(
   "user/getAllMentors",
@@ -107,6 +132,29 @@ export const createMentorProfile = createAsyncThunk(
     } catch (error) {
       console.log("Error creating resume: ", error.response.data);
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const editProfileMentor = createAsyncThunk(
+  "user/editProfileMentor",
+  async (updatedProfile, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.put(
+        `${POINT_CONTENT}/api/content/mentor/${updatedProfile.id}`,
+        updatedProfile,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      thunkApi.dispatch(setProfile(data));
+      return data;
+    } catch (error) {
+      console.log("Error edit: ", error.response.data.fields);
+      return rejectWithValue(error.response.data.fields);
     }
   }
 );

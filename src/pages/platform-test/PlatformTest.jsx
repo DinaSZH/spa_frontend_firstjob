@@ -14,7 +14,11 @@ import {
 } from "@mantine/core";
 import { IconCertificate } from "@tabler/icons-react";
 import classes from "./Tests.module.css";
-import { getMyTests, getPlatformTests } from "../../store/slices/testSlice";
+import {
+  getMyTests,
+  getPlatformTestById,
+  getPlatformTests,
+} from "../../store/slices/testSlice";
 import ModalTest from "../../components/ModalTest/ModalTest";
 import { useDisclosure } from "@mantine/hooks";
 import ModalTestPlatform from "../../components/ModalTestPlatform/ModalTestPlatform";
@@ -23,6 +27,7 @@ import KeycloakService from "../../services/KeycloakService";
 export default function PlatformTest() {
   const dispatch = useDispatch();
   const platformTests = useSelector((state) => state.test.platformTests);
+  const platformTest = useSelector((state) => state.test.platformTest);
   const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
   const [openedTest, { open: openTest, close: closeTest }] =
@@ -32,97 +37,9 @@ export default function PlatformTest() {
     dispatch(getPlatformTests());
   }, []);
 
-  const fullTestPlatform = {
-    name: "Java test",
-    description: "Test for Java developers",
-    thresholdScore: 3,
-    questions: [
-      {
-        question: "What is abstraction?",
-        answers: [
-          {
-            answer: "Ability to abstract",
-            isRight: true,
-          },
-          {
-            answer: "Process of hiding implementation details",
-            isRight: false,
-          },
-          {
-            answer: "Type of coffee",
-            isRight: false,
-          },
-        ],
-      },
-      {
-        question: "What is encapsulation?",
-        answers: [
-          {
-            answer: "Hiding internal state",
-            isRight: true,
-          },
-          {
-            answer: "A type of plastic",
-            isRight: false,
-          },
-          {
-            answer: "Process of inheritance",
-            isRight: false,
-          },
-        ],
-      },
-      {
-        question: "What is inheritance?",
-        answers: [
-          {
-            answer: "Mechanism to inherit",
-            isRight: true,
-          },
-          {
-            answer: "A genetic trait",
-            isRight: false,
-          },
-          {
-            answer: "Ability to take multiple forms",
-            isRight: false,
-          },
-        ],
-      },
-      {
-        question: "What is polymorphism?",
-        answers: [
-          {
-            answer: "Ability to take multiple forms",
-            isRight: true,
-          },
-          {
-            answer: "A mathematical concept",
-            isRight: false,
-          },
-          {
-            answer: "Type of programming language",
-            isRight: false,
-          },
-        ],
-      },
-      {
-        question: "What is a class?",
-        answers: [
-          {
-            answer: "Blueprint for objects",
-            isRight: true,
-          },
-          {
-            answer: "A group of students",
-            isRight: false,
-          },
-          {
-            answer: "Type of function",
-            isRight: false,
-          },
-        ],
-      },
-    ],
+  const handleTakeTest = (id) => {
+    dispatch(getPlatformTestById(id));
+    openTest();
   };
 
   return (
@@ -164,7 +81,9 @@ export default function PlatformTest() {
                     Total Score: {item.totalScore}
                   </Text>
                   {KeycloakService.getUserRole() && (
-                    <Button mt="sm">Take the test</Button>
+                    <Button mt="sm" onClick={() => handleTakeTest(item.id)}>
+                      Take the test
+                    </Button>
                   )}
                 </Card>
               ))}
@@ -184,15 +103,8 @@ export default function PlatformTest() {
       <ModalTestPlatform
         opened={openedTest}
         close={closeTest}
-        fullTestData={fullTestPlatform}
+        fullTestData={platformTest}
       />
-      {/* <ModalTest
-        opened={openedTest}
-        close={closeTest}
-        fullTestData={fullTestPlatform}
-        item={item}
-        resumeId={selectedResume}
-      /> */}
     </main>
   );
 }

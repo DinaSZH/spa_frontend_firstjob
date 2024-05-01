@@ -10,6 +10,7 @@ export const applySlice = createSlice({
     userApplies: [],
     apply: {},
     testMain: {},
+    appliesHR: [],
   },
   reducers: {
     appendApply: (state, action) => {
@@ -26,15 +27,15 @@ export const applySlice = createSlice({
       applies = applies.filter((item) => item.id !== action.payload);
       state.applies = applies;
     },
-    setApplyStatus: (state, action) => {
-      let applies = [...state.applies];
+    setApplyStatusHR: (state, action) => {
+      let applies = [...state.appliesHR];
       applies = applies.map((item) => {
         if (item.id === action.payload.applyId) {
           item.status = action.payload.status;
         }
         return item;
       });
-      state.applies = applies;
+      state.appliesHR = applies;
     },
     setTest: (state, action) => {
       state.testMain = action.payload.testMain;
@@ -95,7 +96,7 @@ export const {
   setApplies,
   setUserApplies,
   removeApply,
-  setApplyStatus,
+  setApplyStatusHR,
   setTest,
 } = applySlice.actions;
 
@@ -144,17 +145,6 @@ export const getVacancyApplies = createAsyncThunk(
   }
 );
 
-export const inviteApply = (applyId) => (dispatch) => {
-  axios
-    .put(`${END_POINT}/api/applies/accept/employee`, { applyId })
-    .then((res) => {
-      dispatch(setApplyStatus({ applyId, status: "INVITATION" }));
-    })
-    .catch((e) => {
-      console.log(e);
-    });
-};
-
 export const getUserApplies = createAsyncThunk(
   "user/getUserApplies",
   async (status, thunkApi) => {
@@ -181,70 +171,48 @@ export const getUserApplies = createAsyncThunk(
   }
 );
 
-// export const acceptApply = (applyId) => (dispatch) => {
-//   axiosInstance.post(`/users/applications/hr/${applyId}/confirm`).then(res => {
+export const inviteApply = createAsyncThunk(
+  "user/inviteApply",
+  async (id, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.post(
+        `${POINT_CONTENT}/api/content/applications/invite/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Invite:", data);
+      thunkApi.dispatch(setApplyStatusHR(data));
+    } catch (error) {
+      console.error("Error Invite applies:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
 
-//     dispatch(setApplyStatusHR({applyId, status: "confirmed"}))
-//     alert("Successfully confirmed")
-//   }).catch(e => {
-//     console.log(e)
-//     alert("Что то пошло не так, сообщите об ошибке Тех спецам сайта!")
-//   })
-// }
-
-// export const declineApply = (applyId) => (dispatch) => {
-//   axios.put(`${END_POINT}/api/applies/decline/employee`, {applyId}).then(res => {
-//     dispatch(setApplyStatus({applyId, status: "DECLINED"}))
-//   }).catch(e => {
-//     console.log(e)
-//   })
-// }
-
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-
-// export const getEmployeeApplies = (data) => (dispatch) => {
-//     axios.get(`${END_POINT}/api/applies/employee`).then(res => {
-//       dispatch(setApplies(res.data))
-//     }).catch(e => {
-//       console.log(e)
-//     })
-//   }
-
-// export const getVacancyApplies = (id) => (dispatch) => {
-//   axios.get(`${END_POINT}/api/applies/vacancy/${id}`).then(res => {
-//     dispatch(setApplies(res.data))
-//   }).catch(e => {
-//     console.log(e)
-//   })
-// }
-
-// export const acceptApply = (applyId) => (dispatch) => {
-//   axios.put(`${END_POINT}/api/applies/accept/employee`, {applyId}).then(res => {
-
-//     dispatch(setApplyStatus({applyId, status: "INVITATION"}))
-
-//   }).catch(e => {
-//     console.log(e)
-
-//   })
-// }
-
-// export const declineApply = (applyId) => (dispatch) => {
-//   axios.put(`${END_POINT}/api/applies/decline/employee`, {applyId}).then(res => {
-//     dispatch(setApplyStatus({applyId, status: "DECLINED"}))
-//   }).catch(e => {
-//     console.log(e)
-//   })
-// }
-
-// export const deleteApply = (id) => (dispatch) => {
-//     axios.delete(`${END_POINT}/api/applies/${id}`).then(res => {
-//       dispatch(removeApply(id))
-//     }).catch(e => {
-//       console.log(e)
-
-//     })
-//   }
+export const declineApply = createAsyncThunk(
+  "user/declineApply",
+  async (id, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.post(
+        `${POINT_CONTENT}/api/content/applications/decline/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Decline:", data);
+      thunkApi.dispatch(setApplyStatusHR(data));
+    } catch (error) {
+      console.error("Error Decline applies:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
 
 export default applySlice.reducer;

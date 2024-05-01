@@ -2,15 +2,9 @@ import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button, Divider, Title, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { submitTest } from "../../store/slices/testSlice";
+import { submitPlatformTest } from "../../store/slices/testSlice";
 
-export default function ModalTestPlatform({
-  opened,
-  close,
-  fullTestData,
-  item,
-  resumeId,
-}) {
+export default function ModalTestPlatform({ opened, close, fullTestData }) {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [
     openedSecondModal,
@@ -29,16 +23,12 @@ export default function ModalTestPlatform({
       })
     );
 
-    console.log("Submitting answers:", formattedAnswers);
-    console.log("Submitting answers: 2", selectedAnswers);
-    console.log("TEst", fullTestData);
-    // dispatch(
-    //   submitTest({
-    //     id: item.id,
-    //     answers: formattedAnswers,
-    //     resumeId: resumeId,
-    //   })
-    // );
+    dispatch(
+      submitPlatformTest({
+        id: fullTestData.id,
+        answers: formattedAnswers,
+      })
+    );
     close();
     closeSecondModal();
   };

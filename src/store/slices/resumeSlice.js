@@ -181,6 +181,28 @@ export const getResumeById = createAsyncThunk(
   }
 );
 
+export const getResumeByIdForHR = createAsyncThunk(
+  "user/getResumeByIdForHR",
+  async (id, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${END_POINT}/api/client-app/resumes/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Fetched resume:", data); // Log fetched data
+      thunkApi.dispatch(setResume({ resume: data }));
+    } catch (error) {
+      console.error("Error getting resume by id:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
 export const deleteResumeById = createAsyncThunk(
   "user/deleteResumeById",
   async (id, thunkApi) => {

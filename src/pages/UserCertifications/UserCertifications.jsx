@@ -1,16 +1,10 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import {
-  deleteResumeById,
-  downloadResumeById,
-} from "../../store/slices/resumeSlice";
+import { downloadResumeById } from "../../store/slices/resumeSlice";
 
 import {
   Container,
   Chip,
-  Flex,
-  Group,
-  Paper,
   Text,
   SimpleGrid,
   Card,
@@ -18,63 +12,27 @@ import {
   Title,
   Button,
 } from "@mantine/core";
+import { IconCertificate, IconDownload } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import KeycloakService from "../../services/KeycloakService";
 import {
-  IconAward,
-  IconCertificate,
-  IconDownload,
-  IconEdit,
-  IconTrash,
-} from "@tabler/icons-react";
-import { useState } from "react";
+  downloadCertificationById,
+  getMyCertifications,
+} from "../../store/slices/testSlice";
 
 export default function UserCertifications({ item }) {
-  const [certifications, setCertifications] = useState([]);
+  const certifications = useSelector((state) => state.test.certifications);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(getMyCertifications(KeycloakService.getEmail()));
+  }, []);
 
   return (
     <Container size="lg" py="xl">
       <Text size="lg" fw={700} mt="md">
         My certificaations
       </Text>
-
-      <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
-        <Card
-          shadow="md"
-          radius="md"
-          padding="xl"
-          withBorder
-          className="flex flex-ai-c flex-jc-c"
-        >
-          <div>
-            <IconCertificate
-              style={{ width: 50, height: 50, color: "#00abfb" }}
-            />
-          </div>
-          <Text size="lg" fw={700} mt="md">
-            Name
-          </Text>
-          <Text weight={500} size="md" color="dimmed" mt="sm">
-            Description
-          </Text>
-          <Text size="sm" color="dimmed" mt="sm">
-            Threshold Score: 3
-          </Text>
-          <Text size="sm" color="dimmed" mt="sm">
-            Total Score: 30
-          </Text>
-          <Chip
-            mt="sm"
-            icon={<IconDownload style={{ width: 16, height: 16 }} />}
-            variant="light"
-            size="md"
-            onClick={() => dispatch(downloadResumeById(item.id))}
-            defaultChecked
-          >
-            Download
-          </Chip>
-        </Card>
-      </SimpleGrid>
 
       {certifications && certifications.length > 0 ? (
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
@@ -93,18 +51,21 @@ export default function UserCertifications({ item }) {
                   />
                 </div>
                 <Text size="lg" fw={700} mt="md">
-                  {item.name}
-                </Text>
-                <Text weight={500} size="md" color="dimmed" mt="sm">
-                  {item.description}
+                  {item.testName}
                 </Text>
                 <Text size="sm" color="dimmed" mt="sm">
-                  Threshold Score: {item.thresholdScore}
+                  Score: {item.userScore} out of {item.totalScore}
                 </Text>
-                <Text size="sm" color="dimmed" mt="sm">
-                  Total Score: {item.totalScore}
-                </Text>
-                <Button mt="sm">Take the test</Button>
+                <Chip
+                  mt="sm"
+                  icon={<IconDownload style={{ width: 16, height: 16 }} />}
+                  variant="light"
+                  size="md"
+                  onClick={() => dispatch(downloadCertificationById(item.id))}
+                  defaultChecked
+                >
+                  Download
+                </Chip>
               </Card>
             ))}
         </SimpleGrid>

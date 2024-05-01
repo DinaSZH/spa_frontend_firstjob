@@ -87,7 +87,7 @@ export default function MyVacancy({ item }) {
   };
 
   const renderApplicationStatus = () => {
-    if (item.applicationStatus === null) {
+    if (item.applicationStatus === null && KeycloakService.getUserRole()) {
       return (
         <Button
           variant="filled"
@@ -109,28 +109,6 @@ export default function MyVacancy({ item }) {
       return null;
     }
   };
-
-  // const renderActions = () => {
-  //   if (KeycloakService.getHRRole() && isUserVacancy) {
-  //     return (
-  //       <div className="flex">
-  //         <Link to={`/vacancy/edit/${item.id}`}>
-  //           <span className="button-edit">Edit</span>
-  //         </Link>
-  //         <span
-  //           className="button-delete"
-  //           onClick={() => dispatch(deleteVacancyById(item.id))}
-  //         >
-  //           Delete
-  //         </span>
-  //       </div>
-  //     );
-  //   } else if (KeycloakService.getUserRole()) {
-  //     return renderApplicationStatus();
-  //   } else {
-  //     return <div className="flex"></div>;
-  //   }
-  // };
 
   return (
     <>
@@ -168,15 +146,6 @@ export default function MyVacancy({ item }) {
                 </Chip>
               </div>
             )}
-            {/* <Chip
-            icon={<IconDownload style={{ width: 16, height: 16 }} />}
-            variant="light"
-            size="md"
-            onClick={() => dispatch(downloadResumeById(item.id))}
-            defaultChecked
-          >
-            Download
-          </Chip> */}
           </Flex>
         </Group>
         <Flex mt={10} gap="sm" direction="column" wrap="wrap">

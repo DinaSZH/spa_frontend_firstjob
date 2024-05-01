@@ -10,6 +10,7 @@ export const testSlice = createSlice({
     platformTests: [],
     test: {},
     fullTest: {},
+    platformTest: {},
     certifications: [],
   },
   reducers: {
@@ -18,6 +19,9 @@ export const testSlice = createSlice({
     },
     setTest: (state, action) => {
       state.fullTest = action.payload.fullTest;
+    },
+    setPlatformTest: (state, action) => {
+      state.platformTest = action.payload.platformTest;
     },
     uppendTest: (state, action) => {
       state.tests = [...state.tests, action.payload.newtest];
@@ -121,6 +125,7 @@ export const {
   setMyTests,
   setMyCertifications,
   setPlatformTests,
+  setPlatformTest,
 } = testSlice.actions;
 
 export const getTestPreview = createAsyncThunk(
@@ -226,7 +231,7 @@ export const getMyCertifications = createAsyncThunk(
         }
       );
       console.log("Fetched certifications:", data);
-      thunkApi.dispatch(setMyTests({ tests: data }));
+      thunkApi.dispatch(setMyCertifications({ certifications: data }));
     } catch (error) {
       console.error("Error fetching certifications:", error);
       thunkApi.rejectWithValue(error.message);
@@ -279,6 +284,50 @@ export const getPlatformTests = createAsyncThunk(
       thunkApi.dispatch(setPlatformTests({ platformTests: data }));
     } catch (error) {
       console.error("Error fetching tests:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getPlatformTestById = createAsyncThunk(
+  "user/getPlatformTestById",
+  async (id, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${POINT_CONTENT}/api/content/tests/platform/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      thunkApi.dispatch(setPlatformTest({ platformTest: data }));
+    } catch (error) {
+      console.error("Error getPlatformTestById:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const submitPlatformTest = createAsyncThunk(
+  "user/submitPlatformTest",
+  async ({ id, answers }, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.post(
+        `${POINT_CONTENT}/api/content/certification/${id}/submit`,
+        { answers },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error sumbit test platform:", error);
       thunkApi.rejectWithValue(error.message);
     }
   }

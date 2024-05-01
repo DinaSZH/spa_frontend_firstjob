@@ -17,13 +17,18 @@ import { POINT_CONTENT } from "../../config/end-point";
 import { useDispatch, useSelector } from "react-redux";
 import { Group, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { createMentorProfile } from "../../store/slices/mentorSlice";
+import {
+  createMentorProfile,
+  editProfileMentor,
+  getMentorProfile,
+} from "../../store/slices/mentorSlice";
 
 export default function EditMentor() {
   const [cityId, setCityId] = useState();
   const [cities, setCities] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const mentor = useSelector((state) => state.mentor.mentorProfile);
 
   useEffect(() => {
     axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {
@@ -66,6 +71,7 @@ export default function EditMentor() {
   const handleSave = async () => {
     try {
       const mentorData = {
+        id: mentor.id,
         position: form.values.position,
         company: form.values.company,
         cityId: form.values.cityId,
@@ -77,23 +83,23 @@ export default function EditMentor() {
         experience: formatExperience(form.values.experience),
       };
 
-      await dispatch(createMentorProfile(mentorData));
-      navigate("/mentors");
+      await dispatch(editProfileMentor(mentorData));
+      navigate("/profile/mentor");
     } catch (error) {
       console.error("Error creating mentor:", error);
     }
   };
   const form = useForm({
     initialValues: {
-      telegramLink: "",
-      cityId: 1,
-      position: "",
-      company: "",
-      cost: 0,
-      currency: "KZT",
-      format: "Online",
-      experience: "6+ years",
-      about: "",
+      telegramLink: mentor?.telegramLink || "",
+      cityId: mentor?.city || "",
+      position: mentor?.position || "",
+      company: mentor?.company || "",
+      cost: mentor?.cost || 0,
+      currency: formatExperience(mentor?.currency) || "KZT",
+      format: mentor?.format || "Online",
+      experience: mentor?.experience || "6+ years",
+      about: mentor?.about || "",
     },
 
     validate: {
@@ -109,6 +115,11 @@ export default function EditMentor() {
       about: (value) => (value.length < 1 ? "about required" : null),
     },
   });
+
+  useEffect(() => {
+    dispatch(getMentorProfile());
+    console.log(mentor);
+  }, []);
 
   return (
     <main>
@@ -153,9 +164,9 @@ export default function EditMentor() {
               <Select
                 mt="sm"
                 label="City"
-                placeholder="Search city"
+                placeholder={mentor?.city}
                 data={cities}
-                value={cityId}
+                // value={mentor?.city}
                 onChange={(value) => setCityId(value)}
                 searchable
                 nothingFoundMessage="Nothing found..."

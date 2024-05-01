@@ -1,11 +1,8 @@
 import Header from "../../../components/header/Header";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { getSearchedVacancies, getSpecializations, getCities, getExperiences, getSkills, getEmpType } from '@/app/store/slices/vacancySlice';
 import { useEffect, useState } from "react";
 //import { useSearchParams } from 'next/navigation'
-import ModalSelectSpec from "../../../components/FiilFormVacancy/ModalSelectSpec/ModalSelectSpec";
-import AutoCompleteSelect from "../../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect";
 import MyVacancies from "../../../components/myvacancies/MyVacancies";
 //import { useRouter } from "next/navigation"
 import img1 from "../../../assets/images/img1.png";
@@ -56,6 +53,8 @@ export default function SearchVacancy() {
   const closeSepcModal = () => {
     setSpecModalOpen(false);
   };
+  const [querySeacrh, setQuerySeacrh] = useState("");
+  const [filteredVacancies, setFilteredVacancies] = useState([]);
 
   const {
     isPending,
@@ -82,13 +81,11 @@ export default function SearchVacancy() {
   const vacancies = useSelector((state) => state.vacancy.allVacancies);
 
   useEffect(() => {
-    // if (KeycloakService.isLoggedIn()) {
-    //   dispatch(getAllAuthVacancies());
-    // } else {
-    //   dispatch(getAllVacancies());
-    // }
-
-    dispatch(getAllVacancies());
+    if (KeycloakService.isLoggedIn()) {
+      dispatch(getAllAuthVacancies());
+    } else {
+      dispatch(getAllVacancies());
+    }
   }, []);
 
   useEffect(() => {
@@ -96,6 +93,19 @@ export default function SearchVacancy() {
       setLoading(false);
     }
   }, [vacancies]);
+
+  useEffect(() => {
+    if (querySeacrh.trim() === "") {
+      // If search query is empty, show all vacancies
+      setFilteredVacancies(vacancies);
+    } else {
+      // Otherwise, filter vacancies based on search query
+      const filtered = vacancies.filter((vacancy) =>
+        vacancy.title.toLowerCase().includes(querySeacrh.toLowerCase())
+      );
+      setFilteredVacancies(filtered);
+    }
+  }, [querySeacrh, vacancies]);
 
   let experiences = [
     "Нет опыта",
@@ -113,10 +123,10 @@ export default function SearchVacancy() {
   return (
     <main>
       <Container size="xl" mt={40}>
-        <Search />
+        <Search onChange={(event) => setQuerySeacrh(event.target.value)} />
         <Grid mt={40}>
           <Grid.Col span="auto">
-            <Paper shadow="xs" withBorder p="md">
+            <Paper mt={20} shadow="xs" withBorder p="md">
               <Text size="lg" fw={700} mb={20}>
                 Filters
               </Text>
@@ -207,13 +217,18 @@ export default function SearchVacancy() {
               </div>
             ) : (
               <div style={{ paddingLeft: `40px` }}>
-                <MyVacancies vacancies={vacancies} />
+                <MyVacancies vacancies={filteredVacancies} />
               </div>
             )}
           </Grid.Col>
         </Grid>
       </Container>
-      <div className="container mt7">
+    </main>
+  );
+}
+
+{
+  /* <div className="container mt7">
         <Search />
         <div className="flex ">
           <div className="search-left flex flex-cl" style={{ width: `25%` }}>
@@ -292,7 +307,5 @@ export default function SearchVacancy() {
             </div>
           )}
         </div>
-      </div>
-    </main>
-  );
+      </div> */
 }

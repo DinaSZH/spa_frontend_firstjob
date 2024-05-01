@@ -14,12 +14,19 @@ import {
 import { Paper } from "@mantine/core";
 import { getProfile } from "../../store/slices/profileSlice";
 import Applies from "../../components/Applies/Applies";
-import { getVacancyApplies } from "../../store/slices/applySlice";
+import {
+  declineApply,
+  getVacancyApplies,
+  inviteApply,
+} from "../../store/slices/applySlice";
 import classes from "./HrApplies.module.css";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function HrApplies() {
   const dispatch = useDispatch();
   const [status, setStatus] = useState("NEW");
+  const [inviteStatus, setInviteStatus] = useState(false);
+  const [declineStatus, setDeclineStatus] = useState(false);
 
   const { id } = useParams();
   useEffect(() => {
@@ -33,6 +40,11 @@ export default function HrApplies() {
   const rows = applies.map((row) => {
     return (
       <Table.Tr key={row.id}>
+        <Table.Td>
+          <Anchor component={Link} to={`/vacancies/${row.vacancy.id}`} fz="sm">
+            {row.vacancy.title}
+          </Anchor>
+        </Table.Td>
         <Table.Td>
           <Text fw={500}>{row.email}</Text>
         </Table.Td>
@@ -48,10 +60,32 @@ export default function HrApplies() {
         </Table.Td>
         <Table.Td>
           <Group gap={10} justify="flex-end">
-            <Button variant="filled" size="xs" color="green">
+            <Button
+              variant="filled"
+              size="xs"
+              color="green"
+              onClick={() => {
+                setInviting(true);
+                dispatch(inviteApply(row.id)).then(() => {
+                  setInviting(false);
+                  toast.success("Invitation sent!");
+                });
+              }}
+            >
               Invite
             </Button>
-            <Button variant="filled" size="xs" color="red">
+            <Button
+              variant="filled"
+              size="xs"
+              color="red"
+              onClick={() => {
+                setInviting(true);
+                dispatch(declineApply(row.id)).then(() => {
+                  setDeclineStatus(false);
+                  toast.success("Invitation sent!");
+                });
+              }}
+            >
               Decline
             </Button>
           </Group>
@@ -77,6 +111,9 @@ export default function HrApplies() {
                 <Table verticalSpacing="xs" className="w-full">
                   <Table.Thead>
                     <Table.Tr>
+                      <Table.Th>
+                        <Text fw={700}>Vacancy</Text>
+                      </Table.Th>
                       <Table.Th>
                         <Text fw={700}>Email</Text>
                       </Table.Th>

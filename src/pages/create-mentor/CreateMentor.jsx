@@ -78,7 +78,7 @@ export default function CreateMentor() {
       };
 
       await dispatch(createMentorProfile(mentorData));
-      navigate("/mentors");
+      navigate("/profile/mentor");
     } catch (error) {
       console.error("Error creating mentor:", error);
     }
@@ -135,6 +135,7 @@ export default function CreateMentor() {
                 label="Telegram link"
                 placeholder="Input Telegram link"
                 {...form.getInputProps("telegramLink")}
+                required
               />
 
               <TextInput
@@ -142,12 +143,14 @@ export default function CreateMentor() {
                 label="Position"
                 placeholder="Input position"
                 {...form.getInputProps("position")}
+                required
               />
               <TextInput
                 mt="sm"
                 label="Company"
                 placeholder="Input company name"
                 {...form.getInputProps("company")}
+                required
               />
 
               <Select
@@ -160,6 +163,7 @@ export default function CreateMentor() {
                 searchable
                 nothingFoundMessage="Nothing found..."
                 {...form.getInputProps("cityId")}
+                required
               />
               <Flex
                 mih={50}
@@ -176,6 +180,7 @@ export default function CreateMentor() {
                   min={0}
                   max={1000000}
                   {...form.getInputProps("cost")}
+                  required
                 />
                 <Select
                   mt="sm"
@@ -183,6 +188,7 @@ export default function CreateMentor() {
                   placeholder="Pick value"
                   data={["KZT", "USD", "RUB"]}
                   {...form.getInputProps("currency")}
+                  required
                 />
               </Flex>
 
@@ -192,6 +198,7 @@ export default function CreateMentor() {
                 placeholder="Pick value"
                 data={["Online", "Offline"]}
                 {...form.getInputProps("format")}
+                required
               />
               <Select
                 mt="sm"
@@ -205,12 +212,14 @@ export default function CreateMentor() {
                   "6+ years",
                 ]}
                 {...form.getInputProps("experience")}
+                required
               />
               <Textarea
                 mt="sm"
                 label="About me"
                 placeholder="Input description"
                 {...form.getInputProps("about")}
+                required
               />
               <Button type="submit" mt="lg">
                 Submit

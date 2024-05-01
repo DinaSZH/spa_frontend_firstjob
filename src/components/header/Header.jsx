@@ -96,9 +96,9 @@ const linksUser = [
 
 const linksMentor = [
   {
-    icon: IconBook,
-    title: "Create mentor profile",
-    link: "/create-mentor",
+    icon: IconCode,
+    title: "Mentor profile",
+    link: "/profile/mentor",
   },
 ];
 

@@ -15,6 +15,7 @@ import {
   Divider,
   FileInput,
   FileButton,
+  Skeleton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../NotFound/NotFound.module.css";
@@ -25,13 +26,18 @@ import { NavLink } from "react-router-dom";
 import { TextEditor } from "../../components/TextEditor/TextEditor";
 import { useForm } from "@mantine/form";
 import KeycloakService from "../../services/KeycloakService";
+import SkeletonLoader from "../../components/Skeleton/Skeleton";
 
 export function News() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
   const allNews = useSelector((state) => state.news.allNews);
   useEffect(() => {
-    dispatch(getAllNews());
+    dispatch(getAllNews())
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false));
   }, []);
 
   const [company, setCompany] = useState("");
@@ -95,7 +101,14 @@ export function News() {
       )}
 
       <Text className={classes.title}>News</Text>
-      {allNews &&
+      {loading ? (
+        <>
+          <Skeleton height={340} mb="xl" />
+          <Skeleton height={340} mb="xl" />
+          <Skeleton height={340} mb="xl" />
+        </>
+      ) : (
+        allNews &&
         allNews.map((item) => (
           <React.Fragment key={item.id}>
             <NavLink
@@ -136,7 +149,8 @@ export function News() {
             <Divider my="md" />
             <Space h="xs" />
           </React.Fragment>
-        ))}
+        ))
+      )}
 
       <Modal
         opened={opened}
@@ -224,166 +238,3 @@ export function News() {
     </Container>
   );
 }
-
-// export function News() {
-//   const [opened, { open, close }] = useDisclosure(false);
-//   const dispatch = useDispatch();
-//   const allNews = useSelector((state) => state.news.allNews);
-//   useEffect(() => {
-//     dispatch(getAllNews());
-//   }, []);
-//   const [file, setFile] = useState(null);
-
-//   const resetRef = useRef(null);
-
-//   const clearFile = () => {
-//     setFile(null);
-//     resetRef.current?.();
-//   };
-
-//   const form = useForm({
-//     mode: "uncontrolled",
-//     initialValues: { comany: "", title: "", text: "", image: "" },
-
-//     // functions will be used to validate values at corresponding key
-//     validate: {
-//       comany: (value) =>
-//         value.length < 2 ? "Comany must have at least 2 letters" : null,
-//       title: (value) =>
-//         value.length < 2 ? "Title must have at least 2 letters" : null,
-//       text: (value) =>
-//         value.length < 2 ? "Text must have at least 2 letters" : null,
-//       image: (value) =>
-//         value.length < 2 ? "Image must have at least 2 letters" : null,
-//     },
-//   });
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const formData = new FormData();
-//     formData.append("image", form.values.image);
-//     formData.append("title", form.values.title);
-//     formData.append("text", form.values.text);
-//     formData.append("company", form.values.company);
-
-//     dispatch(createNews(formData));
-//   };
-
-//   return (
-//     <Container size="lg" py="xl">
-//       <Button onClick={open} className="mb20">
-//         Add news
-//       </Button>
-//       <Text className={classes.title}>News</Text>
-//       {allNews &&
-//         allNews.map((item) => (
-//           <React.Fragment key={item.id}>
-//             <NavLink
-//               style={{ textDecoration: "none", color: "inherit" }}
-//               to={`/news/${item.id}`}
-//             >
-//               <SimpleGrid
-//                 spacing={{ base: 20, sm: 30 }}
-//                 cols={{ base: 1, sm: 2 }}
-//                 className={classes.card}
-//               >
-//                 <Image src={item.imageUrl} className={classes.mobileImage} />
-//                 <Image src={item.imageUrl} className={classes.desktopImage} />
-//                 <div>
-//                   <Group justify="space-between" gap="xs">
-//                     <Text fw={700} size="xl">
-//                       {item.title}
-//                     </Text>
-//                   </Group>
-//                   <Text size="lg">{item.text}</Text>
-//                   <div className="mb10"></div>
-//                   <Text c="dimmed">
-//                     Created at:{" "}
-//                     {item.createdAt ? item.createdAt.split("T")[0] : ""}
-//                   </Text>
-
-//                   <Group gap="xs">
-//                     <Text c="blue">Author: {item.author}</Text>
-//                     <Text c="blue">Company: {item.company}</Text>
-//                   </Group>
-//                 </div>
-//               </SimpleGrid>
-//             </NavLink>
-//             <Divider my="md" />
-//             <Space h="xs" />
-//           </React.Fragment>
-//         ))}
-
-//       <Modal
-//         opened={opened}
-//         onClose={close}
-//         title="Create news"
-//         size="70%"
-//         centered
-//       >
-//         <Center>
-//           <Text size="xl" fw={700} c="blue">
-//             Upload news
-//           </Text>
-//         </Center>
-//         <form onSubmit={form.onSubmit(handleSubmit)}>
-//           <Input.Wrapper
-//             size="md"
-//             label="Company name"
-//             required
-//             // description="Input description"
-//             // error="Input error"
-//           >
-//             <Input placeholder="Enter company" />
-//           </Input.Wrapper>
-//           <Space h="md" />
-//           <Input.Wrapper
-//             size="md"
-//             label="Title"
-//             required
-//             // description="Input description"
-//             // error="Input error"
-//           >
-//             <Input placeholder="Enter title" />
-//           </Input.Wrapper>
-
-//           <Space h="md" />
-//           <Input.Wrapper size="md" label="Text" required>
-//             <TextEditor required />
-//           </Input.Wrapper>
-
-//           <Space h="md" />
-//           <Group>
-//             <FileButton
-//               resetRef={resetRef}
-//               onChange={setFile}
-//               accept="image/png,image/jpeg"
-//               required
-//             >
-//               {(props) => (
-//                 <Button variant="outline" {...props}>
-//                   Upload image
-//                 </Button>
-//               )}
-//             </FileButton>
-//             <Button disabled={!file} color="red" onClick={clearFile}>
-//               Reset
-//             </Button>
-//           </Group>
-
-//           {file && (
-//             <Text size="sm" mt="sm">
-//               Picked file: {file.name}
-//             </Text>
-//           )}
-//           <Space h="lg" />
-//           <Button type="submit" size="md">
-//             Upload
-//           </Button>
-//         </form>
-
-//         <Space h="md" />
-//       </Modal>
-//     </Container>
-//   );
-// }

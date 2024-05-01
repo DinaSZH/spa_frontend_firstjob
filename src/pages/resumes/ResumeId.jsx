@@ -2,7 +2,11 @@ import Header from "../../components/header/Header";
 import MyResumes from "../../components/myresumes/MyResumes";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMyResumes, getResumeById } from "../../store/slices/resumeSlice";
+import {
+  getMyResumes,
+  getResumeById,
+  getResumeByIdForHR,
+} from "../../store/slices/resumeSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import arrow from "../../assets/images/arrow-left.png";
 import {
@@ -35,6 +39,7 @@ import {
   downloadCertificationById,
   getMyCertifications,
 } from "../../store/slices/testSlice";
+import KeycloakService from "../../services/KeycloakService";
 
 export default function ResumeId() {
   const dispatch = useDispatch();
@@ -43,7 +48,12 @@ export default function ResumeId() {
   const resume = useSelector((state) => state.resume.resume);
   const certifications = useSelector((state) => state.test.certifications);
   useEffect(() => {
-    dispatch(getResumeById(id));
+    if (KeycloakService.getHRRole()) {
+      dispatch(getResumeByIdForHR(id));
+    } else {
+      dispatch(getResumeById(id));
+    }
+
     dispatch(getMyCertifications(resume.email));
   }, []);
 
@@ -51,10 +61,16 @@ export default function ResumeId() {
     <main>
       <Container size="lg" py="xl">
         <Group justify="space-between">
-          <Button onClick={() => navigate(`/resumes`)} variant="light" mb={10}>
-            <img className="arrow link" src={arrow} alt="arrow" />
-            My resume
-          </Button>
+          {!KeycloakService.getHRRole() && (
+            <Button
+              onClick={() => navigate(`/resumes`)}
+              variant="light"
+              mb={10}
+            >
+              <img className="arrow link" src={arrow} alt="arrow" />
+              My resume
+            </Button>
+          )}
           {/* <Button
             onClick={() => navigate(`/edit-resume/${resume.id}`)}
             variant="filled"
