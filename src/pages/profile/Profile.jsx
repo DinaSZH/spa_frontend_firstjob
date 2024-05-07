@@ -1,112 +1,110 @@
-
-import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-// import {getResumeById} from '@/app/store/slices/resumeSlice'
-import {getAgeFromBirthday, monthsInRussian, monthsInRussian2} from '../../utils/format'
-import { Link, useNavigate } from 'react-router-dom';
-import user from '../../assets/images/user-icon.webp';
-import iconUser from '../../assets/images/iconUser.png';
-import KeycloakService from '../../services/KeycloakService';
-import { Loader } from '@mantine/core';
-import { getProfile } from '../../store/slices/profileSlice';
-import RenderOnAuthenticated from '../../helpers/RenderOnAuthenticated';
-import { DatePickerInput } from '@mantine/dates';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import user from "../../assets/images/user-icon.webp";
+import KeycloakService from "../../services/KeycloakService";
+import {
+  Button,
+  Center,
+  Container,
+  Divider,
+  Flex,
+  Group,
+  Loader,
+  Paper,
+  Text,
+  Title,
+} from "@mantine/core";
+import { getProfile } from "../../store/slices/profileSlice";
+import RenderOnAuthenticated from "../../helpers/RenderOnAuthenticated";
+import {
+  IconCalendar,
+  IconMail,
+  IconPhone,
+} from "@tabler/icons-react";
 
 export default function Profile() {
+  const dispatch = useDispatch();
+  const { profile,} = useSelector((state) => state.profile);
 
-    const dispatch = useDispatch();
-    const { profile, error, loading } = useSelector(
-      (state) => state.profile
-    )
-    // const {id} = useParams();
-    // const resume = useSelector(state => state.resume.resume)
+  const [loader, setLoader] = useState(true);
+  const navigate = useNavigate();
 
-    // const didMount = () => {
-    //     dispatch(getResumeById(id))
-    // }
-    // useEffect(didMount, [])
+  useEffect(() => {
+    dispatch(getProfile());
+  }, []);
 
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [birthdate, setBirthdate] = useState("");
-    const [loader, setLoader] = useState(true);
-    const navigate = useNavigate();
-
-    const getProfileInfo = async () => {
-      try {
-        if (KeycloakService.isLoggedIn()) {
-          setName(KeycloakService.getGiven_name());
-          setSurname(KeycloakService.getFamily_name());
-          setEmail(KeycloakService.getUsername());
-          setPhone(KeycloakService.getPhone());
-          setBirthdate(KeycloakService.getBirthdate());
-          console.log("User authenticated");
-        
-        } else {
-          console.log("User is not authenticated");
-        }
-      } catch (error) {
-        console.error("Error initializing Keycloak:", error);
-      }
-    };
-    
-    useEffect(() => {
-      dispatch(getProfile())
-      console.log(KeycloakService.getToken())
-    }, []);
-
-    useEffect(() => {
-      if(profile){
-        setLoader(false);
-      }
-    }, [profile]);
-
-    
-
-  
+  useEffect(() => {
+    if (profile) {
+      setLoader(false);
+    }
+  }, [profile]);
 
   return (
     <RenderOnAuthenticated>
-    <main>
-      <div className='container'>
-        <div className='flex flex-ai-c flex-jc-end ptb7'>
-         {profile && <button className='button button-black' onClick={() => navigate(`/profile/edit`)}>Редактировать</button>}
-        </div> 
+      <main>
+        <Container size="lg" py="xl">
+          <Group justify="flex-end">
+            <Button
+              onClick={() => navigate("/profile/edit")}
+              variant="filled"
+              color="rgba(51, 44, 44, 1)"
+              mb={10}
+            >
+              Edit profile
+            </Button>
+          </Group>
+          <Paper
+            mih={500}
+            mt={20}
+            radius="md"
+            withBorder
+            p="lg"
+            color="#228BE6"
+            shadow="xs"
+          >
+            {loader ? (
+              <Center h={500}>
+                <Loader color="blue" size={100} />
+              </Center>
+            ) : (
+              <Flex
+                gap="lg"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                wrap="wrap"
+              >
+                <div>
+                  <img className="usernameImage" src={user} alt="logo" />
+                </div>
 
-        <div className='vacancy-container flex mb10'>
+                <div>
+                  <Title order={2}>Profile Information</Title>
+                  <h3 className="text">{`${profile?.firstname} ${profile?.lastname}`}</h3>
 
-          <div className='vacancy-container-right mr4'> 
-              <div className='vacancy-sidebar'>
-                  <img className='usernameImage' src={user} alt='logo'/>
-              </div>
-          </div>
+                  <Divider my="md" />
 
-            <div className='vacancy-container-left'>
-                    {loader ? <Loader color="blue" /> : <div>
-                        <h2 className='no-mr'>Profile Information</h2>
-                        <h3 className='text'>{`${profile?.firstname} ${profile?.lastname}`}</h3>
-
-                        <div className='divider'></div>
-
-                        <div className='backgroundBlock'>
-                          <div className='flex resume-title'> 
-                          {/* <img className='logo' src={iconUser} alt='logo'/> */}
-                          <h1 className='no-mr'>Personal Details</h1></div>
-                          <p>{profile?.email}</p>
-                          <p>{profile?.phone}</p>
-                          <p>{profile?.birthdate} </p>
-                        
-                        </div>
-                      </div>}
-
-                    <div className='divider'></div>
-
-            </div>
-      </div>
-      </div>
-    </main>
+                  <div className="backgroundBlock">
+                    <div className="flex resume-title">
+                      <Title order={2}>Personal Details</Title>
+                    </div>
+                    <Text c="dimmed" className="flex flex-ai-c gap10" mt={10}>
+                      <IconMail /> {profile?.email}
+                    </Text>
+                    <Text c="dimmed" className="flex flex-ai-c gap10" mt={10}>
+                      <IconPhone /> {profile?.phone}
+                    </Text>
+                    <Text c="dimmed" className="flex flex-ai-c gap10" mt={10}>
+                      <IconCalendar /> {profile?.birthdate}
+                    </Text>
+                  </div>
+                </div>
+              </Flex>
+            )}
+          </Paper>
+        </Container>
+      </main>
     </RenderOnAuthenticated>
-  )
+  );
 }

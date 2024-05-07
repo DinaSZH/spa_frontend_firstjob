@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   registerHR,
-  setError,
   setSignupSuccess,
 } from "../../store/slices/authSlice";
 import {

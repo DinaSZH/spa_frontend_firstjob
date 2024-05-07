@@ -254,7 +254,7 @@ export default function Header() {
                   </Menu.Target>
 
                   <Menu.Dropdown>
-                    <Menu.Label>Application</Menu.Label>
+                    <Menu.Label>Menu</Menu.Label>
                     {profile && (
                       <Menu.Item
                         onClick={() => navigate("/profile")}
