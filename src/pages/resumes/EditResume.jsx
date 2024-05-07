@@ -1,22 +1,20 @@
-import Input from "../../components/FillForm/input/input";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ModalAddExp from "../../components/FillForm/ModalAddExp/ModalAddExp";
 import WorkingHistory from "../../components/FillForm/WorkingHistory/WorkingHistory";
 import AddEducation from "../../components/FillForm/AddEducation/AddEducation";
 import SelectEmploymentTypes from "../../components/FillForm/SelectEmploymentTypes/SelectEmploymentTypes";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { END_POINT } from "../../config/end-point";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MultiSelect } from "@mantine/core";
+import { useQuery, } from "@tanstack/react-query";
+import { Center, Loader, MultiSelect } from "@mantine/core";
 import EducationItem from "../../components/EducationItem/EducationItem";
 import {
-  createResume,
   editResumeById,
   getResumeById,
 } from "../../store/slices/resumeSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Group } from "@mantine/core";
+import { Group } from "@mantine/core";
 import {
   Box,
   Button,
@@ -39,8 +37,6 @@ export default function EditResume() {
   const [allSkills, setSkills] = useState([]);
   const [allEmploymentTypes, setEmploymentTypes] = useState([]);
   const [experience, setExperience] = useState([]);
-  const [modalExpIsOpen, setModalExpIsOpen] = useState(false);
-  const [modalEduIsOpen, setModalEduIsOpen] = useState(false);
 
   const [city, setCity] = useState("");
   const [gender, setGender] = useState("");
@@ -74,7 +70,6 @@ export default function EditResume() {
         throw new Error("Failed to fetch cities");
       }
       const citiesData = await response.json();
-      // Преобразование данных городов в формат, ожидаемый компонентом Select
       const transformedCities = citiesData.map((city) => ({
         value: city.id,
         label: city.name,
@@ -101,14 +96,6 @@ export default function EditResume() {
       });
   }, []);
 
-  const closeModalExp = () => {
-    setModalExpIsOpen(false);
-  };
-
-  const closeModalEdu = () => {
-    setModalEduIsOpen(false);
-  };
-
   const addWorkingHistory = (item) => {
     setExperience([...experience, item]);
     close();
@@ -133,12 +120,10 @@ export default function EditResume() {
     setEducation(ed);
   };
 
-  const handleGenderChange = (e) => {
-    setGender(e.target.value);
-  };
-
-  const onSkillsChange = (data) => {
-    setSelectedSkills(data.map((skill) => skill.label)); // Store only the label (name) of selected skills
+  const currencyMappings = {
+    "₸": "KZT",
+    $: "USD",
+    "₽": "RUB",
   };
 
   const updateFormValidity = () => {
@@ -147,8 +132,6 @@ export default function EditResume() {
       city &&
       position &&
       skills.length > 0 &&
-      experience.length > 0 &&
-      education.length > 0 &&
       salary >= 0 &&
       currency &&
       about;
@@ -158,7 +141,6 @@ export default function EditResume() {
 
   useEffect(() => {
     updateFormValidity();
-    console.log("isFormValid:", isFormValid);
   }, [gender, city, position, skills, salary, currency, about, employmentType]);
 
   useEffect(() => {
@@ -172,7 +154,7 @@ export default function EditResume() {
       setPosition(resume.position);
       setSelectedSkills(resume.skills);
       setSalary(resume.salary);
-      setCurrency(resume.currency);
+      setCurrency(currencyMappings[resume.currency]);
       setExperience(resume.experience);
       setAbout(resume.about);
       setEducation(resume.education);
@@ -183,6 +165,7 @@ export default function EditResume() {
 
   const handleSave = async () => {
     try {
+      const matchingCity = cities.find((cityData) => cityData === resume.city);
       const editedResumeData = {
         gender,
         city,
@@ -195,7 +178,7 @@ export default function EditResume() {
         education,
         employmentType,
       };
-      console.log(editedResumeData);
+      console.log("EDITED", editedResumeData);
 
       await dispatch(
         editResumeById({
@@ -227,324 +210,116 @@ export default function EditResume() {
           Edit resume
         </Text>
 
-        <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
-          <Box mx="auto">
-            <Text fw={700} size="xl" mt="sm">
-              Basic information
-            </Text>
-            <Select
-              mt="sm"
-              label="Gender"
-              placeholder={gender}
-              data={["Male", "Female"]}
-              value={gender}
-              onChange={setGender}
-              required
-            />
-            <Select
-              mt="sm"
-              label="City"
-              placeholder={city}
-              data={cities}
-              searchable
-              value={city}
-              onChange={setCity}
-              nothingFoundMessage="Nothing found..."
-              required
-              // {...form.getInputProps("city")}
-            />
-            <Text fw={700} size="xl" mt="sm">
-              Speciality
-            </Text>
-
-            <TextInput
-              mt="sm"
-              label="Desired job position"
-              placeholder="Input position"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
-              //{...form.getInputProps("position")}
-            />
-
-            <Flex
-              mih={50}
-              gap="sm"
-              justify="flex-start"
-              align="flex-start"
-              direction="row"
-              wrap="wrap"
-            >
-              <NumberInput
+        {loading ? (
+          <>
+            <Center h={500}>
+              <Loader color="blue" size={100} />
+            </Center>
+          </>
+        ) : (
+          <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
+            <Box mx="auto">
+              <Text fw={700} size="xl" mt="sm">
+                Basic information
+              </Text>
+              <Select
                 mt="sm"
-                label="Salary"
-                placeholder="Input salary"
-                min={0}
-                max={10000000000}
-                value={salary}
-                onChange={setSalary}
-                //  {...form.getInputProps("salary")}
+                label="Gender"
+                placeholder={gender}
+                data={["Male", "Female"]}
+                value={gender}
+                onChange={setGender}
+                required
               />
               <Select
                 mt="sm"
-                label="Currency"
-                placeholder="Pick value"
-                data={["KZT", "USD", "RUB"]}
-                value={currency}
-                onChange={setCurrency}
-                // {...form.getInputProps("currency")}
+                label="City"
+                placeholder={city}
+                data={cities}
+                searchable
+                value={city}
+                onChange={setCity}
+                nothingFoundMessage="Nothing found..."
+                required
               />
-            </Flex>
-
-            <MultiSelect
-              mt="sm"
-              label="Skills"
-              placeholder="Pick value"
-              data={allSkills}
-              hidePickedOptions
-              value={skills}
-              onChange={setSelectedSkills}
-              // {...form.getInputProps("skills")}
-            />
-
-            <Text fw={700} size="xl" mt="sm">
-              Job experience
-            </Text>
-
-            <Flex
-              mt="sm"
-              mih={50}
-              gap={100}
-              justify="flex-start"
-              align="center"
-              direction="row"
-              wrap="wrap"
-            >
-              <Text fw={500} size="md">
-                Place of work
+              <Text fw={700} size="xl" mt="sm">
+                Speciality
               </Text>
-              <Button variant="outline" onClick={open}>
-                Add place of work
-              </Button>
-              <ModalAddExp
-                // close={closeModalExp}
-                close={close}
-                opened={opened}
-                addWorkingHistory={addWorkingHistory}
+
+              <TextInput
+                mt="sm"
+                label="Desired job position"
+                placeholder="Input position"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                required
               />
-            </Flex>
-            {experience.map((item) => (
-              <WorkingHistory
-                key={item.id}
-                workingHistory={item}
-                remove={removeWorkingHistory}
-              />
-            ))}
 
-            {/* <MultiSelect
-              mt="sm"
-              label="Employment Types"
-              placeholder="Pick value"
-              data={allEmploymentTypes}
-              hidePickedOptions
-              value={employmentTypes}
-              onChange={setSelectedEmploymentTypes}
-              //{...form.getInputProps("employmentTypes")}
-            /> */}
-
-            <Text fw={700} size="xl" mt="sm">
-              Education
-            </Text>
-
-            <Flex
-              mt="sm"
-              mih={50}
-              gap={100}
-              justify="flex-start"
-              align="center"
-              direction="row"
-              wrap="wrap"
-            >
-              <Text fw={500} size="md">
-                Education
-              </Text>
-              <Button variant="outline" onClick={openEdu}>
-                Add education
-              </Button>
-              <AddEducation
-                closeEdu={closeEdu}
-                openedEdu={openedEdu}
-                addEducation={addEducation}
-              />
-            </Flex>
-            {education.map((item) => (
-              <EducationItem
-                key={item.id}
-                education={item}
-                remove={removeEducation}
-              />
-            ))}
-
-            <Text fw={700} size="xl" mt="sm">
-              Description
-            </Text>
-            <Textarea
-              mt="sm"
-              label="About me"
-              placeholder="Input description"
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-            />
-            <Button
-              onClick={handleSave}
-              disabled={!isFormValid}
-              type="submit"
-              mt="lg"
-            >
-              Edit resume
-            </Button>
-            {/* </form> */}
-          </Box>
-        </Paper>
-      </Container>
-      <Space h="lg" />
-      {/* <div className="container p7">
-        <div className="flex flex-jc-end mb10">
-          <Link className="button button-black " to="/resumes">
-            Back
-          </Link>
-        </div>
-        <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
-          <h1>Edit resume</h1>
-
-          <h3>Основная информация</h3>
-          <fieldset className={"fieldset fieldset-sm"}>
-            <label>Gender</label>
-            <div className="radio-group">
-              <div className="radio">
-                {resume.gender && resume.gender === "MALE" && (
-                  <input
-                    className="radio"
-                    type="radio"
-                    name="gender"
-                    id="g1"
-                    onChange={handleGenderChange}
-                    value={"MALE"}
-                    checked
-                  />
-                )}
-                {!resume.gender ||
-                  (resume.gender !== "MALE" && (
-                    <input
-                      className="radio"
-                      type="radio"
-                      name="gender"
-                      id="g1"
-                      onChange={handleGenderChange}
-                      value={"MALE"}
-                    />
-                  ))}
-                <label htmlFor="g1">Male</label>
-              </div>
-              <div className="radio">
-                {resume.gender && resume.gender === "FEMALE" && (
-                  <input
-                    className="radio"
-                    type="radio"
-                    name="gender"
-                    id="g2"
-                    onChange={handleGenderChange}
-                    value={"FEMALE"}
-                    checked
-                  />
-                )}
-                {!resume.gender ||
-                  (resume.gender !== "FEMALE" && (
-                    <input
-                      className="radio"
-                      type="radio"
-                      name="gender"
-                      id="g2"
-                      onChange={handleGenderChange}
-                      value={"FEMALE"}
-                    />
-                  ))}
-                <label htmlFor="g2">Female</label>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className={"fieldset fieldset-sm"}>
-            <label className="h1">City of residence</label>
-            <Select
-              placeholder="Search city"
-              data={cities}
-              searchable
-              value={city}
-              onChange={setCity}
-              nothingFoundMessage="Nothing found..."
-              className={"fieldset fieldset-sm h3"}
-            />
-          </fieldset>
-
-          <h3>Специальность</h3>
-
-          <Input
-            placeholder=""
-            type="text"
-            label="Желаемая должность"
-            size="fieldset-lg"
-            onChange={(e) => setPosition(e.target.value)}
-            value={position}
-          />
-
-          <fieldset className={"fieldset fieldset-sm"}>
-            <label className="h1">Skills</label>
-          </fieldset>
-          <MultiSelect
-            placeholder="Pick value"
-            data={allSkills}
-            hidePickedOptions
-            value={skills}
-            onChange={setSelectedSkills}
-          />
-
-          <fieldset className={"fieldset fieldset-lg"}>
-            <label>Зарплата</label>
-
-            <div className="salary">
-              <input
-                placeholder=""
-                className="input"
-                type="number"
-                size="input"
-                value={salary}
-                onChange={(e) => setSalary(e.target.value * 1)}
-              />
-              <select
-                className="input"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
+              <Flex
+                mih={50}
+                gap="sm"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                wrap="wrap"
               >
-                <option value={"KZT"}>KZT</option>
-                <option value={"USD"}>USD</option>
-                <option value={"RUB"}>RUB</option>
-              </select>
-              на руки
-            </div>
-          </fieldset>
+                <NumberInput
+                  mt="sm"
+                  label="Salary"
+                  placeholder="Input salary"
+                  min={0}
+                  max={10000000000}
+                  value={salary}
+                  onChange={setSalary}
+                  required
+                />
+                <Select
+                  mt="sm"
+                  label="Currency"
+                  placeholder="Pick value"
+                  data={["KZT", "USD", "RUB"]}
+                  value={currency}
+                  onChange={setCurrency}
+                  required
+                />
+              </Flex>
 
-          <h3>Опыт работы</h3>
+              <MultiSelect
+                mt="sm"
+                label="Skills"
+                placeholder="Pick value"
+                data={allSkills}
+                hidePickedOptions
+                value={skills}
+                onChange={setSelectedSkills}
+                required
+              />
 
-          {modalExpIsOpen && (
-            <ModalAddExp
-              close={closeModalExp}
-              addWorkingHistory={addWorkingHistory}
-            />
-          )}
-          <fieldset className={"fieldset fieldset-lg"}>
-            <label>Места работы</label>
+              <Text fw={700} size="xl" mt="sm">
+                Job experience
+              </Text>
 
-            <div className="exp">
+              <Flex
+                mt="sm"
+                mih={50}
+                gap={100}
+                justify="flex-start"
+                align="center"
+                direction="row"
+                wrap="wrap"
+              >
+                <Text fw={500} size="md">
+                  Place of work
+                </Text>
+                <Button variant="outline" onClick={open}>
+                  Add place of work
+                </Button>
+                <ModalAddExp
+                  close={close}
+                  opened={opened}
+                  addWorkingHistory={addWorkingHistory}
+                />
+              </Flex>
               {experience.map((item) => (
                 <WorkingHistory
                   key={item.id}
@@ -552,34 +327,43 @@ export default function EditResume() {
                   remove={removeWorkingHistory}
                 />
               ))}
-              <button
-                className="button button-primary-bordered"
-                onClick={() => setModalExpIsOpen(true)}
+
+              {/* <MultiSelect
+                mt="sm"
+                label="Employment Types"
+                placeholder="Pick value"
+                data={allEmploymentTypes}
+                hidePickedOptions
+                value={employmentTypes}
+                onChange={setSelectedEmploymentTypes}
+                //{...form.getInputProps("employmentTypes")}
+              /> */}
+
+              <Text fw={700} size="xl" mt="sm">
+                Education
+              </Text>
+
+              <Flex
+                mt="sm"
+                mih={50}
+                gap={100}
+                justify="flex-start"
+                align="center"
+                direction="row"
+                wrap="wrap"
               >
-                Добавить место работы
-              </button>
-            </div>
-          </fieldset>
-
-          <fieldset className={"fieldset fieldset-lg"}>
-            <label>О себе</label>
-            <textarea
-              className="textarea"
-              placeholder="Расскажите о себе"
-              onChange={(e) => setAbout(e.target.value)}
-              value={about}
-            />
-          </fieldset>
-
-          <h3>Образование</h3>
-
-          {modalEduIsOpen && (
-            <AddEducation close={closeModalEdu} addEducation={addEducation} />
-          )}
-          <fieldset className={"fieldset fieldset-lg"}>
-            <label>Образование</label>
-
-            <div className="exp">
+                <Text fw={500} size="md">
+                  Education
+                </Text>
+                <Button variant="outline" onClick={openEdu}>
+                  Add education
+                </Button>
+                <AddEducation
+                  closeEdu={closeEdu}
+                  openedEdu={openedEdu}
+                  addEducation={addEducation}
+                />
+              </Flex>
               {education.map((item) => (
                 <EducationItem
                   key={item.id}
@@ -587,49 +371,30 @@ export default function EditResume() {
                   remove={removeEducation}
                 />
               ))}
-              <button
-                className="button button-primary-bordered"
-                onClick={() => setModalEduIsOpen(true)}
+
+              <Text fw={700} size="xl" mt="sm">
+                Description
+              </Text>
+              <Textarea
+                mt="sm"
+                label="About me"
+                placeholder="Input description"
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+              />
+              <Button
+                onClick={handleSave}
+                disabled={!isFormValid}
+                type="submit"
+                mt="lg"
               >
-                Добавить место учебы
-              </button>
-            </div>
-          </fieldset>
-
-          <h3>Choose employment type</h3>
-          <fieldset className={"fieldset fieldset-sm"}>
-            <label className="h1">Employment type</label>
-            <div className="h1">
-              <Checkbox.Group>
-                {allEmploymentTypes.map((type) => (
-                  <Group mt="xs" key={type.id}>
-                    <Checkbox
-                      value={type.id}
-                      label={type.name}
-                      className="h1"
-                      checked={employmentType.includes(type.id)}
-                      onChange={(e) => {
-                        const checked = e.currentTarget.checked;
-                        setSelectedEmpTypes((prevState) => {
-                          if (checked) {
-                            return [...prevState, type.id];
-                          } else {
-                            return prevState.filter((item) => item !== type.id);
-                          }
-                        });
-                      }}
-                    />
-                  </Group>
-                ))}
-              </Checkbox.Group>
-            </div>
-          </fieldset>
-
-          <button className="button button-primary" onClick={handleSave}>
-            Edit resume
-          </button>
-        </Paper>
-      </div> */}
+                Edit resume
+              </Button>
+            </Box>
+          </Paper>
+        )}
+      </Container>
+      <Space h="lg" />
     </main>
   );
 }

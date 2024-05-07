@@ -3,17 +3,31 @@ import MyResumes from "../../components/myresumes/MyResumes";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getMyResumes } from "../../store/slices/resumeSlice";
-import { Link, useNavigate } from "react-router-dom";
-import { Button, Container, Group, Text } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Center,
+  Container,
+  Group,
+  Loader,
+  Text,
+  Title,
+} from "@mantine/core";
+import classes from "./Resume.module.css";
 
 export default function Resumes() {
   const dispacth = useDispatch();
-  const resumes = useSelector((state) => state.resume.resumes);
+  const { resumes, loading } = useSelector((state) => state.resume);
   const navigate = useNavigate();
 
   useEffect(() => {
     dispacth(getMyResumes());
+    console.log(loading);
   }, []);
+
+  useEffect(() => {
+    console.log(loading);
+  }, [loading]);
 
   return (
     <main>
@@ -31,7 +45,29 @@ export default function Resumes() {
             Create resume
           </Button>
         </Group>
-        <MyResumes resumes={resumes} />
+        {loading ? (
+          <>
+            <Center h={500}>
+              <Loader color="blue" size={100} />
+            </Center>
+          </>
+        ) : (
+          <MyResumes resumes={resumes} />
+        )}
+        {!resumes && !loading && (
+          <Container className={classes.root}>
+            <Title className={classes.title}>There is no resumes.</Title>
+            <Text
+              c="dimmed"
+              size="lg"
+              ta="center"
+              className={classes.description}
+            >
+              You do not have any resumes, create a resume by clicking on the
+              button "Create Resume".
+            </Text>
+          </Container>
+        )}
       </Container>
     </main>
   );

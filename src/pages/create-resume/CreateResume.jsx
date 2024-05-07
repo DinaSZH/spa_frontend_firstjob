@@ -1,18 +1,16 @@
-import Input from "../../components/FillForm/input/input";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ModalAddExp from "../../components/FillForm/ModalAddExp/ModalAddExp";
 import WorkingHistory from "../../components/FillForm/WorkingHistory/WorkingHistory";
 import AddEducation from "../../components/FillForm/AddEducation/AddEducation";
-import SelectEmploymentTypes from "../../components/FillForm/SelectEmploymentTypes/SelectEmploymentTypes";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { END_POINT } from "../../config/end-point";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Modal, MultiSelect } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
+import { MultiSelect } from "@mantine/core";
 import EducationItem from "../../components/EducationItem/EducationItem";
 import { createResume } from "../../store/slices/resumeSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Group } from "@mantine/core";
+import { Group } from "@mantine/core";
 import {
   Box,
   Button,
@@ -33,11 +31,7 @@ export default function CreateResume() {
   const [openedEdu, { open: openEdu, close: closeEdu }] = useDisclosure(false);
 
   const [allSkills, setSkills] = useState([]);
-
   const [experience, setExperience] = useState([]);
-  const [modalExpIsOpen, setModalExpIsOpen] = useState(false);
-  const [modalEduIsOpen, setModalEduIsOpen] = useState(false);
-
   const [city, setCity] = useState("");
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
@@ -51,6 +45,8 @@ export default function CreateResume() {
   const [employmentType, setSelectedEmpTypes] = useState([]);
   const [about, setAbout] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
+
+  const {success} = useSelector(state => state.resume)
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -127,8 +123,6 @@ export default function CreateResume() {
       city &&
       position &&
       skills.length > 0 &&
-      experience.length > 0 &&
-      education.length > 0 &&
       salary >= 0 &&
       currency &&
       about;
@@ -138,7 +132,6 @@ export default function CreateResume() {
 
   useEffect(() => {
     updateFormValidity();
-    console.log("isFormValid:", isFormValid);
   }, [gender, city, position, skills, salary, currency, about, employmentType]);
 
   const handleSave = async () => {
@@ -158,7 +151,9 @@ export default function CreateResume() {
 
       console.log("Resume daaa: ", resumeData);
       await dispatch(createResume(resumeData));
-      navigate("/resumes");
+      if(success){
+        navigate("/resumes");
+      }
     } catch (error) {
       console.error("Error creating resumes:", error);
     }
@@ -183,9 +178,11 @@ export default function CreateResume() {
 
         <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
           <Box mx="auto">
-            {/* <form onSubmit={form.onSubmit(handleSave)}> */}
             <Text fw={700} size="xl" mt="sm">
               Basic information
+            </Text>
+            <Text fw={400} color="red" size="md" mt="sm">
+              * Fill all required fields
             </Text>
             <Select
               mt="sm"
@@ -195,7 +192,6 @@ export default function CreateResume() {
               value={gender}
               onChange={setGender}
               required
-              // {...form.getInputProps("gender")}
             />
             <Select
               mt="sm"
@@ -207,7 +203,6 @@ export default function CreateResume() {
               onChange={setCity}
               nothingFoundMessage="Nothing found..."
               required
-              // {...form.getInputProps("city")}
             />
             <Text fw={700} size="xl" mt="sm">
               Speciality
@@ -219,7 +214,7 @@ export default function CreateResume() {
               placeholder="Input position"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
-              //{...form.getInputProps("position")}
+              required
             />
 
             <Flex
@@ -229,6 +224,7 @@ export default function CreateResume() {
               align="flex-start"
               direction="row"
               wrap="wrap"
+              required
             >
               <NumberInput
                 mt="sm"
@@ -238,7 +234,7 @@ export default function CreateResume() {
                 max={10000000000}
                 value={salary}
                 onChange={setSalary}
-                //  {...form.getInputProps("salary")}
+                required
               />
               <Select
                 mt="sm"
@@ -247,7 +243,7 @@ export default function CreateResume() {
                 data={["KZT", "USD", "RUB"]}
                 value={currency}
                 onChange={setCurrency}
-                // {...form.getInputProps("currency")}
+                required
               />
             </Flex>
 
@@ -259,7 +255,7 @@ export default function CreateResume() {
               hidePickedOptions
               value={skills}
               onChange={setSelectedSkills}
-              // {...form.getInputProps("skills")}
+              required
             />
 
             <Text fw={700} size="xl" mt="sm">
@@ -269,7 +265,7 @@ export default function CreateResume() {
             <Flex
               mt="sm"
               mih={50}
-              gap={100}
+              gap={30}
               justify="flex-start"
               align="center"
               direction="row"
@@ -282,7 +278,6 @@ export default function CreateResume() {
                 Add place of work
               </Button>
               <ModalAddExp
-                // close={closeModalExp}
                 close={close}
                 opened={opened}
                 addWorkingHistory={addWorkingHistory}
@@ -304,7 +299,7 @@ export default function CreateResume() {
               hidePickedOptions
               value={employmentTypes}
               onChange={setSelectedEmploymentTypes}
-              //{...form.getInputProps("employmentTypes")}
+              required
             />
 
             <Text fw={700} size="xl" mt="sm">
@@ -314,7 +309,7 @@ export default function CreateResume() {
             <Flex
               mt="sm"
               mih={50}
-              gap={100}
+              gap={50}
               justify="flex-start"
               align="center"
               direction="row"
@@ -349,6 +344,7 @@ export default function CreateResume() {
               placeholder="Input description"
               value={about}
               onChange={(e) => setAbout(e.target.value)}
+              required
             />
             <Button
               onClick={handleSave}
@@ -358,7 +354,6 @@ export default function CreateResume() {
             >
               Create resume
             </Button>
-            {/* </form> */}
           </Box>
         </Paper>
       </Container>

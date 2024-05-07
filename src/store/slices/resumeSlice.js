@@ -42,10 +42,7 @@ export const resumeSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
       .addCase(createResume.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -58,10 +55,7 @@ export const resumeSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
       .addCase(getResumeById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -74,10 +68,7 @@ export const resumeSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
       .addCase(deleteResumeById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -90,10 +81,7 @@ export const resumeSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
       .addCase(editResumeById.pending, (state) => {
         state.loading = true;
         state.error = null;
