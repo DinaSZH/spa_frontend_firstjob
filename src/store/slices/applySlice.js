@@ -55,10 +55,8 @@ export const applySlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      // getVacancyApplies
       .addCase(getVacancyApplies.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -71,10 +69,8 @@ export const applySlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      // getUserApplies
       .addCase(getUserApplies.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -87,7 +83,7 @@ export const applySlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
+      })
   },
 });
 
@@ -178,6 +174,7 @@ export const inviteApply = createAsyncThunk(
       const jwt = KeycloakService.getToken();
       const { data } = await axios.post(
         `${POINT_CONTENT}/api/content/applications/invite/${id}`,
+        null,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -200,6 +197,7 @@ export const declineApply = createAsyncThunk(
       const jwt = KeycloakService.getToken();
       const { data } = await axios.post(
         `${POINT_CONTENT}/api/content/applications/decline/${id}`,
+        null,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,

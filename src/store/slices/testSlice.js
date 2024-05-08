@@ -12,6 +12,9 @@ export const testSlice = createSlice({
     fullTest: {},
     platformTest: {},
     certifications: [],
+    loadingTest: false,
+    successTest: false,
+    error: null,
   },
   reducers: {
     setTestPreviw: (state, action) => {
@@ -39,80 +42,82 @@ export const testSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getTestPreview.pending, (state) => {
-        state.status = "loading";
+        state.loadingTest = true;
+        state.successTest = false;
         state.error = null;
       })
       .addCase(getTestPreview.fulfilled, (state, { payload }) => {
-        state.status = "succeeded";
-        state.status = action.payload.status;
+        state.loadingTest = false;
+        state.successTest = true;
       })
       .addCase(getTestPreview.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.status = "failed";
+        state.loadingTest = false;
+        state.successTest = false;
         state.error = action.payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      //submitTest
       .addCase(submitTest.pending, (state) => {
-        state.loading = true;
+        state.loadingTest = true;
+        state.successTest = false;
         state.error = null;
       })
       .addCase(submitTest.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
+        state.loadingTest = false;
+        state.successTest = true;
       })
       .addCase(submitTest.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingTest = false;
+        state.successTest = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      //createTest
       .addCase(createTest.pending, (state) => {
-        state.loading = true;
+        state.loadingTest = true;
+        state.successTest = false;
         state.error = null;
       })
       .addCase(createTest.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
+        state.loadingTest = false;
+        state.successTest = true;
       })
       .addCase(createTest.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingTest = false;
+        state.successTest = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      // getMyTests
       .addCase(getMyTests.pending, (state) => {
-        state.loading = true;
+        state.loadingTest = true;
+        state.successTest = false;
         state.error = null;
       })
       .addCase(getMyTests.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
+        state.loadingTest = false;
+        state.successTest = true;
       })
       .addCase(getMyTests.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingTest = false;
+        state.successTest = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      // getMyCertifications
       .addCase(getMyCertifications.pending, (state) => {
-        state.loading = true;
+        state.loadingTest = true;
+        state.successTest = false;
         state.error = null;
       })
       .addCase(getMyCertifications.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
+        state.loadingTest = false;
+        state.successTest = true;
       })
       .addCase(getMyCertifications.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingTest = false;
+        state.successTest = false;
         state.error = payload;
       });
   },

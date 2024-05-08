@@ -1,16 +1,13 @@
-import Input from "../../components/FillForm/input/input";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { POINT_CONTENT } from "../../config/end-point";
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Group } from "@mantine/core";
+import { Center, Group, Loader } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import {
   editVacancyById,
   getVacancyById,
 } from "../../store/slices/vacancySlice";
-import AutoCompleteSelect from "../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect";
 import { getMyTests } from "../../store/slices/testSlice";
 import {
   MultiSelect,
@@ -32,7 +29,6 @@ export default function EditVacancy() {
   const [company, setCompany] = useState("");
   const [address, setAdress] = useState("");
   const [cityId, setCityId] = useState();
-  // const [cities, setCities] = useState([]);
   const [salaryFrom, setFromSalary] = useState();
   const [salaryTo, setToSalary] = useState();
   const [currency, setCurrency] = useState("KZT");
@@ -46,15 +42,10 @@ export default function EditVacancy() {
   const dispatch = useDispatch();
   const { id } = useParams();
   const vacancy = useSelector((state) => state.vacancy.vacancy);
-  const { error, loading, success } = useSelector((state) => state.vacancy);
+  const { error, loadingVacancy, success } = useSelector((state) => state.vacancy);
   const tests = useSelector((state) => state.test.tests);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // useEffect(() => {
-  //   axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {
-  //     setCities(res.data);
-  //   });
-  // }, []);
   const { data: cities } = useQuery({
     queryKey: ["cities"],
     queryFn: async () => {
@@ -87,7 +78,6 @@ export default function EditVacancy() {
           label: test.name,
         }))
       );
-      // console.log("TEST ID VAVAVAV", tests[vacancy.testId].name);
     }
   }, [tests]);
 
@@ -96,7 +86,15 @@ export default function EditVacancy() {
       setTitle(vacancy.title);
       setCompany(vacancy.company);
       setAdress(vacancy.address);
-      setCityId(vacancy.city);
+     if (vacancy.id && cities) {
+      const selectedCity = cities.find((city) => city.label === vacancy.city);
+      if (selectedCity) {
+        setCityId(selectedCity.value); 
+      } else {
+        console.error("City not found:", vacancy.city);
+      }
+    }
+
       setFromSalary(vacancy.salaryFrom);
       setToSalary(vacancy.salaryTo);
       setCurrency(vacancy.currency);
@@ -105,7 +103,7 @@ export default function EditVacancy() {
       setDescription(vacancy.description);
       setTestId(tests[vacancy.testId]);
     }
-    console.log(vacancy);
+   
   }, [vacancy]);
 
   const formatExperience = (experience) => {
@@ -209,9 +207,6 @@ export default function EditVacancy() {
       console.log("selectedCity ", selectedCity);
       console.log("cityIdL Value ", cityId);
       console.log("cityId", vacancy.city);
-      // console.log("selectedCity ", selectedCity);
-      // console.log("cityIdL Value ", cityId);
-      // console.log("cityId", vacancy.city);
 
       await dispatch(
         editVacancyById({
@@ -220,17 +215,13 @@ export default function EditVacancy() {
         })
       );
 
-      navigate("/vacancies");
+      if (success) {
+        navigate("/vacancies");
+      }
     } catch (error) {
       console.error("Error editing vacancy:", error);
     }
   };
-
-  useEffect(() => {
-    if (success) {
-      navigate("/vacancies");
-    }
-  }, [success]);
 
   return (
     <main>
@@ -248,146 +239,154 @@ export default function EditVacancy() {
         <Text size="xl" fw={700} mb="lg">
           Edit vacancy
         </Text>
-
-        <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
-          <Box mx="auto">
-            <Text fw={700} size="xl" mt="sm">
-              Basic information
-            </Text>
-            <TextInput
-              mt="sm"
-              label="Job title"
-              placeholder="Input title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-
-            <TextInput
-              mt="sm"
-              label="Company name"
-              placeholder="Input company name"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              required
-            />
-
-            <TextInput
-              mt="sm"
-              label="Address"
-              placeholder="Input address"
-              value={address}
-              onChange={(e) => setAdress(e.target.value)}
-              required
-            />
-
-            <Select
-              mt="sm"
-              label="City"
-              placeholder={cityId}
-              data={cities}
-              searchable
-              value={cityId}
-              onChange={setCityId}
-              nothingFoundMessage="Nothing found..."
-              required
-            />
-
-            <Flex
-              mih={50}
-              gap="sm"
-              justify="flex-start"
-              align="flex-start"
-              direction="row"
-              wrap="wrap"
-            >
-              <NumberInput
+        {loadingVacancy ? (
+          <>
+            <Center h={500}>
+              <Loader color="blue" size={100} />
+            </Center>
+          </>
+        ) : (
+          <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs">
+            <Box mx="auto">
+              <Text fw={700} size="xl" mt="sm">
+                Basic information
+              </Text>
+              <TextInput
                 mt="sm"
-                label="From salary"
-                placeholder="Input from salary"
-                min={0}
-                max={10000000000}
-                value={salaryFrom}
-                onChange={setFromSalary}
-              />
-
-              <NumberInput
-                mt="sm"
-                label="To salary"
-                placeholder="Input to salary"
-                min={0}
-                max={10000000000}
-                value={salaryTo}
-                onChange={setToSalary}
-              />
-              <Select
-                mt="sm"
-                label="Currency"
-                placeholder="Pick value"
-                data={["KZT", "USD", "RUB"]}
-                value={currency}
-                onChange={setCurrency}
+                label="Job title"
+                placeholder="Input title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
-            </Flex>
 
-            <MultiSelect
-              mt="sm"
-              label="Employment Type"
-              placeholder="Pick value"
-              data={["Full time", "Remote"]}
-              hidePickedOptions
-              value={employmentType}
-              onChange={setSelectedEmpTypes}
-              required
-            />
+              <TextInput
+                mt="sm"
+                label="Company name"
+                placeholder="Input company name"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                required
+              />
 
-            <Select
-              mt="sm"
-              label="Experience"
-              placeholder="Pick value"
-              data={[
-                "No experience",
-                "Less than year",
-                "1-3 years",
-                "3-6 years",
-                "6+ years",
-              ]}
-              value={experience}
-              onChange={setExperience}
-              required
-            />
+              <TextInput
+                mt="sm"
+                label="Address"
+                placeholder="Input address"
+                value={address}
+                onChange={(e) => setAdress(e.target.value)}
+                required
+              />
 
-            <Textarea
-              mt="sm"
-              label="Description"
-              placeholder="Input description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-            {tests ? (
               <Select
                 mt="sm"
-                label="Choose test"
-                placeholder={tests[vacancy.testId]}
-                data={allTests}
-                value={testId}
-                onChange={setTestId}
+                label="City"
+                placeholder={cityId}
+                data={cities}
+                searchable
+                value={cityId}
+                onChange={setCityId}
+                nothingFoundMessage="Nothing found..."
+                required
               />
-            ) : (
-              <Link to="/create-test">Добавить тест</Link>
-            )}
-            <Button
-              onClick={handleSave}
-              disabled={!isFormValid}
-              type="submit"
-              mt="lg"
-            >
-              Edit vacancy
-            </Button>
-          </Box>
-        </Paper>
+
+              <Flex
+                mih={50}
+                gap="sm"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                wrap="wrap"
+              >
+                <NumberInput
+                  mt="sm"
+                  label="From salary"
+                  placeholder="Input from salary"
+                  min={0}
+                  max={10000000000}
+                  value={salaryFrom}
+                  onChange={setFromSalary}
+                />
+
+                <NumberInput
+                  mt="sm"
+                  label="To salary"
+                  placeholder="Input to salary"
+                  min={0}
+                  max={10000000000}
+                  value={salaryTo}
+                  onChange={setToSalary}
+                />
+                <Select
+                  mt="sm"
+                  label="Currency"
+                  placeholder="Pick value"
+                  data={["KZT", "USD", "RUB"]}
+                  value={currency}
+                  onChange={setCurrency}
+                  required
+                />
+              </Flex>
+
+              <MultiSelect
+                mt="sm"
+                label="Employment Type"
+                placeholder="Pick value"
+                data={["Full time", "Remote"]}
+                hidePickedOptions
+                value={employmentType}
+                onChange={setSelectedEmpTypes}
+                required
+              />
+
+              <Select
+                mt="sm"
+                label="Experience"
+                placeholder="Pick value"
+                data={[
+                  "No experience",
+                  "Less than year",
+                  "1-3 years",
+                  "3-6 years",
+                  "6+ years",
+                ]}
+                value={experience}
+                onChange={setExperience}
+                required
+              />
+
+              <Textarea
+                mt="sm"
+                label="Description"
+                placeholder="Input description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+              {tests ? (
+                <Select
+                  mt="sm"
+                  label="Choose test"
+                  placeholder={tests[vacancy.testId]}
+                  data={allTests}
+                  value={testId}
+                  onChange={setTestId}
+                />
+              ) : (
+                <Link to="/create-test">Add test</Link>
+              )}
+              <Button
+                onClick={handleSave}
+                disabled={!isFormValid}
+                type="submit"
+                loading={loading}
+                mt="lg"
+              >
+                Edit vacancy
+              </Button>
+            </Box>
+          </Paper>
+        )}
       </Container>
       <Space h="lg" />
     </main>

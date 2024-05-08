@@ -1,16 +1,11 @@
-import Input from "../../components/FillForm/input/input";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { POINT_CONTENT } from "../../config/end-point";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { MultiSelect } from "@mantine/core";
-import { createResume } from "../../store/slices/resumeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { createVacancy } from "../../store/slices/vacancySlice";
-import AutoCompleteSelect from "../../components/FillForm/AutoCompleteSelect/AutoCompleteSelect";
 import { getMyTests } from "../../store/slices/testSlice";
-import { useForm } from "@mantine/form";
 import {
   Box,
   Button,
@@ -30,7 +25,6 @@ export default function CreateVacancy() {
   const [company, setCompany] = useState("");
   const [address, setAdress] = useState("");
   const [cityId, setCityId] = useState();
-  // const [cities, setCities] = useState([]);
   const [fromSalary, setFromSalary] = useState(0);
   const [toSalary, setToSalary] = useState(0);
   const [currency, setCurrency] = useState("KZT");
@@ -65,9 +59,6 @@ export default function CreateVacancy() {
   });
 
   useEffect(() => {
-    // axios.get(`${POINT_CONTENT}/api/content/vacancies/cities`).then((res) => {
-    //   setCities(res.data);
-    // });
     dispatch(getMyTests());
   }, []);
 
@@ -159,50 +150,12 @@ export default function CreateVacancy() {
       description,
       testId: parseInt(testId),
     };
-    console.log("DAATA VACANCY:", data);
     dispatch(createVacancy(data));
-    navigate("/vacancies");
-  };
 
-  useEffect(() => {
     if (success) {
       navigate("/vacancies");
     }
-  }, [success]);
-  ///////////////
-
-  // const form = useForm({
-  //   initialValues: {
-  //     title: "",
-  //     company: "",
-  //     address: "",
-  //     cityId: null,
-  //     fromSalary: 0,
-  //     toSalary: 0,
-  //     currency: "",
-  //     employmentTypes: [],
-  //     experience: "",
-  //     description: "",
-  //     testId: null,
-  //   },
-
-  //   validate: {
-  //     title: (value) => (value.length < 1 ? "title required" : null),
-  //     company: (value) => (value.length < 1 ? "title required" : null),
-  //     address: (value) => (value.length < 1 ? "title required" : null),
-  //     cityId: (value) => (value < -1 ? "city required" : null),
-  //     fromSalary: (value) =>
-  //       value < -1 ? "from salary can not be negative or empty" : null,
-  //     toSalary: (value) =>
-  //       value < -1 ? "to salary can not be negative or empty" : null,
-  //     currency: (value) => (value.length < 1 ? "currency required" : null),
-  //     employmentTypes: (value) =>
-  //       value.length < 1 ? "employment types required" : null,
-  //     experience: (value) => (value.length < 1 ? "experience required" : null),
-  //     description: (value) =>
-  //       value.length < 1 ? "description required" : null,
-  //   },
-  // });
+  };
 
   return (
     <main>
@@ -226,6 +179,9 @@ export default function CreateVacancy() {
             <Text fw={700} size="xl" mt="sm">
               Basic information
             </Text>
+            <Text fw={400} color="red" size="md" mt="sm">
+              * Fill all required fields
+            </Text>
 
             <TextInput
               mt="sm"
@@ -233,6 +189,7 @@ export default function CreateVacancy() {
               placeholder="Input title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
 
             <TextInput
@@ -241,6 +198,7 @@ export default function CreateVacancy() {
               placeholder="Input company name"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
+              required
             />
 
             <TextInput
@@ -249,6 +207,7 @@ export default function CreateVacancy() {
               placeholder="Input address"
               value={address}
               onChange={(e) => setAdress(e.target.value)}
+              required
             />
 
             <Select
@@ -279,6 +238,7 @@ export default function CreateVacancy() {
                 max={10000000000}
                 value={fromSalary}
                 onChange={setFromSalary}
+                required
               />
 
               <NumberInput
@@ -289,6 +249,7 @@ export default function CreateVacancy() {
                 max={10000000000}
                 value={toSalary}
                 onChange={setToSalary}
+                required
               />
               <Select
                 mt="sm"
@@ -297,6 +258,7 @@ export default function CreateVacancy() {
                 data={["KZT", "USD", "RUB"]}
                 value={currency}
                 onChange={setCurrency}
+                required
               />
             </Flex>
 
@@ -308,6 +270,7 @@ export default function CreateVacancy() {
               hidePickedOptions
               value={employmentTypes}
               onChange={setSelectedEmpTypes}
+              required
             />
 
             <Select
@@ -323,6 +286,7 @@ export default function CreateVacancy() {
               ]}
               value={experience}
               onChange={setExperience}
+              required
             />
 
             <Textarea
@@ -331,6 +295,7 @@ export default function CreateVacancy() {
               placeholder="Input description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
             />
             {tests ? (
               <Select
@@ -353,7 +318,6 @@ export default function CreateVacancy() {
             >
               Create vacancy
             </Button>
-            {/* </form> */}
           </Box>
         </Paper>
       </Container>

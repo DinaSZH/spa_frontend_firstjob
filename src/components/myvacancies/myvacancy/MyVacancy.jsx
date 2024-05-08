@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { createApplyVacancy } from "../../../store/slices/applySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -14,19 +12,20 @@ import {
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import KeycloakService from "../../../services/KeycloakService";
-import { Button, Modal, Radio, Text } from "@mantine/core";
+import { Button, Center, Loader, Modal, Radio } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
-import { POINT_CONTENT } from "../../../config/end-point";
 import { getTestPreview } from "../../../store/slices/testSlice";
-import { deleteVacancyById } from "../../../store/slices/vacancySlice";
+import { deleteVacancyById, getAllAuthVacancies } from "../../../store/slices/vacancySlice";
 import { Chip, Flex, Group, Paper } from "@mantine/core";
-import { IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function MyVacancy({ item }) {
   const dispatch = useDispatch();
   const resumes = useSelector((state) => state.resume.resumes);
+  const { loading } = useSelector((state) => state.apply);
+  const { loadingTest } = useSelector((state) => state.test);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const [openedTest, { open: openTest, close: closeTest }] =
     useDisclosure(false);
@@ -46,6 +45,7 @@ export default function MyVacancy({ item }) {
   }, [openedTest]);
 
   useEffect(() => {
+    dispatch(getAllAuthVacancies())
     const userId = KeycloakService.getEmail();
     setIsUserVacancy(item.hrEmail === userId);
   }, [item, item.applicationStatus]);
@@ -55,7 +55,6 @@ export default function MyVacancy({ item }) {
   }, [item.applicationStatus]);
 
   const handleApply = async () => {
-    setLoading(true);
     try {
       if (item.testId) {
         dispatch(getTestPreview(item.testId));
@@ -69,13 +68,10 @@ export default function MyVacancy({ item }) {
       }
     } catch (error) {
       console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const handleGoTest = async () => {
-    setLoading(true);
     try {
       if (item.testId) {
         dispatch(createApplyVacancy({ id: item.id, resumeId: selectedResume }));
@@ -105,6 +101,16 @@ export default function MyVacancy({ item }) {
       );
     } else if (item.applicationStatus === "TEST_FAILED") {
       return <span style={{ color: "gray" }}>You failed the test!</span>;
+    } else if (item.applicationStatus === "INVITED") {
+      return (
+        <span style={{ color: "#5FA6FA" }}>You invited to a vacancy!</span>
+      );
+    } else if (item.applicationStatus === "DECLINED") {
+      return (
+        <span style={{ color: "red" }}>
+          Unfortunately you received a decline!
+        </span>
+      );
     } else {
       return null;
     }
@@ -139,7 +145,14 @@ export default function MyVacancy({ item }) {
                   color="red"
                   variant="light"
                   size="md"
-                  onClick={() => dispatch(deleteVacancyById(item.id))}
+                  onClick={async () => {
+                    try {
+                      await dispatch(deleteVacancyById(item.id));
+                      toast.success("Vacancy deleted successfully!");
+                    } catch (error) {
+                      toast.error("Error deleting vacancy!");
+                    }
+                  }}
                   defaultChecked
                 >
                   Delete
@@ -169,41 +182,48 @@ export default function MyVacancy({ item }) {
         </Group>
       </Paper>
       <Modal opened={opened} onClose={close} title="Test preview" centered>
-        <div className="h2 link">
-          You need to pass a test in order to apply for a vacancy
-        </div>
-        {testPreviewData.title && (
-          <div className="flex">
-            <h3 className="mr10">Title: </h3>
-            <p>{testPreviewData?.title}</p>
-          </div>
+        {loadingTest ? (
+          <Center mih={200}>
+            <Loader color="blue" size={50} />
+          </Center>
+        ) : (
+          <>
+            <div className="h2 link">
+              You need to pass a test in order to apply for a vacancy
+            </div>
+            {testPreviewData.title && (
+              <div className="flex">
+                <h3 className="mr10">Title: </h3>
+                <p>{testPreviewData?.title}</p>
+              </div>
+            )}
+            {testPreviewData.description && (
+              <div className="flex">
+                <h3 className="mr10">Description: </h3>
+                <p> {testPreviewData?.description}</p>
+              </div>
+            )}
+            {testPreviewData.thresholdScore && (
+              <div className="flex">
+                <h3 className="mr10">Threshold Score: </h3>
+                <p> {testPreviewData?.thresholdScore}</p>
+              </div>
+            )}
+            {testPreviewData.totalScore && (
+              <div className="flex">
+                <h3 className="mr10">Total Score: </h3>
+                <p> {testPreviewData?.totalScore}</p>
+              </div>
+            )}
+            <div className="flex gap flex-end flex-jc-end">
+              <Button
+                onClick={handleGoTest}
+              >
+                Go to test
+              </Button>
+            </div>
+          </>
         )}
-        {testPreviewData.description && (
-          <div className="flex">
-            <h3 className="mr10">Description: </h3>
-            <p> {testPreviewData?.description}</p>
-          </div>
-        )}
-        {testPreviewData.thresholdScore && (
-          <div className="flex">
-            <h3 className="mr10">Threshold Score: </h3>
-            <p> {testPreviewData?.thresholdScore}</p>
-          </div>
-        )}
-        {testPreviewData.totalScore && (
-          <div className="flex">
-            <h3 className="mr10">Total Score: </h3>
-            <p> {testPreviewData?.totalScore}</p>
-          </div>
-        )}
-        <div className="flex gap flex-end flex-jc-end">
-          <Button
-            onClick={handleGoTest}
-            //loading={loading}
-          >
-            Go to test
-          </Button>
-        </div>
       </Modal>
       <ModalTest
         opened={openedTest}
@@ -254,6 +274,7 @@ export default function MyVacancy({ item }) {
           </div>
         )}
       </Modal>
+      <Toaster />
     </>
   );
 }

@@ -10,8 +10,8 @@ export const vacancySlice = createSlice({
     vacancies: [],
     vacancy: {},
     error: null,
-    loading: false,
-    success: null,
+    loadingVacancy: false,
+    success: false,
   },
   reducers: {
     setAllVacancies: (state, action) => {
@@ -34,98 +34,94 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // getAllVacancies
       .addCase(getAllVacancies.pending, (state) => {
-        state.loading = true;
+        state.loadingVacancy = true;
         state.error = null;
       })
       .addCase(getAllVacancies.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.loadingVacancy = false;
         state.success = true;
       })
       .addCase(getAllVacancies.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingVacancy = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+  
+      // getMyVacancies
       .addCase(getMyVacancies.pending, (state) => {
-        state.loading = true;
+        state.loadingVacancy = true;
         state.error = null;
       })
       .addCase(getMyVacancies.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.loadingVacancy = false;
         state.success = true;
       })
       .addCase(getMyVacancies.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingVacancy = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+  
+      // createVacancy
       .addCase(createVacancy.pending, (state) => {
-        state.loading = true;
+        state.loadingVacancy = true;
         state.error = null;
       })
       .addCase(createVacancy.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.loadingVacancy = false;
         state.success = true;
       })
       .addCase(createVacancy.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingVacancy = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+  
+      // getVacancyById
       .addCase(getVacancyById.pending, (state) => {
-        state.loading = true;
+        state.loadingVacancy = true;
         state.error = null;
       })
       .addCase(getVacancyById.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.loadingVacancy = false;
         state.success = true;
       })
       .addCase(getVacancyById.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingVacancy = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+  
+      // deleteVacancyById
       .addCase(deleteVacancyById.pending, (state) => {
-        state.loading = true;
+        state.loadingVacancy = true;
         state.error = null;
       })
       .addCase(deleteVacancyById.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.loadingVacancy = false;
         state.success = true;
       })
       .addCase(deleteVacancyById.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingVacancy = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+  
+      // editVacancyById
       .addCase(editVacancyById.pending, (state) => {
-        state.loading = true;
+        state.loadingVacancy = true;
         state.error = null;
       })
       .addCase(editVacancyById.fulfilled, (state, action) => {
         state.response = "update";
-        state.loading = false;
+        state.loadingVacancy = false;
         state.success = true;
       })
       .addCase(editVacancyById.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
-        state.loading = false;
+        state.loadingVacancy = false;
         state.error = payload;
       });
   },

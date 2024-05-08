@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import KeycloakService from "../../services/KeycloakService";
+import { Link, useParams } from "react-router-dom";
 import {
   Anchor,
   Button,
   Container,
   Group,
   rem,
-  Loader,
-  SegmentedControl,
   Table,
   Tabs,
   Text,
 } from "@mantine/core";
 import { Paper } from "@mantine/core";
-import { getProfile } from "../../store/slices/profileSlice";
-import Applies from "../../components/Applies/Applies";
 import {
   declineApply,
   getVacancyApplies,
@@ -31,14 +26,39 @@ export default function HrApplies() {
   const iconStyle = { width: rem(12), height: rem(12) };
 
   const { id } = useParams();
+
+  const { applies, success } = useSelector((state) => state.apply);
+  const INVITED = applies.filter((item) => item.applyStatus === "INVITED");
+  const DECLINED = applies.filter((item) => item.applyStatus === "DECLINED");
+  const APPLIED = applies.filter((item) => item.applyStatus === "APPLIED");
+
   useEffect(() => {
     dispatch(getVacancyApplies(id));
   }, []);
 
-  const applies = useSelector((state) => state.apply.applies);
-  const INVITED = applies.filter((item) => item.applyStatus === "INVITED");
-  const DECLINED = applies.filter((item) => item.applyStatus === "DECLINED");
-  const APPLIED = applies.filter((item) => item.applyStatus === "APPLIED");
+  useEffect(() => {
+    dispatch(getVacancyApplies(id));
+  }, [applies.applyStatus]);
+
+  const handleInviteApply = async (applyId) => {
+    try {
+      await dispatch(inviteApply(applyId));
+      toast.success("Invitation sent!");
+      dispatch(getVacancyApplies(id));
+    } catch (error) {
+      toast.error("Error inviting apply!");
+    }
+  };
+
+  const handleDeclineApply = async (applyId) => {
+    try {
+      await dispatch(declineApply(applyId));
+      toast.success("Decline sent successfully!");
+      dispatch(getVacancyApplies(id));
+    } catch (error) {
+      toast.error("Error declining apply!");
+    }
+  };
 
   const rows = (applies) =>
     applies.map((row) => (
@@ -63,30 +83,26 @@ export default function HrApplies() {
         </Table.Td>
         <Table.Td>
           <Group gap={10} justify="flex-end">
-            <Button
-              variant="filled"
-              size="xs"
-              color="green"
-              onClick={() => {
-                dispatch(inviteApply(row.id)).then(() => {
-                  toast.success("Invitation sent!");
-                });
-              }}
-            >
-              Invite
-            </Button>
-            <Button
-              variant="filled"
-              size="xs"
-              color="red"
-              onClick={() => {
-                dispatch(declineApply(row.id)).then(() => {
-                  toast.success("Decline sent!");
-                });
-              }}
-            >
-              Decline
-            </Button>
+            {row.applyStatus !== "INVITED" && (
+              <Button
+                variant="filled"
+                size="xs"
+                color="green"
+                onClick={() => handleInviteApply(row.id)}
+              >
+                Invite
+              </Button>
+            )}
+            { row.applyStatus !== "DECLINED" && (
+              <Button
+                variant="filled"
+                size="xs"
+                color="red"
+                onClick={() => handleDeclineApply(row.id)}
+              >
+                Decline
+              </Button>
+            )}
           </Group>
         </Table.Td>
       </Table.Tr>

@@ -28,15 +28,12 @@ import {
   getAllVacancies,
 } from "../../../store/slices/vacancySlice";
 import KeycloakService from "../../../services/KeycloakService";
+import { getMyResumes } from "../../../store/slices/resumeSlice";
 
 export default function SearchVacancy() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
-  // const router = useRouter()
-  // const [q, setQ] = useState(searchParams.get("q"))
-  // const [specializationId, setSpecialization] = useState(searchParams.get("specializationId"))
-  // const [specializationName, setSpecializationName] = useState()
   const [isSpecModalOpen, setSpecModalOpen] = useState(false);
   const [cityId, setCityId] = useState(searchParams.get("cityId"));
   const [fromSalary, setFromSalary] = useState(searchParams.get("fromSalary"));
@@ -48,8 +45,6 @@ export default function SearchVacancy() {
   const [employmentTypeId, setEmploymentType] = useState(
     searchParams.get("employmentTypeId")
   );
-  // const [salary, setSalary] = useState(searchParams.get("salary"))
-  // const [salary_type, setSalaryType] = useState(searchParams.get("salary_type"))
   const closeSepcModal = () => {
     setSpecModalOpen(false);
   };
@@ -78,9 +73,13 @@ export default function SearchVacancy() {
     },
   });
 
+  const { loadingVacancy } = useSelector((state) => state.vacancy);
   const vacancies = useSelector((state) => state.vacancy.allVacancies);
 
   useEffect(() => {
+    if (KeycloakService.getUserRole) {
+      dispatch(getMyResumes());
+    }
     if (KeycloakService.isLoggedIn()) {
       dispatch(getAllAuthVacancies());
     } else {
@@ -107,19 +106,6 @@ export default function SearchVacancy() {
     }
   }, [querySeacrh, vacancies]);
 
-  let experiences = [
-    "Нет опыта",
-    "От 1 до 3 лет",
-    "От 3 до 6 лет",
-    "Более 6 лет",
-  ];
-  let empTypes = [
-    "Полная занятость",
-    "Частичная занятость",
-    "Проектная работа",
-    "Волонетрство",
-    "Стажировка",
-  ];
   return (
     <main>
       <Container size="xl" mt={40}>
@@ -208,13 +194,10 @@ export default function SearchVacancy() {
             </Paper>
           </Grid.Col>
           <Grid.Col span={9}>
-            {loading ? (
-              <div
-                style={{ paddingLeft: `40px` }}
-                className="flex flex-jc-c mt7"
-              >
-                <Loader color="blue" />
-              </div>
+            {loadingVacancy ? (
+              <Center h={500}>
+                <Loader color="blue" size={100} />
+              </Center>
             ) : (
               <div style={{ paddingLeft: `40px` }}>
                 <MyVacancies vacancies={filteredVacancies} />
@@ -225,87 +208,4 @@ export default function SearchVacancy() {
       </Container>
     </main>
   );
-}
-
-{
-  /* <div className="container mt7">
-        <Search />
-        <div className="flex ">
-          <div className="search-left flex flex-cl" style={{ width: `25%` }}>
-            <div className="search-component vacancy-container-right mtb4">
-              <fieldset className={"fieldset-vertical fieldset-md"}>
-                <label>City</label>
-                <Select
-                  placeholder="Search city"
-                  data={cities}
-                  searchable
-                  value={cityId}
-                  onChange={setCityId}
-                  nothingFoundMessage="Nothing found..."
-                  className={"fieldset fieldset-sm h3"}
-                />
-              </fieldset>
-
-              <fieldset className="fieldset-vertical fieldset-md">
-                <label>Предполагаемый уровень дохода в месяц</label>
-                <div className="input-group">
-                  <input
-                    className="input-default"
-                    placeholder="От"
-                    type="number"
-                    onChange={(e) => setFromSalary(e.target.value * 1)}
-                  />
-
-                  <Select
-                    className="w-full h-full"
-                    placeholder="currency"
-                    data={["KZT", "USD", "RUB"]}
-                    value={currency}
-                    onChange={setCurrency}
-                  />
-                </div>
-              </fieldset>
-
-              <fieldset className={"fieldset-vertical fieldset-sm"}>
-                <label className="h1">Experience</label>
-                <Select
-                  placeholder="Pick value"
-                  data={[
-                    "No experience",
-                    "Less than year",
-                    "1-3 years",
-                    "3-6 years",
-                    "6+ years",
-                  ]}
-                  value={experienceId}
-                  onChange={setExperienceId}
-                />
-              </fieldset>
-
-              <fieldset className={"fieldset-vertical fieldset-sm"}>
-                <label className="h1">Employment type</label>
-                <Select
-                  placeholder="Pick value"
-                  data={["Full time", "Remote"]}
-                  value={currency}
-                  onChange={setCurrency}
-                />
-              </fieldset>
-            </div>
-          </div>
-
-          {loading ? (
-            <div
-              style={{ width: `80%`, paddingLeft: `40px` }}
-              className="flex flex-jc-c mt7"
-            >
-              <Loader color="blue" />
-            </div>
-          ) : (
-            <div style={{ width: `80%`, paddingLeft: `40px` }}>
-              <MyVacancies vacancies={vacancies} />
-            </div>
-          )}
-        </div>
-      </div> */
 }

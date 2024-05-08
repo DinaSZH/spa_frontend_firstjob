@@ -66,10 +66,6 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: "/",
-        element: <Home />,
-      },
-      {
         path: "/create-resume",
         element: <CreateResume />,
       },
@@ -102,16 +98,16 @@ const router = createBrowserRouter([
         element: <EditResume />,
       },
       {
+        path: "/create-vacancy",
+        element: <CreateVacancy />,
+      },
+      {
         path: "/vacancies",
         element: <Vacancies />,
       },
       {
         path: "/vacancies/:id",
         element: <VacancyId />,
-      },
-      {
-        path: "/create-vacancy",
-        element: <CreateVacancy />,
       },
       {
         path: "/vacancy/edit/:id",
@@ -172,6 +168,10 @@ const router = createBrowserRouter([
       {
         path: "/user/certifications",
         element: <UserCertifications />,
+      },
+      {
+        path: "/",
+        element: <Home />,
       },
     ],
   },

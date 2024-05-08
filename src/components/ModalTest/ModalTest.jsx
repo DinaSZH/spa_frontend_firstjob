@@ -1,7 +1,7 @@
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button, Divider, Title, Text } from "@mantine/core";
+import { Modal, Button, Divider, Title, Text, Skeleton } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { submitTest } from "../../store/slices/testSlice";
 
 export default function ModalTest({
@@ -20,6 +20,7 @@ export default function ModalTest({
   const handleAnswerChange = (questionId, answerId) => {
     setSelectedAnswers({ ...selectedAnswers, [questionId]: answerId });
   };
+  const {loadingTest} = useSelector((state) => state.test)
 
   const handleSubmit = () => {
     const formattedAnswers = Object.entries(selectedAnswers).map(
@@ -49,6 +50,13 @@ export default function ModalTest({
 
   return (
     <>
+     {loadingTest ? (
+        <>
+          <Skeleton height={340} mb="xl" />
+          <Skeleton height={340} mb="xl" />
+          <Skeleton height={340} mb="xl" />
+        </>
+      ) : (
       <Modal
         opened={opened}
         onClose={handleOnClose}
@@ -88,29 +96,6 @@ export default function ModalTest({
                   </Title>
                 </div>
                 <Divider my="sm" />
-                {/* <RadioGroup onChange={handleAnswerChange}>
-            <div className="mb20">
-              <div className="flex gap flex-cl">
-                <div className="flex border-gray p2">
-                  <Radio value="q1" icon={CheckIcon} className="radio-wrapper" />
-                  <Text size="md">{dataQuest.answers[0].answer}</Text>
-                </div>
-                <div className="flex border-gray p2">
-                  <Radio value="q2" icon={CheckIcon} className="radio-wrapper" />
-                  <Text size="md">{dataQuest.answers[1].answer}</Text>
-                </div>
-                <div className="flex border-gray p2">
-                  <Radio value="q3" icon={CheckIcon} className="radio-wrapper" />
-                  <Text size="md">{dataQuest.answers[2].answer}</Text>
-                </div>
-                <div className="flex border-gray p2">
-                  <Radio value="q4" icon={CheckIcon} className="radio-wrapper" />
-                  <Text size="md">{dataQuest.answers[3].answer}</Text>
-                </div>
-              </div>
-            </div>
-          </RadioGroup> */}
-
                 <div className="mb20">
                   {dataQuest.answers.map((answer) => (
                     <div key={answer.id} className="flex border-gray p2 mb20">
@@ -146,7 +131,7 @@ export default function ModalTest({
             </Button>
           </div>
         </div>
-      </Modal>
+      </Modal>)}
 
       <Modal
         opened={openedSecondModal}

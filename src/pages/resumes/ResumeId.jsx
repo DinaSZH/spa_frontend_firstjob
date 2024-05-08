@@ -66,16 +66,10 @@ export default function ResumeId() {
         ) : (
           <>
             <Group justify="space-between">
-              {!KeycloakService.getHRRole() && (
-                <Button
-                  onClick={() => navigate(`/resumes`)}
-                  variant="light"
-                  mb={10}
-                >
-                  <img className="arrow link" src={arrow} alt="arrow" />
-                  My resumes
-                </Button>
-              )}
+              <Button variant="light" mb={10} onClick={() => navigate(-1)}>
+                <img className="arrow link" src={arrow} alt="arrow" />
+                Back
+              </Button>
             </Group>
             <Paper radius="md" withBorder p="lg" py="xl" px="xl" mt={20}>
               <div className="backgroundBlock">
@@ -164,7 +158,7 @@ export default function ResumeId() {
                 </Flex>
               </div>
               <Divider my="md" />
-              {resume && resume.education && resume.education.length > 0 &&  (
+              {resume && resume.education && resume.education.length > 0 && (
                 <>
                   <div className="backgroundBlock">
                     <h2 className="flex flex-ai-c">
@@ -188,7 +182,7 @@ export default function ResumeId() {
                 </>
               )}
 
-              {resume && resume.experience && resume.experience.length > 0 &&  (
+              {resume && resume.experience && resume.experience.length > 0 && (
                 <>
                   <div className="backgroundBlock">
                     <h2 className="flex flex-ai-c">
