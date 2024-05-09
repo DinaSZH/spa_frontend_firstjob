@@ -15,7 +15,7 @@ import KeycloakService from "../../../services/KeycloakService";
 import { Button, Center, Loader, Modal, Radio } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
 import { getTestPreview } from "../../../store/slices/testSlice";
-import { deleteVacancyById, getAllAuthVacancies } from "../../../store/slices/vacancySlice";
+import { deleteVacancyById, getAllAuthVacancies, getAllVacancies } from "../../../store/slices/vacancySlice";
 import { Chip, Flex, Group, Paper } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { Toaster, toast } from "react-hot-toast";
@@ -45,10 +45,9 @@ export default function MyVacancy({ item }) {
   }, [openedTest]);
 
   useEffect(() => {
-    dispatch(getAllAuthVacancies())
     const userId = KeycloakService.getEmail();
     setIsUserVacancy(item.hrEmail === userId);
-  }, [item.applicationStatus]);
+  }, []);
 
   // useEffect(() => {
   //   renderApplicationStatus();
@@ -61,10 +60,18 @@ export default function MyVacancy({ item }) {
         open();
         closeApply();
       } else {
-        dispatch(createApplyVacancy({ id: item.id, resumeId: selectedResume }))
-          .then(() => setApplicationStatus("APPLIED"))
-          .catch((error) => console.error("Error applying to vacancy:", error));
-        closeApply();
+        try{
+          dispatch(createApplyVacancy({ id: item.id, resumeId: selectedResume }))
+          toast.success("Successfully applied!")
+          if(KeycloakService.isLoggedIn()){
+            dispatch(getAllAuthVacancies());
+          } else{
+            getAllVacancies();
+          }
+          closeApply();
+        } catch (error) {
+          toast.success("Failed to apply, contact technical support!")
+        }
       }
     } catch (error) {
       console.error("Error:", error);
@@ -181,6 +188,8 @@ export default function MyVacancy({ item }) {
           </div>
         </Group>
       </Paper>
+
+      <Toaster/>
       <Modal opened={opened} onClose={close} title="Test preview" centered>
         {loadingTest ? (
           <Center mih={200}>

@@ -380,7 +380,7 @@ export default function EditVacancy() {
                 onClick={handleSave}
                 disabled={!isFormValid}
                 type="submit"
-                loading={loading}
+                loading={loadingVacancy}
                 mt="lg"
               >
                 Edit vacancy

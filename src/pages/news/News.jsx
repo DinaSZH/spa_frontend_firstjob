@@ -1,9 +1,8 @@
 import React, { useRef, useState } from "react";
-
+import parse from "html-react-parser";
 import {
   Image,
   Container,
-  Title,
   Text,
   Button,
   SimpleGrid,
@@ -13,58 +12,51 @@ import {
   Input,
   Space,
   Divider,
-  FileInput,
   FileButton,
   Skeleton,
+  Flex,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../NotFound/NotFound.module.css";
 import { useEffect } from "react";
-import { createNews, getAllNews } from "../../store/slices/newsSlice";
+import {
+  createNews,
+  deleteNewsById,
+  getAllNews,
+} from "../../store/slices/newsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TextEditor } from "../../components/TextEditor/TextEditor";
-import { useForm } from "@mantine/form";
 import KeycloakService from "../../services/KeycloakService";
-import SkeletonLoader from "../../components/Skeleton/Skeleton";
+import { Toaster, toast } from "react-hot-toast";
 
 export function News() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const allNews = useSelector((state) => state.news.allNews);
+  const { error, loading, success } = useSelector((state) => state.news);
   useEffect(() => {
-    dispatch(getAllNews())
-      .then(() => setLoading(false))
-      .catch(() => setLoading(false));
+    dispatch(getAllNews());
   }, []);
 
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
-  const [error, setError] = useState("");
-
+  const [isFormValid, setIsFormValid] = useState(false);
   const resetRef = useRef(null);
 
-  // const { form, values, errors, setFieldValue } = useForm({
-  //   initialValues: {
-  //     company: "",
-  //     title: "",
-  //     text: "",
-  //     image: null,
-  //   },
-  //   validation: {
-  //     company: (value) =>
-  //       value.length < 2 ? "Company must have at least 2 letters" : null,
-  //     title: (value) =>
-  //       value.length < 2 ? "Title must have at least 2 letters" : null,
-  //     text: (value) =>
-  //       value.length < 2 ? "Text must have at least 2 letters" : null,
-  //     image: (value) => (!value ? "Image is required" : null),
-  //   },
-  // });
+  const updateFormValidity = () => {
+    const isValid = company && title && text && image;
+
+    setIsFormValid(isValid);
+  };
+
+  useEffect(() => {
+    updateFormValidity();
+  }, [company, title, text, image]);
 
   const clearFile = () => {
     setImage(null);
@@ -80,10 +72,30 @@ export function News() {
     formData.append("company", company);
 
     try {
-      dispatch(createNews(formData));
-      close();
+      try {
+        await dispatch(createNews(formData));
+        toast.success("News created successfully!");
+        dispatch(getAllNews());
+        close();
+      } catch (error) {
+        toast.error(
+          "Error when creating news, please contact technical support!"
+        );
+      }
     } catch (error) {
       setError("Error creating news, try again");
+    }
+  };
+
+  const handleDeleteNews = async (id) => {
+    try {
+      await dispatch(deleteNewsById(id));
+      toast.success("News deleted successfully!");
+      dispatch(getAllNews());
+    } catch (error) {
+      toast.error(
+        "Error when deleting news, please contact technical support!"
+      );
     }
   };
 
@@ -111,46 +123,63 @@ export function News() {
         allNews &&
         allNews.map((item) => (
           <React.Fragment key={item.id}>
-            <NavLink
-              style={{ textDecoration: "none", color: "inherit" }}
-              to={`/news/${item.id}`}
-            >
-              <SimpleGrid
-                spacing={{ base: 20, sm: 30 }}
-                cols={{ base: 1, sm: 2 }}
-                className={classes.card}
+            {KeycloakService.getEmail() === item.author && (
+              <Flex
+                mih={50}
+                justify="flex-end"
+                align="center"
+                direction="row"
+                wrap="wrap"
+                gap="md"
               >
-                <Image src={item.imageUrl} className={classes.mobileImage} />
-                <Image
-                  style={{ height: "300px", objectFit: "contain" }}
-                  src={item.imageUrl}
-                  className={classes.desktopImage}
-                />
-                <div>
-                  <Group justify="space-between" gap="xs">
-                    <Text fw={700} size="xl">
-                      {item.title}
-                    </Text>
-                  </Group>
-                  <Text size="lg">{item.text}</Text>
-                  <div className="mb10"></div>
-                  <Text c="dimmed">
-                    Created at:{" "}
-                    {item.createdAt ? item.createdAt.split("T")[0] : ""}
+                <Text c="dimmed">You created this news</Text>
+                <Button
+                  color="red"
+                  variant="outline"
+                  onClick={() => handleDeleteNews(item.id)}
+                >
+                  Delete
+                </Button>
+              </Flex>
+            )}
+            <SimpleGrid
+              onClick={() => navigate(`/news/${item.id}`)}
+              spacing={{ base: 20, sm: 30 }}
+              cols={{ base: 1, sm: 2 }}
+              className={classes.card}
+            >
+              <Image src={item.imageUrl} className={classes.mobileImage} />
+              <Image
+                style={{ height: "300px", objectFit: "contain" }}
+                src={item.imageUrl}
+                className={classes.desktopImage}
+              />
+              <div>
+                <Group justify="space-between" gap="xs">
+                  <Text fw={700} size="xl">
+                    {item.title}
                   </Text>
+                </Group>
+                <div  style={{ maxWidth: "529px", maxHeight: "200px", overflow: "hidden",  textOverflow: "ellipsis" }}>{parse(item.text)}</div>
+                <Text c="blue" fs="italic">...open to read full article</Text>
+                <Text c="dimmed">
+                  Created at:{" "}
+                  {item.createdAt ? item.createdAt.split("T")[0] : ""}
+                </Text>
 
-                  <Group gap="xs">
-                    <Text c="blue">Author: {item.author}</Text>
-                    <Text c="blue">Company: {item.company}</Text>
-                  </Group>
-                </div>
-              </SimpleGrid>
-            </NavLink>
+                <Group gap="xs">
+                  <Text c="blue">Author: {item.author}</Text>
+                  <Text c="blue">Company: {item.company}</Text>
+                </Group>
+              </div>
+            </SimpleGrid>
             <Divider my="md" />
             <Space h="xs" />
           </React.Fragment>
         ))
       )}
+
+      <Toaster />
 
       <Modal
         opened={opened}
@@ -164,13 +193,11 @@ export function News() {
             Upload news
           </Text>
         </Center>
-        {/* <form onSubmit={handleSubmit}> */}
-        <Input.Wrapper
-          size="md"
-          label="Company name"
-          required
-          // error={errors.company}
-        >
+
+        <Text fw={400} color="red" size="md" mt="sm">
+          * Fill all required fields
+        </Text>
+        <Input.Wrapper size="md" label="Company name" required>
           <Input
             placeholder="Enter company"
             value={company}
@@ -194,13 +221,16 @@ export function News() {
         </Input.Wrapper>
 
         <Space h="md" />
+
+        <Text fw={600} size="md" mb="sm" required>
+          Upload news image
+        </Text>
         <Group>
           <FileButton
             resetRef={resetRef}
-            onChange={handleImageChange} // Pass handleImageChange directly
+            onChange={handleImageChange}
             accept="image/png,image/jpeg,image/jpg"
             required
-            // error={errors.image}
           >
             {(props) => (
               <Button variant="outline" {...props}>
@@ -220,7 +250,7 @@ export function News() {
         )}
         <Space h="lg" />
 
-        {error.length > 0 && (
+        {error > 0 && (
           <>
             <Text size="md" fw={700} c="red">
               {error}
@@ -228,11 +258,10 @@ export function News() {
             <Space h="lg" />
           </>
         )}
-        <Button onClick={handleSubmit} size="md">
+
+        <Button onClick={handleSubmit} size="md" disabled={!isFormValid}>
           Upload
         </Button>
-        {/* </form> */}
-
         <Space h="md" />
       </Modal>
     </Container>

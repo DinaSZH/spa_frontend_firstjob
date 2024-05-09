@@ -402,7 +402,7 @@ export default function EditResume() {
               />
               <Button
                 onClick={handleSave}
-                //disabled={!isFormValid}
+                disabled={!isFormValid}
                 type="submit"
                 mt="lg"
               >
