@@ -7,6 +7,7 @@ export const resumeSlice = createSlice({
   name: "resume",
   initialState: {
     resumes: [],
+    resumesHR: [],
     resume: {},
     error: null,
     loading: false,
@@ -15,6 +16,9 @@ export const resumeSlice = createSlice({
   reducers: {
     setMyResumes: (state, action) => {
       state.resumes = action.payload.resumes;
+    },
+    setResumesHR: (state, action) => {
+      state.resumesHR = action.payload.resumesHR;
     },
     uppendResume: (state, action) => {
       state.resumes = [...state.resumes, action.payload.newresume];
@@ -94,11 +98,25 @@ export const resumeSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
+      })
+      //gel all resumes for HR
+      .addCase(getAllResumesHR.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllResumesHR.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(getAllResumesHR.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      })
   },
 });
 
-export const { setMyResumes, uppendResume, setResume, handleDeleteResume } =
+export const { setMyResumes, setResumesHR, uppendResume, setResume, handleDeleteResume } =
   resumeSlice.actions;
 
 export const getMyResumes = createAsyncThunk(
@@ -116,6 +134,28 @@ export const getMyResumes = createAsyncThunk(
       );
       console.log("Fetched resumes:", data); // Log fetched data
       thunkApi.dispatch(setMyResumes({ resumes: data }));
+    } catch (error) {
+      console.error("Error fetching resumes:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getAllResumesHR = createAsyncThunk(
+  "user/getAllResumesHR",
+  async (_, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${END_POINT}/api/client-app/resumes`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Fetched resumes:", data); // Log fetched data
+      thunkApi.dispatch(setResumesHR({ resumesHR: data }));
     } catch (error) {
       console.error("Error fetching resumes:", error);
       thunkApi.rejectWithValue(error.message);

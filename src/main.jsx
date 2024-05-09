@@ -58,6 +58,7 @@ import PlatformTest from "./pages/platform-test/PlatformTest";
 import UserCertifications from "./pages/UserCertifications/UserCertifications";
 import MentorProfile from "./pages/MentorProfile/MentorProfile";
 import EditMentor from "./pages/edit-mentor/EditMentor";
+import ResumeDB from "./pages/resumeDB/ResumeDB";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
     // element: <RequireAuth><Layout /></RequireAuth>,
     element: <MainLayout />,
     children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
       {
         path: "/create-resume",
         element: <CreateResume />,
@@ -170,9 +175,10 @@ const router = createBrowserRouter([
         element: <UserCertifications />,
       },
       {
-        path: "/",
-        element: <Home />,
+        path: "/allResumes",
+        element: <ResumeDB />,
       },
+
     ],
   },
   {

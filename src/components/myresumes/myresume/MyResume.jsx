@@ -7,6 +7,7 @@ import {
 import { Chip, Flex, Group, Paper } from "@mantine/core";
 import { IconDownload, IconEdit, IconFileDescription, IconTrash } from "@tabler/icons-react";
 import { Toaster, toast } from "react-hot-toast";
+import KeycloakService from "../../../services/KeycloakService";
 export default function MyResume({ item }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function MyResume({ item }) {
             {item.position}
           </Link>
         </Flex>
-        <Flex mih={50} gap="sm" align="center" direction="row" wrap="wrap">
+       {KeycloakService.getUserRole() &&  <Flex mih={50} gap="sm" align="center" direction="row" wrap="wrap">
           <Chip
             icon={<IconDownload style={{ width: 16, height: 16 }} />}
             variant="light"
@@ -54,7 +55,7 @@ export default function MyResume({ item }) {
           >
             Delete
           </Chip>
-        </Flex>
+        </Flex>}
       </Group>
       <Flex mih={50} mt={40} gap="sm" direction="row" wrap="wrap">
         {item.skills &&

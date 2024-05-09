@@ -42,7 +42,9 @@ export default function EditVacancy() {
   const dispatch = useDispatch();
   const { id } = useParams();
   const vacancy = useSelector((state) => state.vacancy.vacancy);
-  const { error, loadingVacancy, success } = useSelector((state) => state.vacancy);
+  const { error, loadingVacancy, success } = useSelector(
+    (state) => state.vacancy
+  );
   const tests = useSelector((state) => state.test.tests);
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -86,14 +88,14 @@ export default function EditVacancy() {
       setTitle(vacancy.title);
       setCompany(vacancy.company);
       setAdress(vacancy.address);
-     if (vacancy.id && cities) {
-      const selectedCity = cities.find((city) => city.label === vacancy.city);
-      if (selectedCity) {
-        setCityId(selectedCity.value); 
-      } else {
-        console.error("City not found:", vacancy.city);
+      if (vacancy.id && cities) {
+        const selectedCity = cities.find((city) => city.label === vacancy.city);
+        if (selectedCity) {
+          setCityId(selectedCity.value);
+        } else {
+          console.error("City not found:", vacancy.city);
+        }
       }
-    }
 
       setFromSalary(vacancy.salaryFrom);
       setToSalary(vacancy.salaryTo);
@@ -103,7 +105,6 @@ export default function EditVacancy() {
       setDescription(vacancy.description);
       setTestId(tests[vacancy.testId]);
     }
-   
   }, [vacancy]);
 
   const formatExperience = (experience) => {

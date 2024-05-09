@@ -3,16 +3,12 @@ import axios from "axios";
 import ModalAddExp from "../../components/FillForm/ModalAddExp/ModalAddExp";
 import WorkingHistory from "../../components/FillForm/WorkingHistory/WorkingHistory";
 import AddEducation from "../../components/FillForm/AddEducation/AddEducation";
-import SelectEmploymentTypes from "../../components/FillForm/SelectEmploymentTypes/SelectEmploymentTypes";
 import { useNavigate, useParams } from "react-router-dom";
 import { END_POINT } from "../../config/end-point";
-import { useQuery, } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Center, Loader, MultiSelect } from "@mantine/core";
 import EducationItem from "../../components/EducationItem/EducationItem";
-import {
-  editResumeById,
-  getResumeById,
-} from "../../store/slices/resumeSlice";
+import { editResumeById, getResumeById } from "../../store/slices/resumeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Group } from "@mantine/core";
 import {
@@ -147,12 +143,33 @@ export default function EditResume() {
     dispatch(getResumeById(id));
   }, []);
 
+  const mapSkillNamesToIds = (selectedSkillNames, allSkills) => {
+    const selectedSkillIds = [];
+    selectedSkillNames.forEach((selectedName) => {
+      const matchedSkill = allSkills.find(
+        (skill) => skill.label === selectedName
+      );
+      if (matchedSkill) {
+        selectedSkillIds.push(matchedSkill.value);
+      }
+    });
+    return selectedSkillIds;
+  };
+
   useEffect(() => {
     if (resume.id) {
       setGender(resume.gender);
-      setCity(resume.city);
+      if (cities) {
+        const selectedCity = cities.find((city) => city.label === resume.city);
+        if (selectedCity) {
+          setCity(selectedCity.value);
+        } else {
+          console.error("City not found:", resume.city);
+        }
+      }
       setPosition(resume.position);
-      setSelectedSkills(resume.skills);
+      const selectedSkillIds = mapSkillNamesToIds(resume.skills, allSkills);
+      setSelectedSkills(selectedSkillIds);
       setSalary(resume.salary);
       setCurrency(currencyMappings[resume.currency]);
       setExperience(resume.experience);
@@ -160,7 +177,6 @@ export default function EditResume() {
       setEducation(resume.education);
       setSelectedEmpTypes(resume.employmentType);
     }
-    console.log("CITYY", resume.city);
   }, [resume]);
 
   const handleSave = async () => {
@@ -187,7 +203,9 @@ export default function EditResume() {
         })
       );
 
-      navigate("/resumes");
+      if (success) {
+        navigate("/resumes");
+      }
     } catch (error) {
       console.error("Error editing resume:", error);
     }
@@ -384,7 +402,7 @@ export default function EditResume() {
               />
               <Button
                 onClick={handleSave}
-                disabled={!isFormValid}
+                //disabled={!isFormValid}
                 type="submit"
                 mt="lg"
               >

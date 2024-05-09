@@ -6,7 +6,6 @@ import {
   Text,
   SimpleGrid,
   ThemeIcon,
-  Anchor,
   Divider,
   Center,
   Box,
@@ -18,19 +17,16 @@ import {
   useMantineTheme,
   Menu,
 } from "@mantine/core";
-// import { MantineLogo } from '@mantinex/mantine-logo';
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconNotification,
   IconCode,
   IconBook,
   IconChartPie3,
-  IconFingerprint,
-  IconCoin,
   IconChevronDown,
-  IconClipboardPlus,
   IconClipboardText,
   IconAward,
+  IconDatabaseSearch
 } from "@tabler/icons-react";
 import classes from "./Header.module.css";
 import React, { useEffect, useState } from "react";
@@ -58,6 +54,11 @@ const linksHR = [
     icon: IconNotification,
     title: "HR applies",
     link: "/applies/hr",
+  },
+  {
+    icon: IconDatabaseSearch,
+    title: "Resume Database",
+    link: "/allResumes",
   },
   {
     icon: IconAward,

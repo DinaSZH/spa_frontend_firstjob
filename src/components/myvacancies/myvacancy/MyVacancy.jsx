@@ -48,11 +48,11 @@ export default function MyVacancy({ item }) {
     dispatch(getAllAuthVacancies())
     const userId = KeycloakService.getEmail();
     setIsUserVacancy(item.hrEmail === userId);
-  }, [item, item.applicationStatus]);
-
-  useEffect(() => {
-    renderApplicationStatus();
   }, [item.applicationStatus]);
+
+  // useEffect(() => {
+  //   renderApplicationStatus();
+  // }, [item.applicationStatus]);
 
   const handleApply = async () => {
     try {
