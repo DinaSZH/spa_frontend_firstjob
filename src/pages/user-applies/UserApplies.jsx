@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import KeycloakService from "../../services/KeycloakService";
+import { Link } from "react-router-dom";
 import {
   Anchor,
   Container,
-  SegmentedControl,
   Table,
   Text,
   Tabs,
@@ -18,21 +16,17 @@ import { IconArticle } from "@tabler/icons-react";
 
 export default function UserApplies() {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState("");
   const iconStyle = { width: rem(12), height: rem(12) };
 
   useEffect(() => {
-    dispatch(getUserApplies(status));
+    dispatch(getUserApplies());
     dispatch(getMyResumes());
-  }, [dispatch, status]);
+  }, [dispatch]);
 
   const userApplies = useSelector((state) => state.apply.userApplies);
-  const resumes = useSelector((state) => state.resume.resumes);
+  const { resumes } = useSelector((state) => state.resume);
 
-  const handleStatusChange = (selectedStatus) => {
-    setStatus(selectedStatus);
-  };
-
+  
   const INVITED = userApplies.filter((item) => item.status === "INVITED");
   const DECLINED = userApplies.filter((item) => item.status === "DECLINED");
   const APPLIED = userApplies.filter((item) => item.status === "APPLIED");

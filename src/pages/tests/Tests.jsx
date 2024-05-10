@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  Button,
   Card,
   Container,
-  Loader,
+  Group,
   SimpleGrid,
+  Skeleton,
   Text,
   Title,
 } from "@mantine/core";
@@ -15,8 +17,7 @@ import { getMyTests } from "../../store/slices/testSlice";
 
 export default function Tests() {
   const dispatch = useDispatch();
-  const tests = useSelector((state) => state.test.tests);
-  const [loader, setLoader] = useState(true);
+  const { tests, loadingTest } = useSelector((state) => state.test);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,17 +26,30 @@ export default function Tests() {
 
   return (
     <main>
-      <div className="container">
-        <div className="flex flex-ai-c flex-jc-end ptb7">
-          <button
-            className="button button-black"
+      <Container size="lg" py="xl">
+        <Group justify="flex-start">
+          <Button
             onClick={() => navigate(`/create-test`)}
+            variant="filled"
+            color="blue"
+            mb={10}
           >
             Create test
-          </button>
-        </div>
+          </Button>
+        </Group>
 
-        {tests && tests.length > 0 ? (
+        {loadingTest ? (
+          <>
+            <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
+              <Skeleton height={300} radius="xl" />
+              <Skeleton height={300} radius="xl" />
+              <Skeleton height={300} radius="xl" />
+              <Skeleton height={300} radius="xl" />
+              <Skeleton height={300} radius="xl" />
+              <Skeleton height={300} radius="xl" />
+            </SimpleGrid>
+          </>
+        ) : (
           <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
             {tests &&
               tests.map((item) => (
@@ -46,27 +60,35 @@ export default function Tests() {
                   padding="xl"
                   className={classes.testContainer}
                 >
-                  <div>
-                    <IconCertificate
-                      style={{ width: 50, height: 50, color: "#00abfb" }}
-                    />
-                  </div>
-                  <Text size="lg" fw={700} mt="md">
-                    {item.name}
-                  </Text>
-                  <Text weight={500} size="md" color="dimmed" mt="sm">
-                    {item.description}
-                  </Text>
-                  <Text size="sm" color="dimmed" mt="sm">
-                    Threshold Score: {item.thresholdScore}
-                  </Text>
-                  <Text size="sm" color="dimmed" mt="sm">
-                    Total Score: {item.totalScore}
-                  </Text>
+                  <Link
+                    to={`/tests/${item.id}`}
+                    style={{ textDecoration: "none" }}
+                    className="flex flex-jc-c flex-ai-c flex-cl"
+                  >
+                    <div>
+                      <IconCertificate
+                        style={{ width: 50, height: 50, color: "#00abfb" }}
+                      />
+                    </div>
+                    <Text size="lg" fw={700} mt="md" style={{color: '#228be6'}} >
+                      {item.name}
+                    </Text>
+                    <Text weight={500} size="md" color="dimmed" mt="sm">
+                      {item.description}
+                    </Text>
+                    <Text size="sm" color="dimmed" mt="sm">
+                      Threshold Score: {item.thresholdScore}
+                    </Text>
+                    <Text size="sm" color="dimmed" mt="sm">
+                      Total Score: {item.totalScore}
+                    </Text>
+                  </Link>
                 </Card>
               ))}
           </SimpleGrid>
-        ) : (
+        )}
+
+        {tests.length < 1 && (
           <Container className={classes.root}>
             <Title className={classes.title}>There is no tests.</Title>
             <Text
@@ -80,7 +102,7 @@ export default function Tests() {
             </Text>
           </Container>
         )}
-      </div>
+      </Container>
     </main>
   );
 }

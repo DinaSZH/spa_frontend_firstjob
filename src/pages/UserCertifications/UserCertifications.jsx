@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { downloadResumeById } from "../../store/slices/resumeSlice";
+import { NavLink } from "react-router-dom";
 
 import {
   Container,
@@ -8,21 +7,25 @@ import {
   Text,
   SimpleGrid,
   Card,
-  Center,
   Title,
   Button,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { IconCertificate, IconDownload } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import KeycloakService from "../../services/KeycloakService";
 import {
   downloadCertificationById,
   getMyCertifications,
 } from "../../store/slices/testSlice";
+import { Toaster, toast } from "react-hot-toast";
 
-export default function UserCertifications({ item }) {
+export default function UserCertifications() {
   const certifications = useSelector((state) => state.test.certifications);
   const dispatch = useDispatch();
+
+  const { loadingTest } = useSelector((state) => state.test);
 
   useEffect(() => {
     dispatch(getMyCertifications(KeycloakService.getEmail()));
@@ -30,11 +33,17 @@ export default function UserCertifications({ item }) {
 
   return (
     <Container size="lg" py="xl">
-      <Text size="lg" fw={700} mt="md">
-        My certificaations
+      <Text size="xl" fw={700} mt="md">
+        My certifications
       </Text>
 
-      {certifications && certifications.length > 0 ? (
+      {loadingTest ? (
+        <>
+          <Center h={500}>
+            <Loader color="blue" size={100} />
+          </Center>
+        </>
+      ) : (
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
           {certifications &&
             certifications.map((item) => (
@@ -61,7 +70,11 @@ export default function UserCertifications({ item }) {
                   icon={<IconDownload style={{ width: 16, height: 16 }} />}
                   variant="light"
                   size="md"
-                  onClick={() => dispatch(downloadCertificationById(item.id))}
+                  onClick={() =>
+                    dispatch(downloadCertificationById(item.id)).then(() => {
+                      toast.success("Сertificate downloaded successfully!");
+                    })
+                  }
                   defaultChecked
                 >
                   Download
@@ -69,7 +82,9 @@ export default function UserCertifications({ item }) {
               </Card>
             ))}
         </SimpleGrid>
-      ) : (
+      )}
+
+      {certifications.length < 1 && (
         <Container pt={40}>
           <Title ta="center" mb={20}>
             There is no certifications.
@@ -85,6 +100,7 @@ export default function UserCertifications({ item }) {
           </NavLink>
         </Container>
       )}
+      <Toaster />
     </Container>
   );
 }

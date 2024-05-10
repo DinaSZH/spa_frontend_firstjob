@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Group,
   NumberInput,
   Paper,
-  Select,
   TextInput,
+  Text,
 } from "@mantine/core";
 import {
   Container,
@@ -16,12 +16,11 @@ import {
   Radio,
   RadioGroup,
 } from "@mantine/core";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-import TestQuestion from "../../components/testQuestion/TestQuestion";
 import { IconCircleX } from "@tabler/icons-react";
 import { createTest } from "../../store/slices/testSlice";
-import ErrorMessage from "../../components/Error/ErrorMessage";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function CreateTest() {
   const [name, setName] = useState("");
@@ -34,59 +33,10 @@ export default function CreateTest() {
     thresholdScore: "",
     questions: [],
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, success } = useSelector((state) => state.test);
-
-  // const validateForm = () => {
-  //   const errors = {};
-  //   const questionErrors = [];
-  //   let isValid = true;
-
-  //   if (!name) {
-  //     errors.name = "Name is required";
-  //     isValid = false;
-  //   }
-
-  //   if (!description) {
-  //     errors.description = "Description is required";
-  //     isValid = false;
-  //   }
-
-  //   if (!thresholdScore) {
-  //     errors.thresholdScore = "Threshold Score is required";
-  //     isValid = false;
-  //   } else if (thresholdScore < 1) {
-  //     errors.thresholdScore = "Threshold Score must be at least 1";
-  //     isValid = false;
-  //   }
-
-  //   questions.forEach((question, index) => {
-  //     if (!question.question) {
-  //       questionErrors[index] = "Question is required";
-  //       isValid = false;
-  //     }
-  //     question.answers.forEach((answer, answerIndex) => {
-  //       if (!answer.answer) {
-  //         if (!questionErrors[index]) {
-  //           questionErrors[index] = [];
-  //         }
-  //         questionErrors[index][answerIndex] = "Answer is required";
-  //         isValid = false;
-  //       }
-  //     });
-  //   });
-
-  //   setErrorMessages({
-  //     ...errors,
-  //     questions: questionErrors,
-  //   });
-
-  //   console.log(errorMessages);
-  //   return isValid;
-  // };
 
   const handleSave = () => {
     const data = {
@@ -103,15 +53,37 @@ export default function CreateTest() {
     };
 
     console.log("Data: ", data);
-    dispatch(createTest(data));
-    navigate("/tests");
+    try {
+      dispatch(createTest(data));
+      navigate("/tests");
+    } catch {
+      toast.error(
+        "An error occurred while creating the test, please contact technical support!"
+      );
+    }
+  };
+
+  const isQuestionValid = (question) => {
+    return question.answers.some((answer) => answer.isRight);
+  };
+
+  const updateFormValidity = () => {
+    const isValid =
+      name.trim() !== "" &&
+      description.trim() !== "" &&
+      thresholdScore !== "" &&
+      questions.length > 0 &&
+      questions.every(
+        (question) =>
+          question.question.trim() !== "" && isQuestionValid(question)
+      );
+
+    setIsFormValid(isValid);
   };
 
   useEffect(() => {
-    if (success) {
-      navigate("/tests");
-    }
-  }, [success, navigate]);
+    updateFormValidity();
+  }, [name, description, thresholdScore, questions]);
 
   const addQuestion = () => {
     const newId = questions.length + 1;
@@ -173,12 +145,16 @@ export default function CreateTest() {
           shadow="xs"
         >
           <h1>Test</h1>
+          <Text fw={400} color="red" size="md" mt="sm">
+            * Fill all required fields
+          </Text>
           <TextInput
             mt={10}
             label="Name"
             placeholder="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
 
           <TextInput
@@ -187,6 +163,7 @@ export default function CreateTest() {
             placeholder="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            required
           />
 
           <NumberInput
@@ -197,6 +174,7 @@ export default function CreateTest() {
             min={1}
             value={thresholdScore}
             onChange={(value) => setThresholdScore(value)}
+            required
           />
 
           <div>
@@ -216,6 +194,9 @@ export default function CreateTest() {
                   onChange={(e) => handleQuestionChange(index, e.target.value)}
                 />
                 <Divider my="sm" />
+                <Text fw={400} color="red" size="md" mb="sm">
+                    * Be sure to choose the correct answer
+                  </Text>
                 <div className="mb20">
                   {question.answers.map((answer, answerIndex) => (
                     <div key={answerIndex} className="flex gap mb20">
@@ -246,38 +227,14 @@ export default function CreateTest() {
             Add question
           </Button>
 
-          {/* {Object.keys(errorMessages).map((key) => (
-            <ErrorMessage title={errorMessages[key]} />
-          ))} */}
-
-          {/* {formSubmitted &&
-            Object.entries(errorMessages).map(([fieldName, errorMessage]) => {
-              if (Array.isArray(errorMessage)) {
-                return errorMessage.map((questionError, index) => (
-                  <ErrorMessage
-                    key={`${fieldName}_${index}`}
-                    title="Error"
-                    text={`${questionError}: ${fieldName}`}
-                    className="mt2 mb10"
-                  />
-                ));
-              } else {
-                return (
-                  <ErrorMessage
-                    key={fieldName}
-                    title="Error"
-                    text={`${errorMessage}: ${fieldName}`}
-                    className="mt2 mb10"
-                  />
-                );
-              }
-            })} */}
+          <Toaster />
 
           <div>
             <Button
               className="button button-primary"
               mt={20}
               onClick={handleSave}
+              disabled={!isFormValid}
             >
               Save and Publish
             </Button>

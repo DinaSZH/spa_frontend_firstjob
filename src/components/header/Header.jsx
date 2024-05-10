@@ -62,7 +62,7 @@ const linksHR = [
   },
   {
     icon: IconAward,
-    title: "Test",
+    title: "My Tests",
     link: "/tests",
   },
   {

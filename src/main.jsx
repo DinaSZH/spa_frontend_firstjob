@@ -59,6 +59,7 @@ import UserCertifications from "./pages/UserCertifications/UserCertifications";
 import MentorProfile from "./pages/MentorProfile/MentorProfile";
 import EditMentor from "./pages/edit-mentor/EditMentor";
 import ResumeDB from "./pages/resumeDB/ResumeDB";
+import TestId from "./pages/tests/TestId";
 
 const router = createBrowserRouter([
   {
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
       {
         path: "/tests",
         element: <Tests />,
+      },
+      {
+        path: "/tests/:id",
+        element: <TestId />,
       },
       {
         path: "/applies/vacancy/:id",

@@ -119,6 +119,22 @@ export const testSlice = createSlice({
         state.loadingTest = false;
         state.successTest = false;
         state.error = payload;
+      })
+       // getTestById
+       .addCase(getTestById.pending, (state) => {
+        state.loadingTest = true;
+        state.successTest = false;
+        state.error = null;
+      })
+      .addCase(getTestById.fulfilled, (state, { payload }) => {
+        state.loadingTest = false;
+        state.successTest = true;
+      })
+      .addCase(getTestById.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loadingTest = false;
+        state.successTest = false;
+        state.error = payload;
       });
   },
 });
@@ -333,6 +349,28 @@ export const submitPlatformTest = createAsyncThunk(
       return data;
     } catch (error) {
       console.error("Error sumbit test platform:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getTestById = createAsyncThunk(
+  "user/getResumeById",
+  async (id, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.get(
+        `${POINT_CONTENT}/api/content/tests/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log("Fetched test:", data); // Log fetched data
+      thunkApi.dispatch(setTest({ fullTest: data }));
+    } catch (error) {
+      console.error("Error getting test by id:", error);
       thunkApi.rejectWithValue(error.message);
     }
   }

@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Flex, Paper, Space, Title } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Flex,
+  Loader,
+  Paper,
+  Space,
+  Title,
+} from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { Group, Text } from "@mantine/core";
 import { getMentorProfile } from "../../store/slices/mentorSlice";
@@ -16,7 +25,8 @@ import {
 export default function MentorProfile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const mentor = useSelector((state) => state.mentor.mentorProfile);
+  const { loading } = useSelector((state) => state.mentor);
+  const  mentor= useSelector((state) => state.mentor.mentorProfile);
 
   useEffect(() => {
     dispatch(getMentorProfile());
@@ -38,7 +48,13 @@ export default function MentorProfile() {
           )}
         </Group>
 
-        {mentor ? (
+        {loading ? (
+          <>
+            <Center h={500}>
+              <Loader color="blue" size={100} />
+            </Center>
+          </>
+        ) : (
           <>
             <Text size="xl" fw={700} mb="lg">
               Mentor Profile
@@ -93,7 +109,9 @@ export default function MentorProfile() {
               <Space h="xs" />
             </Paper>
           </>
-        ) : (
+        )}
+
+        {!mentor && (
           <Flex
             gap="lg"
             justify="center"

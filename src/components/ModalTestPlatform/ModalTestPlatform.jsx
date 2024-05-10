@@ -1,10 +1,15 @@
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button, Divider, Title, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { Modal, Button, Divider, Title, Text, Container, Center, Loader } from "@mantine/core";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { submitPlatformTest } from "../../store/slices/testSlice";
 
-export default function ModalTestPlatform({ opened, close, fullTestData }) {
+export default function ModalTestPlatform({
+  opened,
+  close,
+  fullTestData,
+  loading,
+}) {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [
     openedSecondModal,
@@ -47,72 +52,80 @@ export default function ModalTestPlatform({ opened, close, fullTestData }) {
         radius={0}
         transitionProps={{ transition: "fade", duration: 200 }}
       >
-        <div className="container p4">
-          <div>
-            {fullTestData.title && (
-              <div className="h2 mb20">{fullTestData.title}</div>
-            )}
-            {fullTestData.description && (
-              <div className="h2 mb20">{fullTestData.description}</div>
-            )}
-            {fullTestData.thresholdScore && (
-              <div className="flex mb20">
-                <span className="h3">Threshold Score: </span>
-                <span className="text">{fullTestData.thresholdScore}</span>
-              </div>
-            )}
-            {fullTestData.totalScore && (
-              <div className="flex mb20">
-                <span className="h3">Total Score: </span>
-                <span className="text"> {fullTestData.totalScore}</span>
-              </div>
-            )}
-          </div>
+        {loading ? (
+          <>
+            <Center h={500}>
+              <Loader color="blue" size={100} />
+            </Center>
+          </>
+        ) : (
+          <Container size="lg" py="xl">
+            <div>
+              {fullTestData.title && (
+                <div className="h2 mb20">{fullTestData.title}</div>
+              )}
+              {fullTestData.description && (
+                <div className="h2 mb20">{fullTestData.description}</div>
+              )}
+              {fullTestData.thresholdScore && (
+                <div className="flex mb20">
+                  <span className="h3">Threshold Score: </span>
+                  <span className="text">{fullTestData.thresholdScore}</span>
+                </div>
+              )}
+              {fullTestData.totalScore && (
+                <div className="flex mb20">
+                  <span className="h3">Total Score: </span>
+                  <span className="text"> {fullTestData.totalScore}</span>
+                </div>
+              )}
+            </div>
 
-          {fullTestData.questions &&
-            fullTestData.questions.map((dataQuest, index) => (
-              <div key={dataQuest.id} className="radio-wrapper">
-                <div className="radio-wrapper">
-                  <Title order={2}>
-                    {index + 1}. {dataQuest.question}
-                  </Title>
+            {fullTestData.questions &&
+              fullTestData.questions.map((dataQuest, index) => (
+                <div key={dataQuest.id} className="radio-wrapper">
+                  <div className="radio-wrapper">
+                    <Title order={2}>
+                      {index + 1}. {dataQuest.question}
+                    </Title>
+                  </div>
+                  <Divider my="sm" />
+                  <div className="mb20">
+                    {dataQuest.answers.map((answer) => (
+                      <div key={answer.id} className="flex border-gray p2 mb20">
+                        <input
+                          type="radio"
+                          id={`question_${dataQuest.id}_answer_${answer.id}`}
+                          name={`question_${dataQuest.id}`}
+                          value={answer.id}
+                          checked={selectedAnswers[dataQuest.id] === answer.id}
+                          onChange={() =>
+                            handleAnswerChange(dataQuest.id, answer.id)
+                          }
+                          className="mr10"
+                        />
+                        <label
+                          htmlFor={`question_${dataQuest.id}_answer_${answer.id}`}
+                        >
+                          <Text size="md">{answer.answer}</Text>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <Divider my="sm" />
-                <div className="mb20">
-                  {dataQuest.answers.map((answer) => (
-                    <div key={answer.id} className="flex border-gray p2 mb20">
-                      <input
-                        type="radio"
-                        id={`question_${dataQuest.id}_answer_${answer.id}`}
-                        name={`question_${dataQuest.id}`}
-                        value={answer.id}
-                        checked={selectedAnswers[dataQuest.id] === answer.id}
-                        onChange={() =>
-                          handleAnswerChange(dataQuest.id, answer.id)
-                        }
-                        className="mr10"
-                      />
-                      <label
-                        htmlFor={`question_${dataQuest.id}_answer_${answer.id}`}
-                      >
-                        <Text size="md">{answer.answer}</Text>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          <div className="flex flex-jc-end">
-            <Button
-              variant="filled"
-              color="green"
-              size="md"
-              onClick={handleSubmit}
-            >
-              Submit test
-            </Button>
-          </div>
-        </div>
+              ))}
+            <div className="flex flex-jc-end">
+              <Button
+                variant="filled"
+                color="green"
+                size="md"
+                onClick={handleSubmit}
+              >
+                Submit test
+              </Button>
+            </div>
+          </Container>
+        )}
       </Modal>
 
       <Modal
@@ -121,7 +134,6 @@ export default function ModalTestPlatform({ opened, close, fullTestData }) {
         centered
         title="Complete the test"
       >
-        {/* Second Modal Content */}
         <div className="h2 flex flex-jc-c flex-ai-c link">
           Complete the test
         </div>

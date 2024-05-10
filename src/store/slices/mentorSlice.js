@@ -37,6 +37,21 @@ export const mentorSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //getMentorProfile
+      .addCase(getMentorProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMentorProfile.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(getMentorProfile.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      })
+      //getAllMentors
       .addCase(getAllMentors.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -46,6 +61,34 @@ export const mentorSlice = createSlice({
         state.success = true;
       })
       .addCase(getAllMentors.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      })
+      // getMentorsById
+      .addCase(getMentorsById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMentorsById.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(getMentorsById.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      })
+      // editProfileMentor
+      .addCase(editProfileMentor.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editProfileMentor.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(editProfileMentor.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;

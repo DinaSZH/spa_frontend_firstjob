@@ -27,9 +27,7 @@ import KeycloakService from "../../services/KeycloakService";
 export default function PlatformTest() {
   const dispatch = useDispatch();
   const platformTests = useSelector((state) => state.test.platformTests);
-  const platformTest = useSelector((state) => state.test.platformTest);
-  const [loader, setLoader] = useState(true);
-  const navigate = useNavigate();
+  const {platformTest, loadingTest} = useSelector((state) => state.test);
   const [openedTest, { open: openTest, close: closeTest }] =
     useDisclosure(false);
 
@@ -80,6 +78,11 @@ export default function PlatformTest() {
                   <Text size="sm" color="dimmed" mt="sm">
                     Total Score: {item.totalScore}
                   </Text>
+
+                  <Text size="sm" c="blue" mt="sm">
+                    Status: {item.status}
+                  </Text>
+
                   {KeycloakService.getUserRole() && (
                     <Button mt="sm" onClick={() => handleTakeTest(item.id)}>
                       Take the test
@@ -104,6 +107,7 @@ export default function PlatformTest() {
         opened={openedTest}
         close={closeTest}
         fullTestData={platformTest}
+        loading={loadingTest}
       />
     </main>
   );
