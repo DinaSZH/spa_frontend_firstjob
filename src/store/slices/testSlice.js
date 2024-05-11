@@ -15,6 +15,7 @@ export const testSlice = createSlice({
     loadingTest: false,
     successTest: false,
     error: null,
+    applyStatus: '',
   },
   reducers: {
     setTestPreviw: (state, action) => {
@@ -37,6 +38,9 @@ export const testSlice = createSlice({
     },
     setMyCertifications: (state, action) => {
       state.certifications = action.payload.certifications;
+    },
+    setApplyStatus: (state, action) => {
+      state.applyStatus = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -135,12 +139,45 @@ export const testSlice = createSlice({
         state.loadingTest = false;
         state.successTest = false;
         state.error = payload;
-      });
+      })
+       // getPlatformTestById
+       .addCase(getPlatformTestById.pending, (state) => {
+        state.loadingTest = true;
+        state.successTest = false;
+        state.error = null;
+      })
+      .addCase(getPlatformTestById.fulfilled, (state, { payload }) => {
+        state.loadingTest = false;
+        state.successTest = true;
+      })
+      .addCase(getPlatformTestById.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loadingTest = false;
+        state.successTest = false;
+        state.error = payload;
+      })
+       // getPlatformTests
+       .addCase(getPlatformTests.pending, (state) => {
+        state.loadingTest = true;
+        state.successTest = false;
+        state.error = null;
+      })
+      .addCase(getPlatformTests.fulfilled, (state, { payload }) => {
+        state.loadingTest = false;
+        state.successTest = true;
+      })
+      .addCase(getPlatformTests.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loadingTest = false;
+        state.successTest = false;
+        state.error = payload;
+      })
   },
 });
 
 export const {
   setTestPreviw,
+  setApplyStatus,
   setTest,
   uppendTest,
   setMyTests,
@@ -184,6 +221,7 @@ export const submitTest = createAsyncThunk(
           },
         }
       );
+      thunkApi.dispatch(setApplyStatus(data));
       console.log(data);
       return data;
     } catch (error) {
@@ -345,6 +383,7 @@ export const submitPlatformTest = createAsyncThunk(
           },
         }
       );
+      thunkApi.dispatch(setApplyStatus(data));
       console.log(data);
       return data;
     } catch (error) {
@@ -355,7 +394,7 @@ export const submitPlatformTest = createAsyncThunk(
 );
 
 export const getTestById = createAsyncThunk(
-  "user/getResumeById",
+  "user/getTestById",
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();

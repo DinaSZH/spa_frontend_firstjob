@@ -71,10 +71,10 @@ export default function EditMentor() {
   const handleSave = async () => {
     try {
       const mentorData = {
-        id: mentor.id,
+        // id: mentor.id,
         position: form.values.position,
         company: form.values.company,
-        cityId: form.values.cityId,
+        cityId: Number(cityId),
         cost: form.values.cost,
         about: form.values.about,
         telegramLink: form.values.telegramLink,
@@ -83,6 +83,7 @@ export default function EditMentor() {
         experience: formatExperience(form.values.experience),
       };
 
+      console.log(mentorData);
       await dispatch(editProfileMentor(mentorData));
       navigate("/profile/mentor");
     } catch (error) {
@@ -121,6 +122,17 @@ export default function EditMentor() {
     console.log(mentor);
   }, []);
 
+  useEffect(() => {
+    if (mentor && cities) {
+      const selectedCity = cities.find((city) => city.label === mentor.city);
+      if (selectedCity) {
+        setCityId(selectedCity.value);
+      } else {
+        console.log("City not found:", mentor.city);
+      }
+    }
+  }, [mentor, cities]);
+  
   return (
     <main>
       <Container size="lg" py="xl">
@@ -172,6 +184,7 @@ export default function EditMentor() {
                 nothingFoundMessage="Nothing found..."
                 {...form.getInputProps("cityId")}
               />
+
               <Flex
                 mih={50}
                 gap="sm"

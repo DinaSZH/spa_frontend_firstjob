@@ -34,6 +34,20 @@ export const vacancySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // getAllAuthVacancies
+      .addCase(getAllAuthVacancies.pending, (state) => {
+        state.loadingVacancy = true;
+        state.error = null;
+      })
+      .addCase(getAllAuthVacancies.fulfilled, (state, { payload }) => {
+        state.loadingVacancy = false;
+        state.success = true;
+      })
+      .addCase(getAllAuthVacancies.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loadingVacancy = false;
+        state.error = payload;
+      })
       // getAllVacancies
       .addCase(getAllVacancies.pending, (state) => {
         state.loadingVacancy = true;
@@ -48,7 +62,7 @@ export const vacancySlice = createSlice({
         state.loadingVacancy = false;
         state.error = payload;
       })
-  
+
       // getMyVacancies
       .addCase(getMyVacancies.pending, (state) => {
         state.loadingVacancy = true;
@@ -63,7 +77,7 @@ export const vacancySlice = createSlice({
         state.loadingVacancy = false;
         state.error = payload;
       })
-  
+
       // createVacancy
       .addCase(createVacancy.pending, (state) => {
         state.loadingVacancy = true;
@@ -78,7 +92,7 @@ export const vacancySlice = createSlice({
         state.loadingVacancy = false;
         state.error = payload;
       })
-  
+
       // getVacancyById
       .addCase(getVacancyById.pending, (state) => {
         state.loadingVacancy = true;
@@ -93,7 +107,7 @@ export const vacancySlice = createSlice({
         state.loadingVacancy = false;
         state.error = payload;
       })
-  
+
       // deleteVacancyById
       .addCase(deleteVacancyById.pending, (state) => {
         state.loadingVacancy = true;
@@ -108,7 +122,7 @@ export const vacancySlice = createSlice({
         state.loadingVacancy = false;
         state.error = payload;
       })
-  
+
       // editVacancyById
       .addCase(editVacancyById.pending, (state) => {
         state.loadingVacancy = true;

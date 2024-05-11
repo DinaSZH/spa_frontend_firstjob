@@ -113,6 +113,20 @@ export const resumeSlice = createSlice({
         state.loading = false;
         state.error = payload;
       })
+      //getResumeByIdForHRfor HR
+      .addCase(getResumeByIdForHR.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getResumeByIdForHR.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(getResumeByIdForHR.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      })
   },
 });
 

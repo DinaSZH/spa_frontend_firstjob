@@ -223,9 +223,9 @@ export default function Header() {
             <Link to="/mentors" className={classes.link}>
               Mentorship
             </Link>
-            <Link to="/platform/tests" className={classes.link}>
+           { isLoggedIn && <Link to="/platform/tests" className={classes.link}>
               Test Platform
-            </Link>
+            </Link>}
           </Group>
 
           <Group visibleFrom="sm">

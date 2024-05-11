@@ -1,4 +1,3 @@
-import Header from "../../../components/header/Header";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -31,6 +30,13 @@ import KeycloakService from "../../../services/KeycloakService";
 import { getMyResumes } from "../../../store/slices/resumeSlice";
 
 export default function SearchVacancy() {
+
+  const { applyStatus } = useSelector((state) => state.apply);
+  const { applyStatus: testStatus } = useSelector(
+    (state) => state.test
+  );
+
+
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -77,7 +83,7 @@ export default function SearchVacancy() {
   const vacancies = useSelector((state) => state.vacancy.allVacancies);
 
   useEffect(() => {
-    if (KeycloakService.getUserRole) {
+    if (KeycloakService.getUserRole()) {
       dispatch(getMyResumes());
     }
     if (KeycloakService.isLoggedIn()) {
@@ -92,6 +98,16 @@ export default function SearchVacancy() {
       setLoading(false);
     }
   }, [vacancies]);
+
+
+  useEffect(() => {
+    if (KeycloakService.isLoggedIn() && (applyStatus || testStatus)) {
+      dispatch(getAllAuthVacancies());
+    } 
+  }, [applyStatus, testStatus]);
+
+
+
 
   useEffect(() => {
     if (querySeacrh.trim() === "") {

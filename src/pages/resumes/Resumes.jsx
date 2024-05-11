@@ -54,7 +54,7 @@ export default function Resumes() {
         ) : (
           <MyResumes resumes={resumes} />
         )}
-        {!resumes && !loading && (
+        {resumes.length <1 && !loading && (
           <Container className={classes.root}>
             <Title className={classes.title}>There is no resumes.</Title>
             <Text

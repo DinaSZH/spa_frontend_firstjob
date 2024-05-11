@@ -25,20 +25,15 @@ import {
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const { profile,} = useSelector((state) => state.profile);
+  const { profile, loading} = useSelector((state) => state.profile);
 
-  const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getProfile());
   }, []);
 
-  useEffect(() => {
-    if (profile) {
-      setLoader(false);
-    }
-  }, [profile]);
+  
 
   return (
     <RenderOnAuthenticated>
@@ -63,7 +58,7 @@ export default function Profile() {
             color="#228BE6"
             shadow="xs"
           >
-            {loader ? (
+            {loading ? (
               <Center h={500}>
                 <Loader color="blue" size={100} />
               </Center>

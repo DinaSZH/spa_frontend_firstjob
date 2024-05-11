@@ -45,7 +45,7 @@ export default function Vacancies() {
           <MyVacancies vacancies={vacancies} />
         )}
 
-        {!vacancies && (
+        {vacancies.length <1 && !loadingVacancy  && (
           <Container className={classes.root}>
             <Title className={classes.title}>There is no vacancies.</Title>
             <Text

@@ -84,7 +84,7 @@ export default function UserCertifications() {
         </SimpleGrid>
       )}
 
-      {certifications.length < 1 && (
+      {certifications.length < 1 && !loadingTest && (
         <Container pt={40}>
           <Title ta="center" mb={20}>
             There is no certifications.

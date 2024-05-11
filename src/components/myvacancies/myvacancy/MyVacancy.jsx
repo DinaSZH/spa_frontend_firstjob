@@ -1,4 +1,4 @@
-import { createApplyVacancy } from "../../../store/slices/applySlice";
+import { createApplyVacancy, createApplyVacancyTest } from "../../../store/slices/applySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -14,8 +14,12 @@ import { Link, useNavigate } from "react-router-dom";
 import KeycloakService from "../../../services/KeycloakService";
 import { Button, Center, Loader, Modal, Radio } from "@mantine/core";
 import ModalTest from "../../ModalTest/ModalTest";
-import { getTestPreview } from "../../../store/slices/testSlice";
-import { deleteVacancyById, getAllAuthVacancies, getAllVacancies } from "../../../store/slices/vacancySlice";
+import { getTestById, getTestPreview } from "../../../store/slices/testSlice";
+import {
+  deleteVacancyById,
+  getAllAuthVacancies,
+  getAllVacancies,
+} from "../../../store/slices/vacancySlice";
 import { Chip, Flex, Group, Paper } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { Toaster, toast } from "react-hot-toast";
@@ -23,15 +27,17 @@ import { Toaster, toast } from "react-hot-toast";
 export default function MyVacancy({ item }) {
   const dispatch = useDispatch();
   const resumes = useSelector((state) => state.resume.resumes);
-  const { loading } = useSelector((state) => state.apply);
-  const { loadingTest } = useSelector((state) => state.test);
+  const { loading, applyStatus } = useSelector((state) => state.apply);
+  const { loadingTest, applyStatus: testStatus } = useSelector(
+    (state) => state.test
+  );
   const navigate = useNavigate();
   const [opened, { open, close }] = useDisclosure(false);
   const [openedTest, { open: openTest, close: closeTest }] =
     useDisclosure(false);
   const [openedApply, { open: openApply, close: closeApply }] =
     useDisclosure(false);
-  const [applicationStatus, setApplicationStatus] = useState(null);
+  const [applicationStatus, setApplicationStatus] = useState("");
   const testPreviewData = useSelector((state) => state.test.test);
   const fullTestData = useSelector((state) => state.test.fullTest);
   const fullTestMain = useSelector((state) => state.apply.testMain);
@@ -49,10 +55,6 @@ export default function MyVacancy({ item }) {
     setIsUserVacancy(item.hrEmail === userId);
   }, []);
 
-  // useEffect(() => {
-  //   renderApplicationStatus();
-  // }, [item.applicationStatus]);
-
   const handleApply = async () => {
     try {
       if (item.testId) {
@@ -60,28 +62,40 @@ export default function MyVacancy({ item }) {
         open();
         closeApply();
       } else {
-        try{
-          dispatch(createApplyVacancy({ id: item.id, resumeId: selectedResume }))
-          toast.success("Successfully applied!")
-          if(KeycloakService.isLoggedIn()){
-            dispatch(getAllAuthVacancies());
-          } else{
-            getAllVacancies();
-          }
+        try {
+          dispatch(
+            createApplyVacancy({ id: item.id, resumeId: selectedResume })
+          );
+          toast.success("Successfully applied!");
+          setApplicationStatus("APPLIED");
+          // dispatch(getAllAuthVacancies());
           closeApply();
         } catch (error) {
-          toast.success("Failed to apply, contact technical support!")
+          toast.error("Failed to apply, contact technical support!");
         }
       }
     } catch (error) {
       console.error("Error:", error);
-    } 
+    }
   };
+
+  useEffect(() => {
+    if (item.applicationStatus === "APPLIED" || applyStatus === "APPLIED") {
+      setApplicationStatus("APPLIED");
+    } else if (item.applicationStatus === "TEST_FAILED") {
+      setApplicationStatus("TEST_FAILED");
+    } else if (item.applicationStatus === "INVITED") {
+      setApplicationStatus("INVITED");
+    } else if (item.applicationStatus === "DECLINED") {
+      setApplicationStatus("DECLINED");
+    }
+  }, [item, applyStatus, testStatus]);
 
   const handleGoTest = async () => {
     try {
       if (item.testId) {
-        dispatch(createApplyVacancy({ id: item.id, resumeId: selectedResume }));
+        //dispatch(getTestById(item.id))
+      dispatch(createApplyVacancyTest({ id: item.id, resumeId: selectedResume }));
         openTest();
       }
     } catch (error) {
@@ -102,17 +116,17 @@ export default function MyVacancy({ item }) {
           Apply <IconDiscountCheck className="ml1" />
         </Button>
       );
-    } else if (item.applicationStatus === "APPLIED") {
+    } else if (applicationStatus === "APPLIED") {
       return (
         <span style={{ color: "green" }}>You have successfully applied!</span>
       );
-    } else if (item.applicationStatus === "TEST_FAILED") {
+    } else if (applicationStatus === "TEST_FAILED") {
       return <span style={{ color: "gray" }}>You failed the test!</span>;
-    } else if (item.applicationStatus === "INVITED") {
+    } else if (applicationStatus === "INVITED") {
       return (
         <span style={{ color: "#5FA6FA" }}>You invited to a vacancy!</span>
       );
-    } else if (item.applicationStatus === "DECLINED") {
+    } else if (applicationStatus === "DECLINED") {
       return (
         <span style={{ color: "red" }}>
           Unfortunately you received a decline!
@@ -189,7 +203,7 @@ export default function MyVacancy({ item }) {
         </Group>
       </Paper>
 
-      <Toaster/>
+      <Toaster />
       <Modal opened={opened} onClose={close} title="Test preview" centered>
         {loadingTest ? (
           <Center mih={200}>
@@ -225,11 +239,7 @@ export default function MyVacancy({ item }) {
               </div>
             )}
             <div className="flex gap flex-end flex-jc-end">
-              <Button
-                onClick={handleGoTest}
-              >
-                Go to test
-              </Button>
+              <Button onClick={handleGoTest}>Go to test</Button>
             </div>
           </>
         )}
@@ -240,6 +250,7 @@ export default function MyVacancy({ item }) {
         fullTestData={fullTestMain}
         item={item}
         resumeId={selectedResume}
+        setApplicationStatus={setApplicationStatus}
       />
       <Modal
         opened={openedApply}

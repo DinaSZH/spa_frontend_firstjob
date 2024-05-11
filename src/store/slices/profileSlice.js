@@ -38,10 +38,8 @@ export const profileSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      });
-  },
-  extraReducers: (builder) => {
-    builder
+      })
+      //editProfile
       .addCase(editProfile.pending, (state) => {
         state.loading = true;
         state.success = false; // Reset success state when starting the request

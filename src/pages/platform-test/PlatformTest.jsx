@@ -27,9 +27,15 @@ import KeycloakService from "../../services/KeycloakService";
 export default function PlatformTest() {
   const dispatch = useDispatch();
   const platformTests = useSelector((state) => state.test.platformTests);
-  const {platformTest, loadingTest} = useSelector((state) => state.test);
+  const { platformTest, loadingTest, applyStatus } = useSelector(
+    (state) => state.test
+  );
   const [openedTest, { open: openTest, close: closeTest }] =
     useDisclosure(false);
+
+  useEffect(() => {
+    dispatch(getPlatformTests());
+  }, [applyStatus]);
 
   useEffect(() => {
     dispatch(getPlatformTests());
@@ -38,6 +44,20 @@ export default function PlatformTest() {
   const handleTakeTest = (id) => {
     dispatch(getPlatformTestById(id));
     openTest();
+  };
+
+  const getStatusText = (status, item) => {
+    if (status === "PASSED") {
+      return "You passed the test";
+    } else if (status === "NOT_PASSED" && KeycloakService.getUserRole()) {
+      return (
+        <Button mt="sm" onClick={() => handleTakeTest(item.id)}>
+          Take the test
+        </Button>
+      );
+    } else if (status === "TEST_FAILED") {
+      return "You failed the test";
+    }
   };
 
   return (
@@ -50,7 +70,13 @@ export default function PlatformTest() {
           </Text>
         </Center>
 
-        {platformTests && platformTests.length > 0 ? (
+        {loadingTest ? (
+          <>
+            <Center h={500}>
+              <Loader color="blue" size={100} />
+            </Center>
+          </>
+        ) : (
           <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
             {platformTests &&
               platformTests.map((item) => (
@@ -80,25 +106,10 @@ export default function PlatformTest() {
                   </Text>
 
                   <Text size="sm" c="blue" mt="sm">
-                    Status: {item.status}
+                    {getStatusText(item.status, item)}
                   </Text>
-
-                  {KeycloakService.getUserRole() && (
-                    <Button mt="sm" onClick={() => handleTakeTest(item.id)}>
-                      Take the test
-                    </Button>
-                  )}
                 </Card>
               ))}
-          </SimpleGrid>
-        ) : (
-          <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>
-            <Skeleton height={300} radius="xl" />
-            <Skeleton height={300} radius="xl" />
-            <Skeleton height={300} radius="xl" />
-            <Skeleton height={300} radius="xl" />
-            <Skeleton height={300} radius="xl" />
-            <Skeleton height={300} radius="xl" />
           </SimpleGrid>
         )}
       </Container>

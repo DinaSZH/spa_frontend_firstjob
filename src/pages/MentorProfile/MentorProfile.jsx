@@ -111,7 +111,7 @@ export default function MentorProfile() {
           </>
         )}
 
-        {!mentor && (
+        {!mentor && !loading && (
           <Flex
             gap="lg"
             justify="center"

@@ -1,5 +1,14 @@
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button, Divider, Title, Text, Container, Center, Loader } from "@mantine/core";
+import {
+  Modal,
+  Button,
+  Divider,
+  Title,
+  Text,
+  Container,
+  Center,
+  Loader,
+} from "@mantine/core";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { submitPlatformTest } from "../../store/slices/testSlice";
@@ -21,21 +30,31 @@ export default function ModalTestPlatform({
   };
 
   const handleSubmit = () => {
-    const formattedAnswers = Object.entries(selectedAnswers).map(
-      ([questionId, answerId]) => ({
-        questionId: parseInt(questionId),
-        answerId: parseInt(answerId),
-      })
-    );
+    const allQuestionsAnswered =
+      fullTestData.questions &&
+      fullTestData.questions.every(
+        (question) => selectedAnswers[question.id] !== undefined
+      );
 
-    dispatch(
-      submitPlatformTest({
-        id: fullTestData.id,
-        answers: formattedAnswers,
-      })
-    );
-    close();
-    closeSecondModal();
+    if (allQuestionsAnswered) {
+      const formattedAnswers = Object.entries(selectedAnswers).map(
+        ([questionId, answerId]) => ({
+          questionId: parseInt(questionId),
+          answerId: parseInt(answerId),
+        })
+      );
+
+      dispatch(
+        submitPlatformTest({
+          id: fullTestData.id,
+          answers: formattedAnswers,
+        })
+      );
+      close();
+      closeSecondModal();
+    } else {
+      openSecondModal();
+    }
   };
 
   const handleOnClose = () => {
@@ -137,18 +156,8 @@ export default function ModalTestPlatform({
         <div className="h2 flex flex-jc-c flex-ai-c link">
           Complete the test
         </div>
-        <div className="h2 mb20 flex flex-jc-c flex-ai-c">
-          You will not be able to retake the test
-        </div>
-        <div className="flex flex-jc-c flex-ai-c mb20">
-          <Button
-            variant="outlined"
-            color="green"
-            size="md"
-            onClick={handleSubmit}
-          >
-            Complete the test
-          </Button>
+        <div style={{color:"red"}} className="h2 mb20 flex flex-jc-c flex-ai-c">
+          You have to answer all questions before submitting.
         </div>
       </Modal>
     </>

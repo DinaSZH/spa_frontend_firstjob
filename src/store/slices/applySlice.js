@@ -11,6 +11,7 @@ export const applySlice = createSlice({
     apply: {},
     testMain: {},
     appliesHR: [],
+    applyStatus: '',
   },
   reducers: {
     appendApply: (state, action) => {
@@ -40,6 +41,9 @@ export const applySlice = createSlice({
     setTest: (state, action) => {
       state.testMain = action.payload.testMain;
     },
+    setApplyStatus: (state, action) => {
+      state.applyStatus = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -52,6 +56,20 @@ export const applySlice = createSlice({
         state.success = true;
       })
       .addCase(createApplyVacancy.rejected, (state, { payload }) => {
+        console.error("Error from backend:", payload);
+        state.loading = false;
+        state.error = payload;
+      })
+      // createApplyVacancyTest
+      .addCase(createApplyVacancyTest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createApplyVacancyTest.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(createApplyVacancyTest.rejected, (state, { payload }) => {
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
@@ -94,6 +112,7 @@ export const {
   removeApply,
   setApplyStatusHR,
   setTest,
+  setApplyStatus,
 } = applySlice.actions;
 
 export const createApplyVacancy = createAsyncThunk(
@@ -110,7 +129,29 @@ export const createApplyVacancy = createAsyncThunk(
           },
         }
       );
-      console.log(data);
+      thunkApi.dispatch(setApplyStatus(data));
+      thunkApi.dispatch(setTest({ testMain: data }));
+    } catch (error) {
+      console.error("Error apply to the vacancy:", error);
+      thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const createApplyVacancyTest = createAsyncThunk(
+  "user/createApplyVacancyTest",
+  async ({ id, resumeId }, thunkApi) => {
+    try {
+      const jwt = KeycloakService.getToken();
+      const { data } = await axios.post(
+        `${POINT_CONTENT}/api/content/vacancies/${id}/apply?resumeId=${resumeId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       thunkApi.dispatch(setTest({ testMain: data }));
     } catch (error) {
       console.error("Error apply to the vacancy:", error);

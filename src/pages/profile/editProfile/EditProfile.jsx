@@ -62,12 +62,6 @@ export default function EditProfile() {
     }
   }, [dispatch, profile]);
 
-  useEffect(() => {
-    if (success) {
-      navigate("/profile");
-      dispatch(clearSuccess());
-    }
-  }, [success]);
 
   const handleEditProfile = async () => {
     try {

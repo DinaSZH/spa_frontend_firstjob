@@ -185,7 +185,7 @@ export const editProfileMentor = createAsyncThunk(
     try {
       const jwt = KeycloakService.getToken();
       const { data } = await axios.put(
-        `${POINT_CONTENT}/api/content/mentor/${updatedProfile.id}`,
+        `${POINT_CONTENT}/api/content/mentor`,
         updatedProfile,
         {
           headers: {
