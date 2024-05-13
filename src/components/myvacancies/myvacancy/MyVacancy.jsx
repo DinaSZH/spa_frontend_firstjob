@@ -184,7 +184,7 @@ export default function MyVacancy({ item }) {
         </Group>
         <Flex mt={10} gap="sm" direction="column" wrap="wrap">
           <div className="flex flex-ai-c">
-            <IconPremiumRights className="mr10" /> {item.salaryFrom}-{" "}
+            <IconPremiumRights className="mr10" /> {item.salaryFrom} -{" "}
             {item.salaryTo} {item.currency}
           </div>
           <div className="flex">

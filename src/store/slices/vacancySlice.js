@@ -151,11 +151,12 @@ export const {
 
 export const getAllVacancies = createAsyncThunk(
   "user/getAllVacancies",
-  async (_, thunkApi) => {
+  async (filterParams, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
       const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/vacancies`
+        `${POINT_CONTENT}/api/content/vacancies`,
+        { params: filterParams }
       );
       console.log("Fetched all vacancies:", data);
       thunkApi.dispatch(setAllVacancies({ allVacancies: data }));
@@ -168,18 +169,19 @@ export const getAllVacancies = createAsyncThunk(
 
 export const getAllAuthVacancies = createAsyncThunk(
   "user/getAllAuthVacancies",
-  async (_, thunkApi) => {
+  async (filterParams, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
       const { data } = await axios.get(
         `${POINT_CONTENT}/api/content/vacancies`,
+        { params: filterParams },
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
         }
       );
-      console.log("Fetched all vacancies:", data);
+      console.log("Fetched all auth vacancies:", data);
       thunkApi.dispatch(setAllVacancies({ allVacancies: data }));
     } catch (error) {
       console.error("Error fetching all vacancies:", error);

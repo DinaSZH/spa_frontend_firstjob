@@ -3,21 +3,12 @@ import ReactDOM from "react-dom/client";
 // import './index.css'
 import "./styles/all.css";
 import { RouterProvider, createBrowserRouter, defer } from "react-router-dom";
-// import { Error } from './pages/Error/Error.tsx';
-// import { Layout } from './layout/Menu/Layout.tsx';
-// import { AuthLayout } from './layout/Auth/AuthLayout.tsx';
 import axios from "axios";
-// import { PREFIX } from './helpers/API.ts';
-// import { Login } from './pages/Login/Login.tsx';
-// import { Register } from './pages/Register/Register.tsx';
-// import { RequireAuth } from './helpers/RequireAuth.tsx';
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import MainLayout from "./layout/MainLayout";
 import Home from "./pages/Home/Home";
 import KeycloakService from "./services/KeycloakService";
-// import { store } from './store/store.ts';
-// import { Success } from './components/Success/Success.tsx';
 import CreateResume from "./pages/create-resume/CreateResume";
 import Profile from "./pages/profile/Profile";
 import "@mantine/core/styles.css";
@@ -33,11 +24,7 @@ import Register from "./pages/register/Register";
 import RenderOnAnonymous from "./helpers/RenderOnAnonymous";
 import RenderOnAuthenticated from "./helpers/RenderOnAuthenticated";
 import { NotFound } from "./pages/NotFound/NotFound";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ResumeId from "./pages/resumes/ResumeId";
 import EditResume from "./pages/resumes/EditResume";
 import Vacancies from "./pages/vacancies/Vacancies";
@@ -60,6 +47,9 @@ import MentorProfile from "./pages/MentorProfile/MentorProfile";
 import EditMentor from "./pages/edit-mentor/EditMentor";
 import ResumeDB from "./pages/resumeDB/ResumeDB";
 import TestId from "./pages/tests/TestId";
+import RenderOnUser from "./helpers/RenderOnUser";
+import RenderOnHR from "./helpers/RenderOnHR";
+import RenderOnMentor from "./helpers/RenderOnMentor";
 
 const router = createBrowserRouter([
   {
@@ -73,7 +63,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/create-resume",
-        element: <CreateResume />,
+        element: (
+          <RenderOnUser>
+            <CreateResume />
+          </RenderOnUser>
+        ),
       },
       {
         path: "/profile",
@@ -85,7 +79,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile/edit",
-        element: <EditProfile />,
+        element: (
+          <RenderOnAuthenticated>
+            {" "}
+            <EditProfile />{" "}
+          </RenderOnAuthenticated>
+        ),
       },
       {
         path: "/search/vacancy",
@@ -93,19 +92,37 @@ const router = createBrowserRouter([
       },
       {
         path: "/resumes",
-        element: <Resumes />,
+        element: (
+          <RenderOnUser>
+            {" "}
+            <Resumes />
+          </RenderOnUser>
+        ),
       },
       {
         path: "/resumes/:id",
-        element: <ResumeId />,
+        element: (
+          <RenderOnAuthenticated>
+            {" "}
+            <ResumeId />
+          </RenderOnAuthenticated>
+        ),
       },
       {
         path: "/resumes/edit/:id",
-        element: <EditResume />,
+        element: (
+          <RenderOnUser>
+            <EditResume />
+          </RenderOnUser>
+        ),
       },
       {
         path: "/create-vacancy",
-        element: <CreateVacancy />,
+        element: (
+          <RenderOnHR>
+            <CreateVacancy />
+          </RenderOnHR>
+        ),
       },
       {
         path: "/vacancies",
@@ -117,31 +134,63 @@ const router = createBrowserRouter([
       },
       {
         path: "/vacancy/edit/:id",
-        element: <EditVacancy />,
+        element: (
+          <RenderOnHR>
+            {" "}
+            <EditVacancy />
+          </RenderOnHR>
+        ),
       },
       {
         path: "/create-test",
-        element: <CreateTest />,
+        element: (
+          <RenderOnHR>
+            <CreateTest />
+          </RenderOnHR>
+        ),
       },
       {
         path: "/tests",
-        element: <Tests />,
+        element: (
+          <RenderOnAuthenticated>
+            {" "}
+            <Tests />
+          </RenderOnAuthenticated>
+        ),
       },
       {
         path: "/tests/:id",
-        element: <TestId />,
+        element: (
+          <RenderOnAuthenticated>
+            {" "}
+            <TestId />
+          </RenderOnAuthenticated>
+        ),
       },
       {
         path: "/applies/vacancy/:id",
-        element: <VacancyApplies />,
+        element: (
+          <RenderOnHR>
+            <VacancyApplies />
+          </RenderOnHR>
+        ),
       },
       {
         path: "/applies",
-        element: <UserApplies />,
+        element: (
+          <RenderOnUser>
+            {" "}
+            <UserApplies />
+          </RenderOnUser>
+        ),
       },
       {
         path: "/applies/hr",
-        element: <HrApplies />,
+        element: (
+          <RenderOnHR>
+            <HrApplies />
+          </RenderOnHR>
+        ),
       },
       {
         path: "/news",
@@ -161,11 +210,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/create-mentor",
-        element: <CreateMentor />,
+        element: (
+          <RenderOnMentor>
+            <CreateMentor />
+          </RenderOnMentor>
+        ),
       },
       {
         path: "/edit-mentor",
-        element: <EditMentor />,
+        element: (
+          <RenderOnMentor>
+            <EditMentor />
+          </RenderOnMentor>
+        ),
       },
       {
         path: "/profile/mentor",
@@ -177,13 +234,20 @@ const router = createBrowserRouter([
       },
       {
         path: "/user/certifications",
-        element: <UserCertifications />,
+        element: (
+          <RenderOnAuthenticated>
+            <UserCertifications />
+          </RenderOnAuthenticated>
+        ),
       },
       {
         path: "/allResumes",
-        element: <ResumeDB />,
+        element: (
+          <RenderOnAuthenticated>
+            <ResumeDB />
+          </RenderOnAuthenticated>
+        ),
       },
-
     ],
   },
   {
@@ -208,19 +272,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // {
-  // 	path: '/test',
-  // 	element: <RenderOnAnonymous><AuthLayout /></RenderOnAnonymous>,
-  // 	children: [
-  // 		{
-  // 			path: '',
-  // 			element: <Register />
-  // 		},
-  // 	]
-  // },
+
   {
     path: "*",
-    // element: <RequireAuth><Layout /></RequireAuth>,
+
     element: <NotFound />,
   },
 ]);

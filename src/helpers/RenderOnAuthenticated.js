@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import KeycloakService from "../services/KeycloakService";
+import { useNavigate } from "react-router-dom";
+const RenderOnAuthenticated = ({ children }) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!KeycloakService.isLoggedIn()) {
+      navigate("/");
+    }
+  }, [navigate]);
 
-const RenderOnAuthenticated = ({children}) => {
-    if (KeycloakService.isLoggedIn()) return children
-    return null
+  return KeycloakService.isLoggedIn() ? children : null;
 };
 
 export default RenderOnAuthenticated;

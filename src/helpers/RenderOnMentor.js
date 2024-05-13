@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import KeycloakService from "../services/KeycloakService";
 import { useNavigate } from "react-router-dom";
-const RenderOnUser = ({ children }) => {
+const RenderOnMentor = ({ children }) => {
   const navigate = useNavigate();
   useEffect(() => {
-    if (!KeycloakService.getUserRole()) {
+    if (!KeycloakService.getMentorRole()) {
       navigate("/");
     }
   }, [navigate]);
 
-  return KeycloakService.getUserRole() ? children : null;
+  return KeycloakService.getMentorRole() ? children : null;
 };
 
-export default RenderOnUser;
+export default RenderOnMentor;

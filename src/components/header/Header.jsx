@@ -26,7 +26,7 @@ import {
   IconChevronDown,
   IconClipboardText,
   IconAward,
-  IconDatabaseSearch
+  IconDatabaseSearch,
 } from "@tabler/icons-react";
 import classes from "./Header.module.css";
 import React, { useEffect, useState } from "react";
@@ -142,7 +142,13 @@ export default function Header() {
   }
 
   const links = linksSelected.map((item) => (
-    <Link to={item.link} className={classes.link}>
+    <div
+      onClick={() => {
+        closeDrawer();
+        navigate(`${item.link}`);
+      }}
+      className={classes.link}
+    >
       <UnstyledButton className={classes.subLink} key={item.title}>
         <Group wrap="nowrap" align="flex-start">
           <ThemeIcon size={34} variant="default" radius="md">
@@ -161,7 +167,7 @@ export default function Header() {
           </div>
         </Group>
       </UnstyledButton>
-    </Link>
+    </div>
   ));
 
   return (
@@ -223,9 +229,11 @@ export default function Header() {
             <Link to="/mentors" className={classes.link}>
               Mentorship
             </Link>
-           { isLoggedIn && <Link to="/platform/tests" className={classes.link}>
-              Test Platform
-            </Link>}
+            {isLoggedIn && (
+              <Link to="/platform/tests" className={classes.link}>
+                Test Platform
+              </Link>
+            )}
           </Group>
 
           <Group visibleFrom="sm">
@@ -323,10 +331,29 @@ export default function Header() {
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
           <Divider my="sm" />
 
-          <a href="#" className={classes.link}>
+          <div
+            onClick={() => {
+              closeDrawer();
+              navigate("/");
+            }}
+            className={classes.link}
+          >
             Home
-          </a>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
+          </div>
+          <div
+            onClick={() => {
+              closeDrawer();
+              navigate("/search/vacancy");
+            }}
+            className={classes.link}
+          >
+            Vacancies
+          </div>
+          <UnstyledButton
+            className={classes.link}
+            onClick={toggleLinks}
+            ml={20}
+          >
             <Center inline>
               <Box component="span" mr={5}>
                 Features
@@ -338,20 +365,45 @@ export default function Header() {
             </Center>
           </UnstyledButton>
           <Collapse in={linksOpened}>{links}</Collapse>
-          <a href="#" className={classes.link}>
-            Learn
-          </a>
-          <a href="#" className={classes.link}>
-            Academy
-          </a>
+          <div
+            onClick={() => {
+              navigate("/news");
+              closeDrawer();
+            }}
+            className={classes.link}
+          >
+            News
+          </div>
+          <div
+            onClick={() => {
+              closeDrawer();
+              navigate("/mentors");
+            }}
+            className={classes.link}
+          >
+            Mentorship
+          </div>
 
           <Divider my="sm" />
 
           <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default" onClick={() => KeycloakService.doLogin()}>
-              Log in
-            </Button>
-            <Button onClick={() => navigate("/register")}>Sign up</Button>
+            {!isLoggedIn && (
+              <div className="flex gap">
+                <Button
+                  variant="default"
+                  onClick={() => KeycloakService.doLogin()}
+                  className="button no-mr"
+                >
+                  Log In
+                </Button>
+                <Button
+                  onClick={() => navigate("/register")}
+                  className="button no-mr"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            )}
           </Group>
         </ScrollArea>
       </Drawer>
