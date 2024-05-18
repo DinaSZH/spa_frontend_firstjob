@@ -1,0 +1,13 @@
+.filterContent {
+  @media (max-width: 879px) {
+    display: none;
+  }
+}
+
+.filterButton {
+  visibility: hidden;
+
+  @media (max-width: 879px) {
+    visibility: visible;
+  }
+}

@@ -16,6 +16,8 @@ import {
   rem,
   useMantineTheme,
   Menu,
+  Chip,
+  Badge,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -27,15 +29,14 @@ import {
   IconClipboardText,
   IconAward,
   IconDatabaseSearch,
+  IconBriefcase,
 } from "@tabler/icons-react";
 import classes from "./Header.module.css";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../assets/images/logo.png";
 import KeycloakService from "../../services/KeycloakService";
 import { IconSettings, IconTrash } from "@tabler/icons-react";
 import RenderOnAuthenticated from "../../helpers/RenderOnAuthenticated";
-import RenderOnAnonymous from "../../helpers/RenderOnAnonymous";
 import { useDispatch, useSelector } from "react-redux";
 import { createProfile } from "../../store/slices/profileSlice";
 
@@ -174,9 +175,12 @@ export default function Header() {
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          {/* <MantineLogo size={30} /> */}
-          <Link to="/">
-            <img className="logo" src={logo} alt="logo" />
+          <Link to="/" className="flex flex-ai-c flex-jc-c">
+            <Badge color="blue" size="lg" >
+              <span className="flex flex-ai-c flex-jc-c gap10">
+                <p>FirstJob</p> <IconBriefcase size="20px" />
+              </span>
+            </Badge>
           </Link>
 
           <Group h="100%" gap={0} visibleFrom="sm">
@@ -349,6 +353,7 @@ export default function Header() {
           >
             Vacancies
           </div>
+          <RenderOnAuthenticated>
           <UnstyledButton
             className={classes.link}
             onClick={toggleLinks}
@@ -365,6 +370,7 @@ export default function Header() {
             </Center>
           </UnstyledButton>
           <Collapse in={linksOpened}>{links}</Collapse>
+          </RenderOnAuthenticated>
           <div
             onClick={() => {
               navigate("/news");

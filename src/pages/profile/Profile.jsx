@@ -31,6 +31,7 @@ export default function Profile() {
 
   useEffect(() => {
     dispatch(getProfile());
+    console.log(KeycloakService.getToken())
   }, []);
 
   

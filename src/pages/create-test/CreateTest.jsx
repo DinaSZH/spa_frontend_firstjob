@@ -27,12 +27,7 @@ export default function CreateTest() {
   const [description, setDescription] = useState("");
   const [thresholdScore, setThresholdScore] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [errorMessages, setErrorMessages] = useState({
-    name: "",
-    description: "",
-    thresholdScore: "",
-    questions: [],
-  });
+
   const [isFormValid, setIsFormValid] = useState(false);
 
   const navigate = useNavigate();

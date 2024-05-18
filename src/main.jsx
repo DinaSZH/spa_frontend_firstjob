@@ -248,30 +248,52 @@ const router = createBrowserRouter([
           </RenderOnAuthenticated>
         ),
       },
+      {
+        path: "/register",
+        element: (
+          <RenderOnAnonymous>
+             <Register />
+          </RenderOnAnonymous>
+        ),
+      },
+      {
+        path: "/register/mentor",
+        element: (
+          <RenderOnAnonymous>
+             <SignupMentor />
+          </RenderOnAnonymous>
+        ),
+      },
+      {
+        path: "/register/hr",
+        element: (
+          <RenderOnAnonymous>
+             <SignupHR />
+          </RenderOnAnonymous>
+        ),
+      },
     ],
   },
-  {
-    path: "/register",
-    element: (
-      <RenderOnAnonymous>
-        <AuthLayout />
-      </RenderOnAnonymous>
-    ),
-    children: [
-      {
-        path: "",
-        element: <Register />,
-      },
-      {
-        path: "mentor",
-        element: <SignupMentor />,
-      },
-      {
-        path: "hr",
-        element: <SignupHR />,
-      },
-    ],
-  },
+  // {
+  //   path: "/register",
+  //   element: <AuthLayout />,
+  //   children: [
+  //     {
+  //       path: "",
+  //       element: (
+  //           <Register />
+  //       ),
+  //     },
+  //     {
+  //       path: "mentor",
+  //       element: <SignupMentor />,
+  //     },
+  //     {
+  //       path: "hr",
+  //       element: <SignupHR />,
+  //     },
+  //   ],
+  // },
 
   {
     path: "*",

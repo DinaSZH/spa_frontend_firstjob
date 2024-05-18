@@ -25,6 +25,8 @@ import {
 import KeycloakService from "../../../services/KeycloakService";
 import { getMyResumes } from "../../../store/slices/resumeSlice";
 import { POINT_CONTENT } from "../../../config/end-point";
+import classes from "./SearchVacancy.module.css";
+
 
 export default function SearchVacancy() {
   const { applyStatus } = useSelector((state) => state.apply);
@@ -157,32 +159,20 @@ export default function SearchVacancy() {
     handleSearch();
   }, [cityId, salaryFrom, salaryTo, currency, employmentTypeId, experienceId]);
 
-  const [hideFilters, setHideFilters] = useState(false);
-
-  useEffect(() => {
-    const handleWindowResize = () => {
-      setHideFilters(window.innerWidth <= 768);
-    };
-    window.addEventListener("resize", handleWindowResize);
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
-  }, []);
-
   return (
     <main>
       <Container size="xl" py="xl">
         <Search onChange={(event) => setQuerySeacrh(event.target.value)} />
-        {hideFilters && (
-          <Menu shadow="lg" width={200} mt={10}>
+      
+          <Menu shadow="lg" width={200} mt={20} className={classes.filterButton}>
             <Menu.Target>
-              <Button>Open filters</Button>
+              <Button variant="outline">Open filters</Button>
             </Menu.Target>
 
             <Menu.Dropdown
               shadow="lg"
               ml={20}
-              style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px" }}
+              style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px", padding: '10px 15px' }}
             >
               <div>
                 <Select
@@ -193,6 +183,7 @@ export default function SearchVacancy() {
                   value={cityId}
                   onChange={setCityId}
                   nothingFoundMessage="Nothing found..."
+                  mb={5}
                 />
               </div>
               <div>
@@ -203,6 +194,7 @@ export default function SearchVacancy() {
                   max={10000000000}
                   value={salaryFrom}
                   onChange={setSalaryFrom}
+                  mb={5}
                 />
               </div>
               <div>
@@ -213,6 +205,7 @@ export default function SearchVacancy() {
                   max={10000000000}
                   value={salaryTo}
                   onChange={setSalaryTo}
+                  mb={5}
                 />
               </div>
               <div>
@@ -222,6 +215,7 @@ export default function SearchVacancy() {
                   data={["KZT", "USD", "RUB"]}
                   value={currency}
                   onChange={setCurrency}
+                  mb={5}
                 />
               </div>
 
@@ -238,6 +232,7 @@ export default function SearchVacancy() {
                   ]}
                   value={experienceId}
                   onChange={setExperienceId}
+                  mb={5}
                 />
               </div>
               <div>
@@ -248,14 +243,14 @@ export default function SearchVacancy() {
                   data={["Full time", "Remote"]}
                   value={employmentTypeId}
                   onChange={setEmploymentType}
+                  mb={5}
                 />
               </div>
             </Menu.Dropdown>
           </Menu>
-        )}
+      
         <Grid>
-          {!hideFilters && (
-            <Grid.Col span={3}>
+            <Grid.Col span={3} className={classes.filterContent}>
               <Paper mt={20} shadow="xs" withBorder p="md">
                 <Text size="lg" fw={700} mb={20}>
                   Filters
@@ -353,7 +348,7 @@ export default function SearchVacancy() {
                 </Group>
               </Paper>
             </Grid.Col>
-          )}
+       
 
           <Grid.Col span="auto">
             {loadingVacancy ? (
