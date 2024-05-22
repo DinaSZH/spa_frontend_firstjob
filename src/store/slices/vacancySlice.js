@@ -174,8 +174,8 @@ export const getAllAuthVacancies = createAsyncThunk(
       const jwt = KeycloakService.getToken();
       const { data } = await axios.get(
         `${POINT_CONTENT}/api/content/vacancies`,
-        { params: filterParams },
         {
+          params: filterParams,
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
