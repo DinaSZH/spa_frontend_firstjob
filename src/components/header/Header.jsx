@@ -176,7 +176,7 @@ export default function Header() {
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <Link to="/" className="flex flex-ai-c flex-jc-c">
-            <Badge color="blue" size="lg" >
+            <Badge color="blue" size="lg">
               <span className="flex flex-ai-c flex-jc-c gap10">
                 <p>FirstJob</p> <IconBriefcase size="20px" />
               </span>
@@ -354,22 +354,22 @@ export default function Header() {
             Vacancies
           </div>
           <RenderOnAuthenticated>
-          <UnstyledButton
-            className={classes.link}
-            onClick={toggleLinks}
-            ml={20}
-          >
-            <Center inline>
-              <Box component="span" mr={5}>
-                Features
-              </Box>
-              <IconChevronDown
-                style={{ width: rem(16), height: rem(16) }}
-                color={theme.colors.blue[6]}
-              />
-            </Center>
-          </UnstyledButton>
-          <Collapse in={linksOpened}>{links}</Collapse>
+            <UnstyledButton
+              className={classes.link}
+              onClick={toggleLinks}
+              ml={20}
+            >
+              <Center inline>
+                <Box component="span" mr={5}>
+                  Features
+                </Box>
+                <IconChevronDown
+                  style={{ width: rem(16), height: rem(16) }}
+                  color={theme.colors.blue[6]}
+                />
+              </Center>
+            </UnstyledButton>
+            <Collapse in={linksOpened}>{links}</Collapse>
           </RenderOnAuthenticated>
           <div
             onClick={() => {
@@ -409,6 +409,27 @@ export default function Header() {
                   Sign Up
                 </Button>
               </div>
+            )}
+            {isLoggedIn && (
+              <>
+                {profile && (
+                  <Button
+                    onClick={() => {
+                      closeDrawer();
+                      navigate("/profile");
+                    }}
+                    className="button no-mr"
+                  >
+                    Profile
+                  </Button>
+                )}
+
+                {!profile && (
+                  <Button onClick={createUserProfile} className="button no-mr">
+                    Create profile
+                  </Button>
+                )}
+              </>
             )}
           </Group>
         </ScrollArea>

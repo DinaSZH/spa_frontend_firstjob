@@ -16,6 +16,7 @@ import {
   Center,
   Group,
   Menu,
+  Title,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -26,7 +27,7 @@ import KeycloakService from "../../../services/KeycloakService";
 import { getMyResumes } from "../../../store/slices/resumeSlice";
 import { POINT_CONTENT } from "../../../config/end-point";
 import classes from "./SearchVacancy.module.css";
-
+import Vacancies from "../../vacancies/Vacancies";
 
 export default function SearchVacancy() {
   const { applyStatus } = useSelector((state) => state.apply);
@@ -163,30 +164,122 @@ export default function SearchVacancy() {
     <main>
       <Container size="xl" py="xl">
         <Search onChange={(event) => setQuerySeacrh(event.target.value)} />
-      
-          <Menu shadow="lg" width={200} mt={20} className={classes.filterButton}>
-            <Menu.Target>
-              <Button variant="outline">Open filters</Button>
-            </Menu.Target>
 
-            <Menu.Dropdown
-              shadow="lg"
-              ml={20}
-              style={{ boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px", padding: '10px 15px' }}
-            >
-              <div>
-                <Select
-                  label="Search city"
-                  placeholder="Search city"
-                  data={cities}
-                  searchable
-                  value={cityId}
-                  onChange={setCityId}
-                  nothingFoundMessage="Nothing found..."
-                  mb={5}
-                />
-              </div>
-              <div>
+        <Menu shadow="lg" width={200} mt={20} className={classes.filterButton}>
+          <Menu.Target>
+            <Button variant="outline">Open filters</Button>
+          </Menu.Target>
+
+          <Menu.Dropdown
+            shadow="lg"
+            ml={20}
+            style={{
+              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+              padding: "10px 15px",
+            }}
+          >
+            <div>
+              <Select
+                label="Search city"
+                placeholder="Search city"
+                data={cities}
+                searchable
+                value={cityId}
+                onChange={setCityId}
+                nothingFoundMessage="Nothing found..."
+                mb={5}
+              />
+            </div>
+            <div>
+              <NumberInput
+                label="From salary"
+                placeholder="Input from salary"
+                min={0}
+                max={10000000000}
+                value={salaryFrom}
+                onChange={setSalaryFrom}
+                mb={5}
+              />
+            </div>
+            <div>
+              <NumberInput
+                label="To salary"
+                placeholder="Input To salary"
+                min={0}
+                max={10000000000}
+                value={salaryTo}
+                onChange={setSalaryTo}
+                mb={5}
+              />
+            </div>
+            <div>
+              <Select
+                label="Currency"
+                placeholder="Pick value"
+                data={["KZT", "USD", "RUB"]}
+                value={currency}
+                onChange={setCurrency}
+                mb={5}
+              />
+            </div>
+
+            <div>
+              <Select
+                label="Experience"
+                placeholder="Pick value"
+                data={[
+                  "No experience",
+                  "Less than year",
+                  "1-3 years",
+                  "3-6 years",
+                  "6+ years",
+                ]}
+                value={experienceId}
+                onChange={setExperienceId}
+                mb={5}
+              />
+            </div>
+            <div>
+              {" "}
+              <Select
+                label="Employment Type"
+                placeholder="Pick value"
+                data={["Full time", "Remote"]}
+                value={employmentTypeId}
+                onChange={setEmploymentType}
+                mb={5}
+              />
+            </div>
+          </Menu.Dropdown>
+        </Menu>
+
+        <Grid>
+          <Grid.Col span={3} className={classes.filterContent}>
+            <Paper mt={20} shadow="xs" withBorder p="md">
+              <Text size="lg" fw={700} mb={20}>
+                Filters
+              </Text>
+              <Text size="md" fw={600}>
+                City:
+              </Text>
+              <Select
+                placeholder="Search city"
+                data={cities}
+                searchable
+                value={cityId}
+                onChange={setCityId}
+                nothingFoundMessage="Nothing found..."
+              />
+
+              <Flex
+                mih={50}
+                gap="sm"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                wrap="wrap"
+                mt="sm"
+              >
                 <NumberInput
                   label="From salary"
                   placeholder="Input from salary"
@@ -194,10 +287,7 @@ export default function SearchVacancy() {
                   max={10000000000}
                   value={salaryFrom}
                   onChange={setSalaryFrom}
-                  mb={5}
                 />
-              </div>
-              <div>
                 <NumberInput
                   label="To salary"
                   placeholder="Input To salary"
@@ -205,150 +295,63 @@ export default function SearchVacancy() {
                   max={10000000000}
                   value={salaryTo}
                   onChange={setSalaryTo}
-                  mb={5}
                 />
-              </div>
-              <div>
                 <Select
                   label="Currency"
                   placeholder="Pick value"
                   data={["KZT", "USD", "RUB"]}
                   value={currency}
                   onChange={setCurrency}
-                  mb={5}
                 />
-              </div>
+              </Flex>
+              <Text size="md" mt={20} fw={600}>
+                Experience:
+              </Text>
+              <Select
+                placeholder="Pick value"
+                data={[
+                  "No experience",
+                  "Less than year",
+                  "1-3 years",
+                  "3-6 years",
+                  "6+ years",
+                ]}
+                value={experienceId}
+                onChange={setExperienceId}
+              />
 
-              <div>
-                <Select
-                  label="Experience"
-                  placeholder="Pick value"
-                  data={[
-                    "No experience",
-                    "Less than year",
-                    "1-3 years",
-                    "3-6 years",
-                    "6+ years",
-                  ]}
-                  value={experienceId}
-                  onChange={setExperienceId}
-                  mb={5}
-                />
-              </div>
-              <div>
-                {" "}
-                <Select
-                  label="Employment Type"
-                  placeholder="Pick value"
-                  data={["Full time", "Remote"]}
-                  value={employmentTypeId}
-                  onChange={setEmploymentType}
-                  mb={5}
-                />
-              </div>
-            </Menu.Dropdown>
-          </Menu>
-      
-        <Grid>
-            <Grid.Col span={3} className={classes.filterContent}>
-              <Paper mt={20} shadow="xs" withBorder p="md">
-                <Text size="lg" fw={700} mb={20}>
-                  Filters
-                </Text>
-                <Text size="md" fw={600}>
-                  City:
-                </Text>
-                <Select
-                  placeholder="Search city"
-                  data={cities}
-                  searchable
-                  value={cityId}
-                  onChange={setCityId}
-                  nothingFoundMessage="Nothing found..."
-                />
-
-                <Flex
-                  mih={50}
-                  gap="sm"
-                  justify="flex-start"
-                  align="flex-start"
-                  direction="row"
-                  wrap="wrap"
+              <Text size="md" mt={20} fw={600}>
+                Employment type:
+              </Text>
+              <Select
+                placeholder="Pick value"
+                data={["Full time", "Remote"]}
+                value={employmentTypeId}
+                onChange={setEmploymentType}
+              />
+              <Group grow mt={20}>
+                <Button
+                  loading={loading}
                   mt="sm"
+                  variant="outline"
+                  radius="xl"
+                  onClick={handleSearch}
                 >
-                  <NumberInput
-                    label="From salary"
-                    placeholder="Input from salary"
-                    min={0}
-                    max={10000000000}
-                    value={salaryFrom}
-                    onChange={setSalaryFrom}
-                  />
-                  <NumberInput
-                    label="To salary"
-                    placeholder="Input To salary"
-                    min={0}
-                    max={10000000000}
-                    value={salaryTo}
-                    onChange={setSalaryTo}
-                  />
-                  <Select
-                    label="Currency"
-                    placeholder="Pick value"
-                    data={["KZT", "USD", "RUB"]}
-                    value={currency}
-                    onChange={setCurrency}
-                  />
-                </Flex>
-                <Text size="md" mt={20} fw={600}>
-                  Experience:
-                </Text>
-                <Select
-                  placeholder="Pick value"
-                  data={[
-                    "No experience",
-                    "Less than year",
-                    "1-3 years",
-                    "3-6 years",
-                    "6+ years",
-                  ]}
-                  value={experienceId}
-                  onChange={setExperienceId}
-                />
-
-                <Text size="md" mt={20} fw={600}>
-                  Employment type:
-                </Text>
-                <Select
-                  placeholder="Pick value"
-                  data={["Full time", "Remote"]}
-                  value={employmentTypeId}
-                  onChange={setEmploymentType}
-                />
-                <Group grow mt={20}>
-                  <Button
-                    loading={loading}
-                    mt="sm"
-                    variant="outline"
-                    radius="xl"
-                    onClick={handleSearch}
-                  >
-                    Search
-                  </Button>
-                  <Button
-                    color="red"
-                    loading={loading}
-                    mt="sm"
-                    variant="outline"
-                    radius="xl"
-                    onClick={handleReset}
-                  >
-                    Reset
-                  </Button>
-                </Group>
-              </Paper>
-            </Grid.Col>
-       
+                  Search
+                </Button>
+                <Button
+                  color="red"
+                  loading={loading}
+                  mt="sm"
+                  variant="outline"
+                  radius="xl"
+                  onClick={handleReset}
+                >
+                  Reset
+                </Button>
+              </Group>
+            </Paper>
+          </Grid.Col>
 
           <Grid.Col span="auto">
             {loadingVacancy ? (
@@ -359,6 +362,22 @@ export default function SearchVacancy() {
               <div>
                 <MyVacancies vacancies={filteredVacancies} />
               </div>
+            )}
+
+            {!loadingVacancy && filteredVacancies.length < 1 && (
+              <Container className={classes.root}>
+                <Center>
+                  <Title className={classes.title}>Not found.</Title>
+                </Center>
+                <Text
+                  c="dimmed"
+                  size="lg"
+                  ta="center"
+                  className={classes.description}
+                >
+                  There is no Vacancies
+                </Text>
+              </Container>
             )}
           </Grid.Col>
         </Grid>

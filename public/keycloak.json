@@ -1,6 +1,6 @@
 {
   "realm": "first-job-auth",
-  "auth-server-url": "http://164.92.79.45:8762/",
+  "auth-server-url": "http://209.38.137.218:8762/",
   "ssl-required": "external",
   "resource": "public-client",
   "public-client": true,

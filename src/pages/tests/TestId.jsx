@@ -76,18 +76,22 @@ export default function TestId() {
                 Test questions:
               </Text>
               <Text>
-                {fullTest.questions.map((question, index) => (
-                  <div key={index}>
-                    <h2>
-                      {index + 1}: {question.question}
-                    </h2>
-                    <ul>
-                      {question.answers.map((answer, answerIndex) => (
-                        <li key={answerIndex}>{answer.answer}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                {fullTest.questions ? (
+                  fullTest.questions.map((question, index) => (
+                    <div key={index}>
+                      <h2>
+                        {index + 1}: {question.question}
+                      </h2>
+                      <ul>
+                        {question.answers.map((answer, answerIndex) => (
+                          <li key={answerIndex}>{answer.answer}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <Text>No questions available</Text>
+                )}
               </Text>
             </>
           )}

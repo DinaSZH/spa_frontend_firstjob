@@ -16,7 +16,7 @@
   font-weight: 500;
   font-size: 14px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     height: rem(42px);
     width: 100%;
   }
@@ -43,6 +43,5 @@
   margin-top: 12px;
   padding: 16px calc(16px * 2);
   padding-bottom: 32px;
-  border-top: rem(1px) solid
-    light-dark(#f1f3f5, #3b3b3b);
+  border-top: rem(1px) solid light-dark(#f1f3f5, #3b3b3b);
 }
