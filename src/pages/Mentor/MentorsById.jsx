@@ -23,7 +23,7 @@ import {
   IconMapPin,
 } from "@tabler/icons-react";
 
-export function MentorsById() {
+export default function MentorsById() {
   const { mentor, loading } = useSelector((state) => state.mentor);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,7 +49,14 @@ export function MentorsById() {
           >
             Back to mentors page
           </Button>
-          <Paper radius="md" withBorder p="lg" color="#228BE6" shadow="xs" mt={10}>
+          <Paper
+            radius="md"
+            withBorder
+            p="lg"
+            color="#228BE6"
+            shadow="xs"
+            mt={10}
+          >
             <Text className={classes.title} mt={5}>
               {" "}
               {mentor.firstname} {mentor.lastname}

@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getNewsById } from "../../store/slices/newsSlice";
 import { useNavigate, useParams } from "react-router-dom";
-export function NewsById() {
+export default function NewsById() {
   const { newsId, loading } = useSelector((state) => state.news);
   const dispatch = useDispatch();
   const navigate = useNavigate();

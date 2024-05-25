@@ -30,7 +30,7 @@ import { TextEditor } from "../../components/TextEditor/TextEditor";
 import KeycloakService from "../../services/KeycloakService";
 import { Toaster, toast } from "react-hot-toast";
 
-export function News() {
+export default function News() {
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
 

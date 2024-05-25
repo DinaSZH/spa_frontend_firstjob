@@ -74,7 +74,6 @@ export default function SignupHR() {
         email: form.values.email,
         firstname: form.values.firstname,
         lastname: form.values.lastname,
-        firstname: form.values.firstname,
         phone: form.values.phone,
         birthdate: formattedBirthdate,
         description: form.values.description,
@@ -93,11 +92,11 @@ export default function SignupHR() {
       <Container size="lg" py="xl">
         <Container size={600} bg="#f0f8ff" py="xl" px="xl">
           <Text size="lg" fw={700}>
-            Регистрация для менторов
+            Registration for Mentors
           </Text>
           {!success && (
             <Text c="blue" fz={16} fw={700} mt={20}>
-              В завершении на почту придёт пароль
+              At the end you will receive a password by email.
             </Text>
           )}
           {success && <Success />}

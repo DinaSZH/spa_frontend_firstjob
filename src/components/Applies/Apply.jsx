@@ -26,7 +26,7 @@ export default function Apply({ item }) {
             className="button button-primary mr4"
             onClick={() => dispatch(acceptApply(item.id))}
           >
-            Пригласить
+            Invite
           </button>
         )}
         {item.status !== "DECLINED" && (
@@ -34,7 +34,7 @@ export default function Apply({ item }) {
             className="button button-secondary"
             onClick={() => dispatch(declineApply(item.id))}
           >
-            Отказать
+            Reject
           </button>
         )}
       </div>

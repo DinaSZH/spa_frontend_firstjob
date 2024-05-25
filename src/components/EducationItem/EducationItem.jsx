@@ -1,21 +1,4 @@
-const months = [
-  "январь",
-  "февраль",
-  "март",
-  "апрель",
-  "май",
-  "июнь",
-  "июль",
-  "август",
-  "сентябрь",
-  "октябрь",
-  "ноябрь",
-  "декабрь",
-];
-
 export default function EducationItem({ education, remove }) {
-  // const startDate = new Date(education.startYear)
-  // const endDate = new Date(education.endYear)
   return (
     <fieldset className="working-history">
       <span>
@@ -26,7 +9,7 @@ export default function EducationItem({ education, remove }) {
       <h4>{education.specialization}</h4>
 
       <span className="cursor" onClick={() => remove(education)}>
-        удалить
+        delete
       </span>
     </fieldset>
   );

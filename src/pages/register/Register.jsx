@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import KeycloakService from "../../services/KeycloakService";
 import { Button, Center, Paper, Space } from "@mantine/core";
 import {
-  Badge,
-  Group,
   Title,
   Text,
   Card,
@@ -100,60 +98,4 @@ export default function Register() {
       </Center>
     </main>
   );
-}
-// export default function Register() {
-//   return (
-//     <main className="login-page">
-//       <Group justify="center" grow gap="xl">
-//         <Paper shadow="xs" radius="lg" p="xl" withBorder>
-//           <Button href="/register/hr" size="xl" radius="md" fullWidth>
-//             For HR
-//           </Button>
-//         </Paper>
-//         <Paper shadow="xs" radius="lg" p="xl" withBorder>
-//           <Button
-//             onClick={() => KeycloakService.doRegister()}
-//             size="xl"
-//             radius="md"
-//             fullWidth
-//           >
-//             {" "}
-//             For employees
-//           </Button>
-//         </Paper>
-//         <Paper shadow="xs" radius="lg" p="xl" withBorder>
-//           <Button href="/register/mentor" size="xl" radius="md" fullWidth>
-//             {" "}
-//             For mentors
-//           </Button>
-//         </Paper>
-//       </Group>
-//     </main>
-//   );
-// }
-
-{
-  /* <section className="login-page signup-page">
-        <div className="signup-item">
-          <Link to="/register/hr" className="button-primary">
-            For HR
-          </Link>
-        </div>
-
-        <div className="signup-item">
-          <button
-            onClick={() => KeycloakService.doRegister()}
-            className="button-primary"
-          >
-            For employees
-          </button>
-        </div>
-
-        <div className="signup-item">
-         
-          <Link to="/register/mentor" className="button-primary">
-            For mentors
-          </Link>
-        </div>
-      </section> */
 }

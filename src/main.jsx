@@ -9,52 +9,67 @@ import { store } from "./store/store";
 import MainLayout from "./layout/MainLayout";
 import Home from "./pages/Home/Home";
 import KeycloakService from "./services/KeycloakService";
-import CreateResume from "./pages/create-resume/CreateResume";
-import Profile from "./pages/profile/Profile";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import { MantineProvider } from "@mantine/core";
-import EditProfile from "./pages/profile/editProfile/EditProfile";
-import SignupHR from "./pages/HR/SignupHR";
-import SignupMentor from "./pages/Mentor/SignupMentor";
-import AuthLayout from "./layout/Auth/AuthLayout";
-import Resumes from "./pages/resumes/Resumes";
-import SearchVacancy from "./pages/search/searchVacancy/SearchVacancy";
-import Register from "./pages/register/Register";
 import RenderOnAnonymous from "./helpers/RenderOnAnonymous";
 import RenderOnAuthenticated from "./helpers/RenderOnAuthenticated";
-import { NotFound } from "./pages/NotFound/NotFound";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ResumeId from "./pages/resumes/ResumeId";
-import EditResume from "./pages/resumes/EditResume";
-import Vacancies from "./pages/vacancies/Vacancies";
-import CreateVacancy from "./pages/create-vacancy/CreateVacancy";
-import VacancyId from "./pages/vacancies/VacancyId";
-import EditVacancy from "./pages/vacancies/EditVacancy";
-import CreateTest from "./pages/create-test/CreateTest";
-import Tests from "./pages/tests/Tests";
-import VacancyApplies from "./pages/vacancyApplies/VacancyApplies";
-import UserApplies from "./pages/user-applies/UserApplies";
-import HrApplies from "./pages/hr-applies/HrApplies";
-import { News } from "./pages/news/News";
-import { NewsById } from "./pages/news/NewsById";
-import { Mentors } from "./pages/Mentor/Mentors";
-import { MentorsById } from "./pages/Mentor/MentorsById";
-import CreateMentor from "./pages/create-mentor/CreateMentor";
-import PlatformTest from "./pages/platform-test/PlatformTest";
-import UserCertifications from "./pages/UserCertifications/UserCertifications";
-import MentorProfile from "./pages/MentorProfile/MentorProfile";
-import EditMentor from "./pages/edit-mentor/EditMentor";
-import ResumeDB from "./pages/resumeDB/ResumeDB";
-import TestId from "./pages/tests/TestId";
 import RenderOnUser from "./helpers/RenderOnUser";
 import RenderOnHR from "./helpers/RenderOnHR";
 import RenderOnMentor from "./helpers/RenderOnMentor";
+import SearchVacancy from "./pages/search/searchVacancy/SearchVacancy";
+////////////////////////////
+const CreateResume = React.lazy(() =>
+  import("./pages/create-resume/CreateResume")
+);
+const Profile = React.lazy(() => import("./pages/profile/Profile"));
+const EditProfile = React.lazy(() =>
+  import("./pages/profile/editProfile/EditProfile")
+);
+const SignupHR = React.lazy(() => import("./pages/HR/SignupHR"));
+const SignupMentor = React.lazy(() => import("./pages/Mentor/SignupMentor"));
+const Resumes = React.lazy(() => import("./pages/resumes/Resumes"));
+const Register = React.lazy(() => import("./pages/register/Register"));
+const NotFound = React.lazy(() => import("./pages/NotFound/NotFound"));
+const ResumeId = React.lazy(() => import("./pages/resumes/ResumeId"));
+const EditResume = React.lazy(() => import("./pages/resumes/EditResume"));
+const Vacancies = React.lazy(() => import("./pages/vacancies/Vacancies"));
+const CreateVacancy = React.lazy(() =>
+  import("./pages/create-vacancy/CreateVacancy")
+);
+const VacancyId = React.lazy(() => import("./pages/vacancies/VacancyId"));
+const EditVacancy = React.lazy(() => import("./pages/vacancies/EditVacancy"));
+const CreateTest = React.lazy(() => import("./pages/create-test/CreateTest"));
+const Tests = React.lazy(() => import("./pages/tests/Tests"));
+const UserApplies = React.lazy(() =>
+  import("./pages/user-applies/UserApplies")
+);
+const HrApplies = React.lazy(() => import("./pages/hr-applies/HrApplies"));
+const News = React.lazy(() => import("./pages/news/News"));
+const NewsById = React.lazy(() => import("./pages/news/NewsById"));
+const Mentors = React.lazy(() => import("./pages/Mentor/Mentors"));
+const MentorsById = React.lazy(() => import("./pages/Mentor/MentorsById"));
+const CreateMentor = React.lazy(() =>
+  import("./pages/create-mentor/CreateMentor")
+);
+const PlatformTest = React.lazy(() =>
+  import("./pages/platform-test/PlatformTest")
+);
+const UserCertifications = React.lazy(() =>
+  import("./pages/UserCertifications/UserCertifications")
+);
+const MentorProfile = React.lazy(() =>
+  import("./pages/MentorProfile/MentorProfile")
+);
+const EditMentor = React.lazy(() => import("./pages/edit-mentor/EditMentor"));
+const ResumeDB = React.lazy(() => import("./pages/resumeDB/ResumeDB"));
+const TestId = React.lazy(() => import("./pages/tests/TestId"));
 
+//////////
 const router = createBrowserRouter([
   {
     path: "/",
-    // element: <RequireAuth><Layout /></RequireAuth>,
     element: <MainLayout />,
     children: [
       {
@@ -81,8 +96,7 @@ const router = createBrowserRouter([
         path: "/profile/edit",
         element: (
           <RenderOnAuthenticated>
-            {" "}
-            <EditProfile />{" "}
+            <EditProfile />
           </RenderOnAuthenticated>
         ),
       },
@@ -94,7 +108,6 @@ const router = createBrowserRouter([
         path: "/resumes",
         element: (
           <RenderOnUser>
-            {" "}
             <Resumes />
           </RenderOnUser>
         ),
@@ -103,7 +116,6 @@ const router = createBrowserRouter([
         path: "/resumes/:id",
         element: (
           <RenderOnAuthenticated>
-            {" "}
             <ResumeId />
           </RenderOnAuthenticated>
         ),
@@ -136,7 +148,6 @@ const router = createBrowserRouter([
         path: "/vacancy/edit/:id",
         element: (
           <RenderOnHR>
-            {" "}
             <EditVacancy />
           </RenderOnHR>
         ),
@@ -153,7 +164,6 @@ const router = createBrowserRouter([
         path: "/tests",
         element: (
           <RenderOnAuthenticated>
-            {" "}
             <Tests />
           </RenderOnAuthenticated>
         ),
@@ -162,24 +172,14 @@ const router = createBrowserRouter([
         path: "/tests/:id",
         element: (
           <RenderOnAuthenticated>
-            {" "}
             <TestId />
           </RenderOnAuthenticated>
-        ),
-      },
-      {
-        path: "/applies/vacancy/:id",
-        element: (
-          <RenderOnHR>
-            <VacancyApplies />
-          </RenderOnHR>
         ),
       },
       {
         path: "/applies",
         element: (
           <RenderOnUser>
-            {" "}
             <UserApplies />
           </RenderOnUser>
         ),
@@ -252,7 +252,7 @@ const router = createBrowserRouter([
         path: "/register",
         element: (
           <RenderOnAnonymous>
-             <Register />
+            <Register />
           </RenderOnAnonymous>
         ),
       },
@@ -260,7 +260,7 @@ const router = createBrowserRouter([
         path: "/register/mentor",
         element: (
           <RenderOnAnonymous>
-             <SignupMentor />
+            <SignupMentor />
           </RenderOnAnonymous>
         ),
       },
@@ -268,32 +268,12 @@ const router = createBrowserRouter([
         path: "/register/hr",
         element: (
           <RenderOnAnonymous>
-             <SignupHR />
+            <SignupHR />
           </RenderOnAnonymous>
         ),
       },
     ],
   },
-  // {
-  //   path: "/register",
-  //   element: <AuthLayout />,
-  //   children: [
-  //     {
-  //       path: "",
-  //       element: (
-  //           <Register />
-  //       ),
-  //     },
-  //     {
-  //       path: "mentor",
-  //       element: <SignupMentor />,
-  //     },
-  //     {
-  //       path: "hr",
-  //       element: <SignupHR />,
-  //     },
-  //   ],
-  // },
 
   {
     path: "*",

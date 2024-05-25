@@ -18,7 +18,7 @@ import { useEffect } from "react";
 import { getAllMentors } from "../../store/slices/mentorSlice";
 import { Link } from "react-router-dom";
 
-export function Mentors() {
+export default function Mentors() {
   const dispatch = useDispatch();
   const { mentors, loading } = useSelector((state) => state.mentor);
 
