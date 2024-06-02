@@ -297,7 +297,7 @@ export default function Header() {
                     <Menu.Item
                       onClick={() =>
                         KeycloakService.doLogout({
-                          redirectUri: "http://localhost:3000/",
+                          redirectUri: "https://firstjob.space",
                         })
                       }
                       color="red"
