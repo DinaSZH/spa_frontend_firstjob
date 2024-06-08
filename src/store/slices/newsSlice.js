@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { POINT_CONTENT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosContent from "../../utils/axiosContent";
 
 export const newsSlice = createSlice({
   name: "news",
@@ -90,12 +91,8 @@ export const newsSlice = createSlice({
   },
 });
 
-export const {
-  setAllNews,
-  uppendNewsId,
-  setNews,
-  handleDeleteNews,
-} = newsSlice.actions;
+export const { setAllNews, uppendNewsId, setNews, handleDeleteNews } =
+  newsSlice.actions;
 
 export const getAllNews = createAsyncThunk(
   "user/getAllNews",
@@ -110,21 +107,14 @@ export const getAllNews = createAsyncThunk(
   }
 );
 
-
 export const createNews = createAsyncThunk(
   "user/createNews",
   async (formData, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/news`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formData
       );
       thunkApi.dispatch(uppendNewsId({ newNewsId: data }));
       console.log("News DATAT: ", data);
@@ -157,13 +147,8 @@ export const deleteNewsById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.delete(
-        `${POINT_CONTENT}/api/content/news/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.delete(
+        `${POINT_CONTENT}/api/content/news/${id}`
       );
       thunkApi.dispatch(handleDeleteNews(id));
     } catch (error) {

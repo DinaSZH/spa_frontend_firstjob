@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { END_POINT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosClient from "../../utils/axiosClient";
 
 export const resumeSlice = createSlice({
   name: "resume",
@@ -126,25 +127,25 @@ export const resumeSlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      })
+      });
   },
 });
 
-export const { setMyResumes, setResumesHR, uppendResume, setResume, handleDeleteResume } =
-  resumeSlice.actions;
+export const {
+  setMyResumes,
+  setResumesHR,
+  uppendResume,
+  setResume,
+  handleDeleteResume,
+} = resumeSlice.actions;
 
 export const getMyResumes = createAsyncThunk(
   "user/getResumes",
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${END_POINT}/api/client-app/resumes/my`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosClient.get(
+        `${END_POINT}/api/client-app/resumes/my`
       );
       console.log("Fetched resumes:", data); // Log fetched data
       thunkApi.dispatch(setMyResumes({ resumes: data }));
@@ -160,13 +161,8 @@ export const getAllResumesHR = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${END_POINT}/api/client-app/resumes`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosClient.get(
+        `${END_POINT}/api/client-app/resumes`
       );
       console.log("Fetched resumes:", data); // Log fetched data
       thunkApi.dispatch(setResumesHR({ resumesHR: data }));
@@ -182,14 +178,9 @@ export const createResume = createAsyncThunk(
   async (createResume, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosClient.post(
         `${END_POINT}/api/client-app/resumes`,
-        createResume,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        createResume
       );
       thunkApi.dispatch(uppendResume({ newresume: data }));
       console.log("RESUMEE DATAT: ", data);
@@ -206,13 +197,8 @@ export const getResumeById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${END_POINT}/api/client-app/resumes/my/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosClient.get(
+        `${END_POINT}/api/client-app/resumes/my/${id}`
       );
       console.log("Fetched resume:", data); // Log fetched data
       thunkApi.dispatch(setResume({ resume: data }));
@@ -228,13 +214,8 @@ export const getResumeByIdForHR = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${END_POINT}/api/client-app/resumes/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosClient.get(
+        `${END_POINT}/api/client-app/resumes/${id}`
       );
       console.log("Fetched resume:", data); // Log fetched data
       thunkApi.dispatch(setResume({ resume: data }));
@@ -250,13 +231,8 @@ export const deleteResumeById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.delete(
-        `${END_POINT}/api/client-app/resumes/my/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosClient.delete(
+        `${END_POINT}/api/client-app/resumes/my/${id}`
       );
       thunkApi.dispatch(handleDeleteResume(id));
     } catch (error) {
@@ -271,14 +247,8 @@ export const downloadResumeById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const response = await axios.get(
-        `${END_POINT}/api/client-app/resumes/${id}/download`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          responseType: "blob",
-        }
+      const response = await _axiosClient.get(
+        `${END_POINT}/api/client-app/resumes/${id}/download`
       );
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
@@ -300,15 +270,9 @@ export const editResumeById = createAsyncThunk(
   async ({ id, updatedResume }, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const response = await axios.put(
+      const response = await _axiosClient.put(
         `${END_POINT}/api/client-app/resumes/my/${id}`,
-        updatedResume,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-        }
+        updatedResume
       );
       console.log("Data after editing resume:", response.data);
       return response.data;

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { POINT_CONTENT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosContent from "../../utils/axiosContent";
 
 export const vacancySlice = createSlice({
   name: "vacancy",
@@ -172,13 +173,10 @@ export const getAllAuthVacancies = createAsyncThunk(
   async (filterParams, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
+      const { data } = await _axiosContent.get(
         `${POINT_CONTENT}/api/content/vacancies`,
         {
           params: filterParams,
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
         }
       );
       console.log("Fetched all auth vacancies:", data);
@@ -195,13 +193,8 @@ export const getMyVacancies = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/vacancies/my`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/vacancies/my`
       );
       console.log("Fetched vacancies:", data); // Log fetched data
       thunkApi.dispatch(setMyVacancies({ vacancies: data }));
@@ -217,14 +210,9 @@ export const createVacancy = createAsyncThunk(
   async (createVacancy, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/vacancies`,
-        createVacancy,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        createVacancy
       );
       thunkApi.dispatch(uppendVacancy({ newvacancy: data }));
       console.log("Vacancy DATAT: ", data);
@@ -258,13 +246,8 @@ export const deleteVacancyById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.delete(
-        `${POINT_CONTENT}/api/content/vacancies/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.delete(
+        `${POINT_CONTENT}/api/content/vacancies/${id}`
       );
       thunkApi.dispatch(handleDeleteVacancy(id));
     } catch (error) {

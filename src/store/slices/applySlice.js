@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { POINT_CONTENT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosContent from "../../utils/axiosContent";
 
 export const applySlice = createSlice({
   name: "apply",
@@ -11,7 +12,7 @@ export const applySlice = createSlice({
     apply: {},
     testMain: {},
     appliesHR: [],
-    applyStatus: '',
+    applyStatus: "",
   },
   reducers: {
     appendApply: (state, action) => {
@@ -101,7 +102,7 @@ export const applySlice = createSlice({
         console.error("Error from backend:", payload);
         state.loading = false;
         state.error = payload;
-      })
+      });
   },
 });
 
@@ -120,14 +121,9 @@ export const createApplyVacancy = createAsyncThunk(
   async ({ id, resumeId }, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/vacancies/${id}/apply?resumeId=${resumeId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        {}
       );
       thunkApi.dispatch(setApplyStatus(data));
       thunkApi.dispatch(setTest({ testMain: data }));
@@ -143,14 +139,9 @@ export const createApplyVacancyTest = createAsyncThunk(
   async ({ id, resumeId }, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/vacancies/${id}/apply?resumeId=${resumeId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        {}
       );
       thunkApi.dispatch(setTest({ testMain: data }));
     } catch (error) {
@@ -165,13 +156,8 @@ export const getVacancyApplies = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/applications`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/applications`
       );
       console.log("Fetched applies:", data);
       thunkApi.dispatch(setApplies(data));
@@ -191,13 +177,8 @@ export const getUserApplies = createAsyncThunk(
       const url = status
         ? `${POINT_CONTENT}/api/content/applications/user?status=${status}`
         : `${POINT_CONTENT}/api/content/applications/user`;
-      const { data } = await axios.get(
-        url, // Using the status parameter in the URL if provided
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        url // Using the status parameter in the URL if provided
       );
       console.log("Fetched applies:", data);
       thunkApi.dispatch(setUserApplies(data));
@@ -213,14 +194,9 @@ export const inviteApply = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/applications/invite/${id}`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        null
       );
       console.log("Invite:", data);
       thunkApi.dispatch(setApplyStatusHR(data));
@@ -236,14 +212,9 @@ export const declineApply = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/applications/decline/${id}`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        null
       );
       console.log("Decline:", data);
       thunkApi.dispatch(setApplyStatusHR(data));

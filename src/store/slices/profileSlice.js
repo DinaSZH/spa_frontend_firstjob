@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { END_POINT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosClient from "../../utils/axiosClient";
 
 let initialState = {
   profile: null,
@@ -64,11 +65,9 @@ export const getProfile = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(`${END_POINT}/api/client-app/profiles`, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const { data } = await _axiosClient.get(
+        `${END_POINT}/api/client-app/profiles`
+      );
       thunkApi.dispatch(setProfile(data));
     } catch (error) {
       thunkApi.dispatch(setError(error.message));
@@ -81,14 +80,9 @@ export const createProfile = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosClient.post(
         `${END_POINT}/api/client-app/profiles`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        null
       );
       thunkApi.dispatch(setProfile(data));
     } catch (error) {
@@ -102,14 +96,9 @@ export const editProfile = createAsyncThunk(
   async (updatedProfile, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.put(
+      const { data } = await _axiosClient.put(
         `${END_POINT}/api/client-app/profiles`,
-        updatedProfile,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        updatedProfile
       );
       thunkApi.dispatch(setProfile(data));
       return data;

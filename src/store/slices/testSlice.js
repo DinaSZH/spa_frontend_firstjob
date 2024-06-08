@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { POINT_CONTENT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosContent from "../../utils/axiosContent";
 
 export const testSlice = createSlice({
   name: "test",
@@ -15,7 +16,7 @@ export const testSlice = createSlice({
     loadingTest: false,
     successTest: false,
     error: null,
-    applyStatus: '',
+    applyStatus: "",
   },
   reducers: {
     setTestPreviw: (state, action) => {
@@ -124,8 +125,8 @@ export const testSlice = createSlice({
         state.successTest = false;
         state.error = payload;
       })
-       // getTestById
-       .addCase(getTestById.pending, (state) => {
+      // getTestById
+      .addCase(getTestById.pending, (state) => {
         state.loadingTest = true;
         state.successTest = false;
         state.error = null;
@@ -140,8 +141,8 @@ export const testSlice = createSlice({
         state.successTest = false;
         state.error = payload;
       })
-       // getPlatformTestById
-       .addCase(getPlatformTestById.pending, (state) => {
+      // getPlatformTestById
+      .addCase(getPlatformTestById.pending, (state) => {
         state.loadingTest = true;
         state.successTest = false;
         state.error = null;
@@ -156,8 +157,8 @@ export const testSlice = createSlice({
         state.successTest = false;
         state.error = payload;
       })
-       // getPlatformTests
-       .addCase(getPlatformTests.pending, (state) => {
+      // getPlatformTests
+      .addCase(getPlatformTests.pending, (state) => {
         state.loadingTest = true;
         state.successTest = false;
         state.error = null;
@@ -171,7 +172,7 @@ export const testSlice = createSlice({
         state.loadingTest = false;
         state.successTest = false;
         state.error = payload;
-      })
+      });
   },
 });
 
@@ -191,13 +192,8 @@ export const getTestPreview = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/${id}/preview`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/tests/${id}/preview`
       );
       thunkApi.dispatch(setTestPreviw({ test: data }));
     } catch (error) {
@@ -212,14 +208,9 @@ export const submitTest = createAsyncThunk(
   async ({ id, answers, resumeId }, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/vacancies/${id}/submit?resumeId=${resumeId}`,
-        { answers },
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        { answers }
       );
       thunkApi.dispatch(setApplyStatus(data));
       console.log(data);
@@ -236,14 +227,9 @@ export const createTest = createAsyncThunk(
   async (testData, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/tests/hr`,
-        testData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        testData
       );
       console.log(data);
       thunkApi.dispatch(uppendTest({ newtest: data }));
@@ -259,13 +245,8 @@ export const getMyTests = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/hr`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/tests/hr`
       );
       console.log("Fetched tests:", data);
       thunkApi.dispatch(setMyTests({ tests: data }));
@@ -281,13 +262,8 @@ export const getMyCertifications = createAsyncThunk(
   async (email, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/certification?email=${email}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/certification?email=${email}`
       );
       console.log("Fetched certifications:", data);
       thunkApi.dispatch(setMyCertifications({ certifications: data }));
@@ -303,12 +279,9 @@ export const downloadCertificationById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const response = await axios.get(
+      const response = await _axiosContent.get(
         `${POINT_CONTENT}/api/content/certification/${id}/download`,
         {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
           responseType: "blob",
         }
       );
@@ -331,13 +304,8 @@ export const getPlatformTests = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/platform`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/tests/platform`
       );
       console.log("Fetched tests:", data);
       thunkApi.dispatch(setPlatformTests({ platformTests: data }));
@@ -353,13 +321,8 @@ export const getPlatformTestById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/platform/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/tests/platform/${id}`
       );
       thunkApi.dispatch(setPlatformTest({ platformTest: data }));
     } catch (error) {
@@ -374,14 +337,9 @@ export const submitPlatformTest = createAsyncThunk(
   async ({ id, answers }, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/certification/${id}/submit`,
-        { answers },
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        { answers }
       );
       thunkApi.dispatch(setApplyStatus(data));
       console.log(data);
@@ -398,13 +356,8 @@ export const getTestById = createAsyncThunk(
   async (id, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/tests/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/tests/${id}`
       );
       console.log("Fetched test:", data); // Log fetched data
       thunkApi.dispatch(setTest({ fullTest: data }));

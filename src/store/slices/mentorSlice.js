@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { POINT_CONTENT } from "../../config/end-point";
 import KeycloakService from "../../services/KeycloakService";
+import _axiosContent from "../../utils/axiosContent";
 
 export const mentorSlice = createSlice({
   name: "mentor",
@@ -110,13 +111,8 @@ export const getMentorProfile = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.get(
-        `${POINT_CONTENT}/api/content/mentor/my`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+      const { data } = await _axiosContent.get(
+        `${POINT_CONTENT}/api/content/mentor/my`
       );
       thunkApi.dispatch(setProfile(data));
     } catch (error) {
@@ -160,14 +156,9 @@ export const createMentorProfile = createAsyncThunk(
   async (createMentor, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.post(
+      const { data } = await _axiosContent.post(
         `${POINT_CONTENT}/api/content/mentor`,
-        createMentor,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        createMentor
       );
       thunkApi.dispatch(uppendMentor({ newmentor: data }));
       console.log("Mentor DATAT: ", data);
@@ -184,14 +175,9 @@ export const editProfileMentor = createAsyncThunk(
   async (updatedProfile, thunkApi) => {
     try {
       const jwt = KeycloakService.getToken();
-      const { data } = await axios.put(
+      const { data } = await _axiosContent.put(
         `${POINT_CONTENT}/api/content/mentor`,
-        updatedProfile,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        updatedProfile
       );
       thunkApi.dispatch(setProfile(data));
       return data;
